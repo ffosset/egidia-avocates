@@ -1,0 +1,19 @@
+<!-- @dsCard group="Spacing" viewport="700x300" name="La loi des marges" subtitle="Le texte ne touche jamais le filet de marge : 48px de marge + 32px de gouttière = 80px." -->
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css"><style>body{background:var(--creme-pur);margin:0;font-size:16px}.frame{position:relative;height:280px;overflow:hidden;background:var(--creme)}.rule{position:absolute;top:0;bottom:0;width:1px;background:var(--line-page-rule);z-index:2}.gut{position:absolute;top:0;bottom:0;background:rgba(176,141,90,.16)}.cap{font-family:var(--font-body);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-label)}.tick{position:absolute;font-family:var(--font-mono);font-size:11px;color:var(--brun-moyen)}</style></head><body>
+<div class="frame">
+<div class="gut" style="left:0;width:48px"></div>
+<div class="gut" style="left:49px;width:32px;background:rgba(70,101,74,.14)"></div>
+<div class="rule" style="left:48px"></div>
+<div class="rule" style="right:48px"></div>
+<div class="gut" style="right:0;width:48px"></div>
+<div class="gut" style="right:49px;width:32px;background:rgba(70,101,74,.14)"></div>
+<div style="position:absolute;left:80px;right:80px;top:0;padding:36px 0">
+<div class="cap">Contact et accès</div>
+<div style="font-family:var(--font-display);font-size:30px;font-weight:700;margin-top:16px;line-height:1.2;max-width:20ch">Le texte commence ici, jamais sur le filet</div>
+<div style="margin-top:24px;font-size:16px;color:var(--brun-moyen);max-width:52ch;line-height:1.6">Marge 48 + gouttière 32 = <strong>--content-inset</strong>, 80px. Tous les conteneurs l'utilisent : en-tête, sections, cellules de bord. Seule la photographie franchit le filet.</div>
+<div style="margin-top:32px;display:flex;gap:16px;align-items:center"><span style="height:48px;display:inline-flex;align-items:center;padding:0 24px;background:var(--brun-profond);color:var(--creme);font-weight:600;font-size:16px">Bouton</span><span style="font-size:14px;color:var(--text-label)">titre → chapô 16 · chapô → contenu 24 · bloc → bloc 48</span></div>
+</div>
+<div class="tick" style="left:8px;bottom:8px">48</div>
+<div class="tick" style="left:56px;bottom:8px">32</div>
+</div>
+</body></html>

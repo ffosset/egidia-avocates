@@ -1,0 +1,94 @@
+ROW 1 :: A=Nom  |  B=Prénom  |  C=Matières préferentielles (liste de mots-clés)  |  D=Description (1000-1500 caractères)  |  E=Langues (liste)  |  F=Lien linkedin  |  G=Adresse email  |  H=Téléphone  |  I=Numéro TVA  |  J=Publications (liste de liens)  |  K=Cabinets (présent)  |  L=Cabinets (passé) - si vous voulez le montrer  |  M=Années d'ancienneté?
+
+ROW 2 :: A=Delplancke  |  B=Floriane  |  C=Droit de la jeunesse, 
+droit de la famille 
+ droit des étrangers  |  D=Avocate inscrite au Barreau de Bruxelles depuis janvier 2017.
+
+Après avoir obtenu en 2015 un diplôme de Master en Droit à l’ULB, Floriane Delplancke a poursuivi sa formation dans le cadre d’un Master en Droits de l’Homme organisé conjointement par l’Université Saint-Louis, l’UCL et l’Université de Namur. Elle a effectué une partie de ses études de droit à l’Université de Liverpool (Royaume-Uni), dans le cadre d’un programme d’échange international.
+
+Lauréate du concours de Droit international humanitaire de la Croix-Rouge, elle a accompli un stage au sein du bureau du Procureur du Tribunal pénal international pour l’ex-Yougoslavie à La Haye, avant de rejoindre Alter Egaux Avocats en janvier 2017. Elle y travaillera durant près de 10 ans avant la création du Cabinet d'avocates Egidia. 
+
+Sa pratique est essentiellement axée sur le droit de la jeunesse, le droit de la famille et le droit des étrangers. 
+
+Elle est, par ailleurs, membre de la commission jeunesse du Barreau de Bruxelles.
+
+A côté de ses activités au sein du Barreau de Bruxelles, Floriane Delplancke est co-présidente de la Commission Enfance et Jeunesse de la Ligue des droits Humains depuis 2025, ce qui l'amène à participer à des activités de sensibilisation, de formations et de plaidoyer. 
+
+  |  E=Français, anglais  |  G=f.delplancke@avocat.be  |  H=Je dois aller en faire un pro. 
+Je te donne le n° dès que j'ai  |  I=BE0666.604.190  |  J=
+F. DELPLANCKE, « Croisée des secteurs ou impasse ? », in J. NOUNCKELE (dir.) Les enfants et les jeunes à la croisée des secteurs. Entre protection, soin et justice : quelles réponses face aux parcours complexes ?, Larcier, mai 2026.
+
+C. GHYMERS, D. UNGER, F. DELPLANCKE, « Guide pratique et de premiers réflexes sur les questions de séjour des mineurs « étrangers » en situation de vulnérabilité », Fédération Wallonie-Bruxelles, Aide à la jeunesse, août 2025.
+
+D. UNGER, F. DELPLANCKE, « Question préjudicielle – Pourvoi contre un placement provisoire en IPPJ – Commentaire », J.D.J. n°436, juin 2024.
+
+D. UNGER, F. DELPLANCKE, "Pour un droit effectif à la participation des mineurs trans et non-binaires dans le secteur de l'Aide à la Jeunesse", Chronique de la Ligue des droits humains, 24 avril 2025.
+
+L.CARPENT, F. DELPLANCKE, L. RESSORT, « L’aide à la jeunesse en question(s) », Larcier, Octobre 2023.
+
+H. SAX, F. DELPLANCKE, « La rébellion en regard de la violence policière : des procédures en miroir et 13 ans malheur à Strasbourg », J.D.J. n°420, décembre 2022.  |  K=Egidia  |  L=Alter Egaux
+
+ROW 3 :: A=Doyen  |  B=Margaux  |  C=Droit des étrangers, droit à l'aide sociale  |  D=Margaux Doyen a obtenu un Bachelier en droit à l’Université Saint-Louis Bruxelles ainsi qu’un Master en droit à l’UCLouvain au cours desquels elle a développé un intérêt particulier pour les matières ayant trait aux droits fondamentaux. 
+Elle a ensuite parachevé sa formation avec un Master de spécialisation en droits humains organisé conjointement par l’Université Saint-Louis, l’UCL et l’Université de Namur durant lequel elle a participé au concours de plaidoiries Charles Rousseau. En parallèle de ce master complémentaire, elle a travaillé comme juriste au sein d’une société de logements sociaux.
+Son parcours comprend également un échange Erasmus à l'Université de Valence, au cours duquel elle a consolidé sa pratique de l'espagnol, qu'elle met aujourd'hui au service de sa clientèle.
+Elle est inscrite à l’Ordre français des Avocats du Barreau de Bruxelles depuis janvier 2022
+Elle pratique essentiellement le droit des étrangers et le droit de l’aide sociale.
+
+  |  E=Français, anglais, espagnol  |  G=margaux.doyen@avocat.be  |  H=32491943372  |  I=BE.0777.751.245
+
+ROW 4 :: A=Feguy  |  B=Farah  |  C=Droit des étrangers, droit de la famille, droit du bail, droit du roulage  |  D=Avocate inscrite au Barreau de Bruxelles depuis janvier 2020.
+
+Diplômée de l’ULB en 2018, Maître Farah FEGUY a d’abord remporté le Tournoi d’éloquence organisé par l'Académie royale de Belgique et la RTBF sur le respect des droits de l'Homme en Belgique, à l'occasion des 70 ans de la Déclaration universelle des droits de l'homme. 
+
+Avant de prêter serment au barreau, elle a d’abord exercé comme conseillère juridique au sein de la Plateforme Citoyenne de Soutien aux Réfugiés. Elle y assurait un accompagnement juridique des personnes en demande de séjour ou en demande d’asile.
+
+À l’issue de son stage au barreau, elle a constitué son cabinet, Terralia-Avocates, avec Maître Marine VRYENS avant la création du cabinet d’avocates EGIDIA. 
+
+Sa pratique est principalement consacrée au droit des étrangers, au droit de la famille, au droit du bail, au droit social et au droit du roulage.
+
+Parallèlement à son activité d'avocate, Maître Feguy est membre active de la Ligue des droits humains, où elle participe à des actions de sensibilisation et de plaidoyer. Cet engagement lui permet, par ailleurs, de suivre de près les évolutions législatives et jurisprudentielles. 
+
+Elle s'est également investie auprès de l'ASBL Touche Pas À Ma Pote en dispensant des formations à destination des services de police relatives à la mise en œuvre de la loi du 22 mai 2014 tendant à lutter contre le sexisme dans l'espace public.  |  E=Français, anglais, néerlandais   |  F=https://www.linkedin.com/in/farah-feguy-298a68209/  |  G=farah.feguy@avocat.be  |  H=4.79490814E8  |  I=BE1036396597  |  K=Terralia-Avocates
+
+ROW 5 :: A=Ghymers  |  B=Cécile  |  C=Droit des MENA, Droit des Etrangers, Droit de la Jeunesse.  |  D=Licenciée en droit de l’UCL. Avocate au barreau de Bruxelles depuis 2002.
+
+Spécialisée en droit des étrangers – plus particulièrement en droit des MENA (mineurs étrangers non accompagnés) ainsi qu’en droit de la jeunesse.
+
+Présidente de la section des avocats MENA du BAJ de Bruxelles de 2010 à 2015 et membre actuellement de la section des avocats MENA et Jeunesse du BAJ de Bruxelles.
+
+Co-présidente de la Commission Etrangers de la LDH (Ligue des droits humains) depuis 2017. Membre de l'OA de Défense des Enfants international (DEI-Belgique) depuis 2026.
+
+Juriste-conseil pour la Croix Rouge de Belgique (département Asile).
+
+Donne régulièrement des formations pour les associations en ce compris l’ADDE (association pour le droit des étrangers), la plateforme Mineurs en exil, Caritas international, la Croix-Rouge et l’ASBL Jeunesse et droit.  |  E=Français, anglais, espagnol  |  G=c.ghymers@avocat.be  |  H=4.77354357E8  |  I=SRL CG-HR BE 0795426328  |  K=EGIDIA  |  L=DNH-legal
+
+ROW 6 :: A=Unger  |  B=Déborah  |  C=Droit de la jeunesse, droit des MENA, droit des étrangers  |  D=Déborah Unger est diplômée de droit en 2015. Elle est titulaire d’un master complémentaire en droits de l’Homme.
+Avocate depuis 2017, elle s’est spécialisée en droit de la jeunesse, droit des étrangers et droit des MENA.
+
+Déborah Unger est assistante à l’Université UCL Saint-Louis, chargée du séminaire en sciences humaines (orientation criminologie) depuis 2023 et des travaux pratiques de droit pénal et droit de la procédure pénale depuis 2026.
+Elle est membre du GREPEC, Groupe de Recherche en matière Pénale et Criminelle, et mène des recherches en matière de droit pénal et de droit de la jeunesse. 
+https://grepec.usaintlouis.be/team/deborah-unger/ 
+
+En 2015, Déborah a rejoint la Commission Enfance et Jeunesse de la Ligue des Droits Humains, commission qu’elle préside depuis 2019.
+
+
+
+
+
+  |  E=Français, anglais  |  F=https://www.linkedin.com/in/deborah-unger-9b4235115/  |  G=deborah.unger@avocat.be  |  H=4.76593235E8  |  I=BE 0683.475.856  |  J=Je pense qu'on peut juste renvoyer au site de l'unif en fait : https://grepec.usaintlouis.be/team/deborah-unger/ + https://research.dial.uclouvain.be/entities/person/abefb960-4369-47c7-9893-ff91765c32c0   |  K=EGIDIA  |  L=DNH-legal
+
+ROW 7 :: A=Vandeput  |  B=Camille  |  C=Droit des étrangers, droit de l'aide sociale, droit de la jeunesse  |  D=Avocate au Barreau depuis 2023. 
+
+Titulaire d’un Master en droit de la KU Leuven, Me Vandeput vous conseille et vous défend en français, néerlandais et anglais.
+
+Spécialisée en droit des étrangers, elle a effectué son stage auprès de Me Jean-Yves Carlier au sein d'un cabinet spécialisé en droit des étrangers. Elle pratique également le droit de la jeunesse et le droit social.  |  E=Français, néerlandais, anglais  |  F=https://www.linkedin.com/in/camille-vandeput-8bb151265/  |  G=	
+
+    camille.vandeput@avocat.be  |  H=4.71481838E8  |  I=BE0804.634.893  |  K=EGIDIA  |  L=IN-Law
+
+ROW 8 :: A=Vryens  |  B=Marine  |  C=droit des étrangers
+droit de l'aide sociale  |  D=Titulaire d'un Master en droit public et droit international de l'ULB, Maître Marine Vryens est une avocate engagée dans la défense des droits fondamentaux, principalement en droit des étrangers et droit de l'aide sociale.
+Son intérêt pour les questions migratoires et les droits humains s'est construit tout au long de son parcours : dès ses études, elle s'est investie dans la Refugee Law Clinic de l'ULB et a consacré son mémoire aux politiques d'asile européennes face aux violences de genre.
+Avant de rejoindre le barreau de Bruxelles, elle a travaillé au sein de Fedasil, participant à l'accueil des demandeurs de protection internationale. Cette expérience de terrain lui a donné une connaissance approfondie des réalités vécues par les personnes en exil et du fonctionnement des structures d'accueil.
+Elle a ensuite intégré un cabinet spécialisé en droit des étrangers et en droit de la famille, où elle a développé une pratique fondée sur la rigueur, l'écoute et un accompagnement personnalisé, convaincue que chaque dossier mérite une attention particulière.
+En parallèle, Maître Vryens est engagée au sein de la Ligue des droits humains, où elle participe à des initiatives en faveur des droits fondamentaux.  |  E=francais
+anglais   |  F=/  |  G=marine.vryens@avocat.be  |  H=0486 747 296  |  I=BE1037598310  |  K=Terralia

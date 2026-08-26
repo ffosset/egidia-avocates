@@ -1,0 +1,23 @@
+:root{
+/* Angles droits : le style est sérieux, expert. Aucun rayon sur les cadres,
+   les filets, les boutons, les encadrés ou les cartes. */
+--radius-none:0px;
+--radius-sm:0px;
+--radius-md:0px;
+--radius-lg:0px;
+/* Conservé pour mémoire — plus utilisé dans le système. */
+--radius-pill:999px;
+
+--border-hairline:1px; /* @kind other */
+--border-rule:1px; /* @kind other */
+--border-frame:2px; /* @kind other */
+--border-accent:3px; /* @kind other */
+
+--border-card:var(--border-hairline) solid var(--line-hairline); /* @kind other */
+--border-frame-strong:var(--border-frame) solid var(--brun-profond); /* @kind other */
+--divider:var(--border-rule) solid var(--line-rule); /* @kind other */
+
+--focus-ring-width:3px; /* @kind other */
+--focus-ring-offset:2px; /* @kind other */
+--focus-ring-color:var(--sauge-obscur);
+}

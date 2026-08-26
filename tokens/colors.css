@@ -1,0 +1,78 @@
+:root{
+/* ---- Primaire (fonds & marges) ---- */
+--creme:#FAF7F4;
+--sable:#D9D2C4;
+--gris:#DCDAD6;
+
+/* ---- Secondaire (sauge) ---- */
+--sauge-obscur:#46654A;
+--sauge-clair:#9AAD8B;
+
+/* ---- Texte & boutons ---- */
+--brun-profond:#3B2E1E;
+--brun-moyen:#6B5237;
+--caramel:#B08D5A;
+
+/* ---- Derived tints (oklch-harmonised with the nine brand colours) ---- */
+--creme-pur:#FFFDFB;
+--sable-clair:#EFEAE1;
+--sauge-voile:#EAF0E7;
+--caramel-voile:#F4EBDD;
+--brun-voile:#E8E2D9;
+
+/* ---- Semantic: surfaces ---- */
+--surface-page:var(--creme);
+--surface-card:var(--creme-pur);
+--surface-margin:var(--sable);
+--surface-inset:var(--sable-clair);
+--surface-accent:var(--sauge-obscur);
+--surface-accent-soft:var(--sauge-voile);
+--surface-warm-soft:var(--caramel-voile);
+--surface-ink:var(--brun-profond);
+
+/* ---- Semantic: text ---- */
+--text-body:var(--brun-profond);
+--text-heading:var(--brun-profond);
+--text-muted:var(--brun-moyen);
+--text-label:#7A6B5A;
+--text-on-dark:var(--creme);
+--text-on-accent:#FFFFFF;
+--text-link:var(--sauge-obscur);
+--text-link-hover:var(--brun-profond);
+
+/* ---- Semantic: lines ---- */
+--line-hairline:var(--gris);
+--line-rule:var(--sable);
+--line-strong:var(--brun-moyen);
+--line-focus:var(--sauge-obscur);
+/* Filets de marge visibles : lisibles sur crème comme sur sauge obscur. */
+--line-page-rule:rgba(122,107,90,.38);
+
+/* ---- Semantic: interactive ---- */
+/* Survol par inversion : un cadre clair devient un aplat foncé. */
+--hover-invert-bg:var(--brun-profond);
+--hover-invert-fg:var(--creme);
+--hover-invert-line:rgba(250,247,244,.28);
+
+--btn-primary-bg:var(--brun-profond);
+--btn-primary-bg-hover:#2C2216;
+--btn-primary-fg:var(--creme);
+--btn-secondary-bg:transparent;
+--btn-secondary-fg:var(--brun-profond);
+--btn-secondary-border:var(--brun-profond);
+--btn-accent-bg:var(--sauge-obscur);
+--btn-accent-bg-hover:#375139;
+--btn-accent-fg:#FFFFFF;
+--btn-warm-bg:var(--caramel);
+--btn-warm-bg-hover:#9C7A48;
+
+/* ---- Semantic: status (sober, editorial — no neon) ---- */
+--status-info-fg:var(--brun-moyen);
+--status-info-bg:var(--surface-warm-soft);
+--status-success-fg:#3F5C3F;
+--status-success-bg:var(--sauge-voile);
+--status-attention-fg:#8A5A20;
+--status-attention-bg:#F6EADA;
+--status-urgent-fg:#8C3A2B;
+--status-urgent-bg:#F5E4E0;
+}

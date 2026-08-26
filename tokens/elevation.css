@@ -1,0 +1,13 @@
+:root{
+/* Elevation is nearly absent: the brand leans on rules and paper tones.
+   Shadows, when used, are warm-brown and very low contrast. */
+--shadow-none:none;
+--shadow-paper:0 1px 2px rgba(59,46,30,.05);
+--shadow-raised:0 2px 8px rgba(59,46,30,.07);
+--shadow-overlay:0 12px 40px rgba(59,46,30,.16);
+--shadow-inset-rule:inset 0 -1px 0 var(--line-rule);
+
+--scrim-modal:rgba(59,46,30,.42); /* @kind other */
+--scrim-image:linear-gradient(180deg,rgba(59,46,30,0) 40%,rgba(59,46,30,.62) 100%); /* @kind other */
+--blur-overlay:8px; /* @kind other */
+}

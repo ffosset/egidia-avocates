@@ -1,0 +1,36 @@
+<!-- @dsCard group="Components" viewport="700x560" name="Layout — registre, arc, bande, portraits" -->
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{background:var(--creme-pur);margin:0}.cap{font-family:var(--font-body);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-label);margin:0;padding:20px 28px 10px}</style></head>
+<body><div id="root"></div><script type="text/babel">
+const { RuledGrid, RuledCell, PersonCell, ArcImage, Band } = window.EgidiaDesignSystem_36aa4a;
+const P = (n) => '../../assets/photos/' + n + '.jpg';
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <div>
+    <p className="cap">RuledGrid · RuledCell · ArcImage — survolez une cellule</p>
+    <RuledGrid columns="1fr 1fr 200px" style={{borderLeft:'none'}}>
+      <RuledCell align="center" minHeight={140} style={{paddingLeft:28}}>
+        <h3 style={{margin:0,fontFamily:'var(--font-display)',fontSize:30,fontWeight:700,lineHeight:1.15,maxWidth:'11ch'}}>Services offerts par le cabinet</h3>
+      </RuledCell>
+      <RuledCell minHeight={140} href="#" title="Droit des étrangers" lead="Séjour, asile, regroupement familial, nationalité." />
+      <ArcImage src={P('ambiance-terrasse')} corner="none" style={{gridRow:'span 2',borderBottom:'var(--divider)'}} />
+      <RuledCell minHeight={140} href="#" title="Droit de la jeunesse" lead="SAJ, SPJ, mineurs en danger, audition à la police." style={{paddingLeft:28}} />
+      <RuledCell minHeight={140} href="#" title="Droit des MENA" lead="Tutelle, détermination de l'âge, hébergement." />
+    </RuledGrid>
+    <p className="cap">PersonCell — cellules jointives, le bandeau s'inverse au survol</p>
+    <RuledGrid columns="repeat(3, 1fr)" style={{borderLeft:'none'}}>
+      <PersonCell name="Floriane Delplancke" photo={P('floriane-delplancke')} meta="Depuis 2017" href="#" />
+      <PersonCell name="Cécile Ghymers" photo={P('cecile-ghymers')} meta="Depuis 2002" href="#" />
+      <PersonCell name="Marine Vryens" photo={P('marine-vryens')} href="#" />
+    </RuledGrid>
+    <p className="cap">Band tone="sage" — bouclier en filigrane, texte centré</p>
+    <Band tone="sage" style={{padding:'40px 0'}}>
+      <h3 style={{margin:0,fontFamily:'var(--font-display)',fontSize:30,fontWeight:700,color:'#fff'}}>Une justice claire et humaine</h3>
+      <p style={{margin:'14px auto 0',maxWidth:'44ch',fontSize:17,lineHeight:1.6,color:'rgba(255,255,255,.92)'}}>Derrière chaque dossier, il y a une personne et une histoire.</p>
+    </Band>
+  </div>
+);
+</script></body></html>

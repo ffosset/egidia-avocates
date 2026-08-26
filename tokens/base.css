@@ -1,0 +1,22 @@
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--surface-page);color:var(--text-body);font-family:var(--font-body);font-size:var(--fs-body);line-height:var(--lh-body);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--font-display);color:var(--text-heading);font-weight:var(--fw-bold);line-height:var(--lh-heading);letter-spacing:var(--ls-heading);margin:0}
+h1{font-size:var(--fs-h1);line-height:var(--lh-display)}
+h2{font-size:var(--fs-h2)}
+h3{font-size:var(--fs-h3)}
+h4{font-size:var(--fs-h4)}
+p{margin:0 0 var(--space-5);max-width:var(--measure-prose);text-wrap:pretty}
+a{color:var(--text-link);text-decoration-line:underline;text-decoration-thickness:1px;text-underline-offset:3px;transition:var(--transition-control)}
+a:hover{color:var(--text-link-hover);text-decoration-thickness:2px}
+:focus-visible{outline:var(--focus-ring-width) solid var(--focus-ring-color);outline-offset:var(--focus-ring-offset)}
+.eg-label{font-family:var(--font-body);font-size:var(--fs-label);font-weight:var(--fw-semibold);letter-spacing:var(--ls-label);text-transform:uppercase;color:var(--text-label)}
+.eg-lead{font-size:var(--fs-lead);line-height:var(--lh-lead);max-width:var(--measure-lead);color:var(--text-body)}
+
+/* ---- Survol par inversion ----
+   La signature interactive du site : tout élément cliquable encadré passe d'un
+   cadre clair à un aplat brun profond, texte crème. Le geste doit être
+   indiscutable — c'est là que le site prend vie. */
+.eg-invert{transition:background-color var(--dur-fast) var(--ease-standard),color var(--dur-fast) var(--ease-standard),border-color var(--dur-fast) var(--ease-standard)}
+.eg-invert:hover,.eg-invert:focus-visible{background:var(--hover-invert-bg)!important;border-color:var(--hover-invert-bg)!important;color:var(--hover-invert-fg)!important}
+.eg-invert:hover *,.eg-invert:focus-visible *{color:var(--hover-invert-fg)!important;border-color:var(--hover-invert-line)!important}
+.eg-invert:hover .eg-accent,.eg-invert:focus-visible .eg-accent{color:var(--sauge-clair)!important}

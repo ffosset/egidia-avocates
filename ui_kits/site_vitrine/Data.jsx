@@ -1,0 +1,260 @@
+// Contenu réel, transcrit de uploads/CONTENU SITE WEB ✅.pdf (voir brand/contenu-site-web.txt).
+// Les champs marqués TODO n'existent pas dans les sources fournies.
+
+const AVOCATES = ['Floriane Delplancke','Margaux Doyen','Farah Feguy','Cécile Ghymers','Déborah Unger','Camille Vandeput','Marine Vryens'];
+
+const MATIERES = [
+  {
+    id: 'etrangers', titre: 'Droit des étrangers', nb: 7,
+    resume: "Séjour, asile, regroupement familial, recours contre un ordre de quitter le territoire, nationalité.",
+    intro: "En droit des étrangers, les délais de recours sont très courts et un délai manqué se rattrape difficilement. Consultez-nous dès la réception d'une décision. Nous vous accompagnons devant les autorités administratives comme devant les juridictions de recours.",
+    traite: ["Demande d'asile","Regroupement familial","Titres et renouvellements de séjour","Recours contre un ordre de quitter le territoire / interdiction d'entrée","Régularisation","Détention et éloignement","Nationalité"],
+    avocates: AVOCATES,
+    liens: [
+      ["Office des Étrangers","www.ibz.be"],
+      ["Agence fédérale pour l'accueil des demandeurs d'asile (Fedasil)","www.fedasil.be"],
+      ["Commissariat général aux réfugiés et aux apatrides (CGRA)","www.cgra.be"],
+      ["Conseil du contentieux des étrangers (CCE)","www.rvv-cce.be"],
+      ["Agentschap Integratie en Inburgering","www.agii.be"],
+      ["Myria — Centre fédéral Migration","www.myria.be"],
+      ["PAG-ASA — accompagnement des victimes de la traite des êtres humains","pag-asa.be"],
+      ["Plate-forme Mineurs en exil","www.mineursenexil.be"],
+    ],
+  },
+  {
+    id: 'jeunesse', titre: 'Droit de la jeunesse', nb: 4,
+    resume: "Suivi par le SAJ, suivi par le Tribunal de la Jeunesse et le SPJ, mineurs en danger, mineurs en conflit avec la loi, audition à la police.",
+    intro: "Quand un enfant est en danger ou qu'un fait qualifié infraction lui est reproché, il a droit à sa propre défense. Nous représentons l'enfant, et nous accompagnons les parents dans les procédures qui les concernent.",
+    traite: ["Mesures d'aide et de protection","Placement et retour en famille","Audition de l'enfant","Défense du mineur devant le tribunal de la jeunesse","Relations avec le SAJ et le SPJ","Audition à la police"],
+    avocates: ['Floriane Delplancke','Cécile Ghymers','Déborah Unger','Camille Vandeput'],
+    liens: [
+      ["Service d'Aide à la Jeunesse (SAJ)","aidealajeunesse.cfwb.be"],
+      ["Bruxelles-J — Centre d'information pour les jeunes","www.bruxelles-j.be"],
+      ["Service Droit des Jeunes (SDJ)","www.sdj.be"],
+      ["Infor Jeunes Bruxelles","www.inforjeunesbruxelles.be"],
+      ["Tes droits ton avocat","tesdroitstonavocat.be"],
+    ],
+  },
+  {
+    id: 'aide-sociale', titre: "Droit à l'aide sociale", nb: 3,
+    resume: "CPAS : revenu d'intégration, refus ou suspension d'aide, récupération d'indus, aide médicale urgente, questions d'accueil.",
+    intro: "Un refus du CPAS est une décision administrative, pas un verdict : elle se conteste devant le tribunal du travail. Beaucoup y renoncent faute de le savoir.",
+    traite: ["Revenu d'intégration","Refus ou suspension d'aide","Récupération d'indus","Aide médicale urgente","Recours devant le tribunal du travail"],
+    avocates: ['Margaux Doyen','Camille Vandeput','Marine Vryens'],
+    liens: [
+      ["Social.Brussels — offre sociale et de santé à Bruxelles","social.brussels"],
+      ["CPAS de Bruxelles","cpasbxl.brussels"],
+      ["Samusocial Bruxelles","samusocial.be"],
+    ],
+  },
+  {
+    id: 'mena', titre: 'Droit des MENA', nb: 2,
+    resume: "Tutelle, détermination de l'âge, demande de séjour, hébergement, scolarité, regroupement familial.",
+    intro: "Arriver seul et mineur dans un pays inconnu, c'est affronter deux procédures à la fois : celle du séjour et celle de la protection. Nous assurons le lien entre les deux.",
+    traite: ["Signalement et désignation d'un tuteur","Contestation des décisions en matière de détermination de l'âge","Recherche de la solution durable","Hébergement et accueil","Passage à la majorité"],
+    avocates: ['Cécile Ghymers','Déborah Unger'],
+    liens: [],
+  },
+  {
+    id: 'famille', titre: 'Droit de la famille', nb: 2,
+    resume: "Séparation, divorce, hébergement des enfants, pensions alimentaires, violences intrafamiliales, filiation, refus de mariage, rectification d'un acte d'état civil.",
+    intro: "Notre rôle est de préserver votre sécurité et celle de vos enfants.",
+    traite: ["Divorce et séparation","Hébergement des enfants","Contributions alimentaires","Autorité parentale","Violences intrafamiliales","Filiation","Refus de mariage / refus de reconnaissance","Rectification d'actes d'état civil"],
+    avocates: ['Floriane Delplancke','Farah Feguy'],
+    liens: [
+      ["Planning Familial","www.monplanningfamilial.be"],
+      ["Ligue des familles","liguedesfamilles.be"],
+      ["Centre de Prévention des Violences Conjugales et Familiales","www.cpvcf.org"],
+      ["Office de la Naissance et de l'Enfance (ONE)","www.one.be"],
+      ["Écoute Violences Conjugales","www.ecouteviolencesconjugales.be"],
+      ["Centre de Prise en charge des Violences Sexuelles (CPVS)","www.violencessexuelles.be"],
+    ],
+  },
+];
+
+const LIENS_ACCUEIL = [
+  ["Trouver un avocat et comprendre ses droits", [
+    ["Avocats.be — combien coûte un avocat","avocats.be/fr/tout-savoir/combien-ca-coute"],
+    ["Bureau d'aide juridique de Bruxelles — conditions de l'aide juridique","www.aidejuridiquebruxelles.be"],
+  ]],
+  ["Aide et orientation", [
+    ["Droits Quotidiens — l'information juridique en langage clair","droitsquotidiens.be"],
+    ["Bruxelles Social — annuaire des services sociaux bruxellois","social.brussels"],
+    ["CPAS de votre commune","cpasbxl.brussels"],
+  ]],
+];
+
+const PHOTOS = {
+  equipe: '../../assets/photos/equipe.jpg',
+  equipeAlt: '../../assets/photos/equipe-2.jpg',
+  ambiance: '../../assets/photos/ambiance-terrasse.jpg',
+};
+
+const CONTACT = {
+  adresse: 'Rue de Livourne 13, 1060 Bruxelles (1er étage)',
+  acces: 'Accessible aux personnes à mobilité réduite',
+  metro: 'Métro Louise',
+  tram: 'Tram arrêt Stephanie',
+  email: 'info@egidia-avocates.be',
+  telephone: null, // non fourni dans les sources
+};
+
+
+// Fiches avocates — transcrit de uploads/Fiches avocates - contenu ✅.xlsx (brand/fiches-avocates.txt).
+// Téléphones normalisés au format belge ; Excel les avait stockés en notation scientifique.
+const FICHES = {
+  'Floriane Delplancke': {
+    photo: '../../assets/photos/floriane-delplancke.jpg',
+    depuis: 2017,
+    motsCles: ['Droit de la jeunesse', 'Droit de la famille', 'Droit des étrangers'],
+    langues: ['Français', 'Anglais'],
+    email: 'f.delplancke@avocat.be',
+    tel: null, // en cours d'attribution
+    tva: 'BE 0666.604.190',
+    linkedin: null,
+    cabinets: { present: 'Egidia', passe: 'Alter Egaux' },
+    parcours: [
+      "Avocate inscrite au Barreau de Bruxelles depuis janvier 2017.",
+      "Après avoir obtenu en 2015 un diplôme de Master en Droit à l'ULB, Floriane Delplancke a poursuivi sa formation dans le cadre d'un Master en Droits de l'Homme organisé conjointement par l'Université Saint-Louis, l'UCL et l'Université de Namur. Elle a effectué une partie de ses études de droit à l'Université de Liverpool (Royaume-Uni), dans le cadre d'un programme d'échange international.",
+      "Lauréate du concours de Droit international humanitaire de la Croix-Rouge, elle a accompli un stage au sein du bureau du Procureur du Tribunal pénal international pour l'ex-Yougoslavie à La Haye, avant de rejoindre Alter Egaux Avocats en janvier 2017. Elle y travaillera durant près de 10 ans avant la création du Cabinet d'avocates Egidia.",
+      "Sa pratique est essentiellement axée sur le droit de la jeunesse, le droit de la famille et le droit des étrangers.",
+      "Elle est, par ailleurs, membre de la commission jeunesse du Barreau de Bruxelles.",
+      "À côté de ses activités au sein du Barreau de Bruxelles, Floriane Delplancke est co-présidente de la Commission Enfance et Jeunesse de la Ligue des droits humains depuis 2025, ce qui l'amène à participer à des activités de sensibilisation, de formations et de plaidoyer.",
+    ],
+    publications: [
+      "F. DELPLANCKE, « Croisée des secteurs ou impasse ? », in J. NOUNCKELE (dir.), Les enfants et les jeunes à la croisée des secteurs. Entre protection, soin et justice : quelles réponses face aux parcours complexes ?, Larcier, mai 2026.",
+      "C. GHYMERS, D. UNGER, F. DELPLANCKE, « Guide pratique et de premiers réflexes sur les questions de séjour des mineurs \u2039 étrangers \u203a en situation de vulnérabilité », Fédération Wallonie-Bruxelles, Aide à la jeunesse, août 2025.",
+      "D. UNGER, F. DELPLANCKE, « Pour un droit effectif à la participation des mineurs trans et non-binaires dans le secteur de l'Aide à la Jeunesse », Chronique de la Ligue des droits humains, 24 avril 2025.",
+      "D. UNGER, F. DELPLANCKE, « Question préjudicielle — Pourvoi contre un placement provisoire en IPPJ — Commentaire », J.D.J. n°436, juin 2024.",
+      "L. CARPENT, F. DELPLANCKE, L. RESSORT, « L'aide à la jeunesse en question(s) », Larcier, octobre 2023.",
+      "H. SAX, F. DELPLANCKE, « La rébellion en regard de la violence policière : des procédures en miroir et 13 ans malheur à Strasbourg », J.D.J. n°420, décembre 2022.",
+    ],
+    liens: [],
+  },
+  'Margaux Doyen': {
+    photo: '../../assets/photos/margaux-doyen.jpg',
+    depuis: 2022,
+    motsCles: ["Droit des étrangers", "Droit à l'aide sociale"],
+    langues: ['Français', 'Anglais', 'Espagnol'],
+    email: 'margaux.doyen@avocat.be',
+    tel: '0491 94 33 72',
+    tva: 'BE 0777.751.245',
+    linkedin: null,
+    cabinets: { present: 'Egidia', passe: null },
+    parcours: [
+      "Margaux Doyen a obtenu un Bachelier en droit à l'Université Saint-Louis Bruxelles ainsi qu'un Master en droit à l'UCLouvain, au cours desquels elle a développé un intérêt particulier pour les matières ayant trait aux droits fondamentaux.",
+      "Elle a ensuite parachevé sa formation avec un Master de spécialisation en droits humains organisé conjointement par l'Université Saint-Louis, l'UCL et l'Université de Namur, durant lequel elle a participé au concours de plaidoiries Charles Rousseau. En parallèle de ce master complémentaire, elle a travaillé comme juriste au sein d'une société de logements sociaux.",
+      "Son parcours comprend également un échange Erasmus à l'Université de Valence, au cours duquel elle a consolidé sa pratique de l'espagnol, qu'elle met aujourd'hui au service de sa clientèle.",
+      "Elle est inscrite à l'Ordre français des Avocats du Barreau de Bruxelles depuis janvier 2022. Elle pratique essentiellement le droit des étrangers et le droit de l'aide sociale.",
+    ],
+    publications: [],
+    liens: [],
+  },
+  'Farah Feguy': {
+    photo: '../../assets/photos/farah-feguy.jpg',
+    depuis: 2020,
+    motsCles: ['Droit des étrangers', 'Droit de la famille', 'Droit du bail', 'Droit du roulage', 'Droit social'],
+    langues: ['Français', 'Anglais', 'Néerlandais'],
+    email: 'farah.feguy@avocat.be',
+    tel: '0479 49 08 14',
+    tva: 'BE 1036.396.597',
+    linkedin: 'https://www.linkedin.com/in/farah-feguy-298a68209/',
+    cabinets: { present: 'Egidia', passe: 'Terralia-Avocates' },
+    parcours: [
+      "Avocate inscrite au Barreau de Bruxelles depuis janvier 2020.",
+      "Diplômée de l'ULB en 2018, Maître Farah Feguy a d'abord remporté le Tournoi d'éloquence organisé par l'Académie royale de Belgique et la RTBF sur le respect des droits de l'Homme en Belgique, à l'occasion des 70 ans de la Déclaration universelle des droits de l'homme.",
+      "Avant de prêter serment au barreau, elle a exercé comme conseillère juridique au sein de la Plateforme Citoyenne de Soutien aux Réfugiés. Elle y assurait un accompagnement juridique des personnes en demande de séjour ou en demande d'asile.",
+      "À l'issue de son stage au barreau, elle a constitué son cabinet, Terralia-Avocates, avec Maître Marine Vryens, avant la création du cabinet d'avocates Egidia.",
+      "Sa pratique est principalement consacrée au droit des étrangers, au droit de la famille, au droit du bail, au droit social et au droit du roulage.",
+      "Parallèlement à son activité d'avocate, Maître Feguy est membre active de la Ligue des droits humains, où elle participe à des actions de sensibilisation et de plaidoyer. Cet engagement lui permet de suivre de près les évolutions législatives et jurisprudentielles.",
+      "Elle s'est également investie auprès de l'ASBL Touche Pas À Ma Pote en dispensant des formations à destination des services de police relatives à la mise en œuvre de la loi du 22 mai 2014 tendant à lutter contre le sexisme dans l'espace public.",
+    ],
+    publications: [],
+    liens: [],
+  },
+  'Cécile Ghymers': {
+    photo: '../../assets/photos/cecile-ghymers.jpg',
+    depuis: 2002,
+    motsCles: ['Droit des MENA', 'Droit des étrangers', 'Droit de la jeunesse'],
+    langues: ['Français', 'Anglais', 'Espagnol'],
+    email: 'c.ghymers@avocat.be',
+    tel: '0477 35 43 57',
+    tva: 'SRL CG-HR — BE 0795.426.328',
+    linkedin: null,
+    cabinets: { present: 'Egidia', passe: 'DNH-legal' },
+    parcours: [
+      "Licenciée en droit de l'UCL. Avocate au barreau de Bruxelles depuis 2002.",
+      "Spécialisée en droit des étrangers — plus particulièrement en droit des MENA (mineurs étrangers non accompagnés) — ainsi qu'en droit de la jeunesse.",
+      "Présidente de la section des avocats MENA du BAJ de Bruxelles de 2010 à 2015, et membre actuellement de la section des avocats MENA et Jeunesse du BAJ de Bruxelles.",
+      "Co-présidente de la Commission Étrangers de la Ligue des droits humains depuis 2017. Membre de Défense des Enfants International (DEI-Belgique) depuis 2026.",
+      "Juriste-conseil pour la Croix-Rouge de Belgique (département Asile).",
+      "Donne régulièrement des formations pour les associations, en ce compris l'ADDE (Association pour le droit des étrangers), la plateforme Mineurs en exil, Caritas International, la Croix-Rouge et l'ASBL Jeunesse et droit.",
+    ],
+    publications: [],
+    liens: [],
+  },
+  'Déborah Unger': {
+    photo: '../../assets/photos/deborah-unger.jpg',
+    depuis: 2017,
+    motsCles: ['Droit de la jeunesse', 'Droit des MENA', 'Droit des étrangers'],
+    langues: ['Français', 'Anglais'],
+    email: 'deborah.unger@avocat.be',
+    tel: '0476 59 32 35',
+    tva: 'BE 0683.475.856',
+    linkedin: 'https://www.linkedin.com/in/deborah-unger-9b4235115/',
+    cabinets: { present: 'Egidia', passe: 'DNH-legal' },
+    parcours: [
+      "Déborah Unger est diplômée en droit en 2015. Elle est titulaire d'un master complémentaire en droits de l'Homme. Avocate depuis 2017, elle s'est spécialisée en droit de la jeunesse, droit des étrangers et droit des MENA.",
+      "Elle est assistante à l'Université Saint-Louis — UCLouvain, chargée du séminaire en sciences humaines (orientation criminologie) depuis 2023 et des travaux pratiques de droit pénal et de droit de la procédure pénale depuis 2026.",
+      "Membre du GREPEC (Groupe de Recherche en matière Pénale et Criminelle), elle mène des recherches en matière de droit pénal et de droit de la jeunesse.",
+      "En 2015, Déborah Unger a rejoint la Commission Enfance et Jeunesse de la Ligue des droits humains, commission qu'elle préside depuis 2019.",
+    ],
+    publications: [],
+    liens: [
+      ['Publications et recherches — GREPEC, Université Saint-Louis', 'grepec.usaintlouis.be/team/deborah-unger/'],
+      ['Publications — DIAL, UCLouvain', 'research.dial.uclouvain.be'],
+    ],
+  },
+  'Camille Vandeput': {
+    photo: '../../assets/photos/camille-vandeput.jpg',
+    depuis: 2023,
+    motsCles: ['Droit des étrangers', "Droit de l'aide sociale", 'Droit de la jeunesse', 'Droit social'],
+    langues: ['Français', 'Néerlandais', 'Anglais'],
+    email: 'camille.vandeput@avocat.be',
+    tel: '0471 48 18 38',
+    tva: 'BE 0804.634.893',
+    linkedin: 'https://www.linkedin.com/in/camille-vandeput-8bb151265/',
+    cabinets: { present: 'Egidia', passe: 'IN-Law' },
+    parcours: [
+      "Avocate au Barreau de Bruxelles depuis 2023.",
+      "Titulaire d'un Master en droit de la KU Leuven, Maître Vandeput vous conseille et vous défend en français, néerlandais et anglais.",
+      "Spécialisée en droit des étrangers, elle a effectué son stage auprès de Maître Jean-Yves Carlier au sein d'un cabinet spécialisé en droit des étrangers. Elle pratique également le droit de la jeunesse et le droit social.",
+    ],
+    publications: [],
+    liens: [],
+  },
+  'Marine Vryens': {
+    photo: '../../assets/photos/marine-vryens.jpg',
+    depuis: null,
+    motsCles: ['Droit des étrangers', "Droit de l'aide sociale"],
+    langues: ['Français', 'Anglais'],
+    email: 'marine.vryens@avocat.be',
+    tel: '0486 74 72 96',
+    tva: 'BE 1037.598.310',
+    linkedin: null,
+    cabinets: { present: 'Egidia', passe: 'Terralia-Avocates' },
+    parcours: [
+      "Titulaire d'un Master en droit public et droit international de l'ULB, Maître Marine Vryens est une avocate engagée dans la défense des droits fondamentaux, principalement en droit des étrangers et droit de l'aide sociale.",
+      "Son intérêt pour les questions migratoires et les droits humains s'est construit tout au long de son parcours : dès ses études, elle s'est investie dans la Refugee Law Clinic de l'ULB et a consacré son mémoire aux politiques d'asile européennes face aux violences de genre.",
+      "Avant de rejoindre le barreau de Bruxelles, elle a travaillé au sein de Fedasil, participant à l'accueil des demandeurs de protection internationale. Cette expérience de terrain lui a donné une connaissance approfondie des réalités vécues par les personnes en exil et du fonctionnement des structures d'accueil.",
+      "Elle a ensuite intégré un cabinet spécialisé en droit des étrangers et en droit de la famille, où elle a développé une pratique fondée sur la rigueur, l'écoute et un accompagnement personnalisé, convaincue que chaque dossier mérite une attention particulière.",
+      "En parallèle, Maître Vryens est engagée au sein de la Ligue des droits humains, où elle participe à des initiatives en faveur des droits fondamentaux.",
+    ],
+    publications: [],
+    liens: [],
+  },
+};
+
+const MATIERES_PAR_AVOCATE = (nom) => MATIERES.filter((m) => m.avocates.includes(nom)).map((m) => m.titre);
+
+Object.assign(window, { AVOCATES, MATIERES, FICHES, PHOTOS, LIENS_ACCUEIL, CONTACT, MATIERES_PAR_AVOCATE });

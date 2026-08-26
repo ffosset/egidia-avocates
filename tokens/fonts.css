@@ -1,0 +1,5 @@
+/* Egidia webfonts — Playfair Display (display) + Source Sans 3 (texte courant).
+   No binaries were supplied with the brand materials, so both families load from
+   Google Fonts. Swap these @import lines for local @font-face rules if the
+   cabinet has licensed files. */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap");

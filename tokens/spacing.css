@@ -1,0 +1,44 @@
+:root{
+/* 8px base, editorial: large steps exist because whitespace is a brand asset */
+--space-1:4px;
+--space-2:8px;
+--space-3:12px;
+--space-4:16px;
+--space-5:24px;
+--space-6:32px;
+--space-7:48px;
+--space-8:64px;
+--space-9:96px;
+--space-10:128px;
+--space-11:160px;
+
+/* ---- LA LOI DES MARGES ----
+   Les filets de marge sont à --page-margin des bords. Le texte ne les touche
+   JAMAIS : il commence à --content-inset, soit la marge plus une gouttière.
+   Seule la photographie franchit les filets. */
+--gutter:32px;
+--content-inset:calc(var(--page-margin) + var(--gutter));
+
+/* Pile verticale : trois pas, et rien d'autre. */
+--stack-tight:var(--space-4);   /* titre → chapô */
+--stack:var(--space-6);         /* chapô → contenu */
+--stack-loose:var(--space-7);   /* bloc → bloc */
+--cell-pad:var(--space-7);      /* padding intérieur d'une cellule filetée */
+
+/* Editorial grid */
+--grid-columns:12; /* @kind other */
+--grid-gutter:var(--space-6);
+--page-max:1680px;
+--prose-max:720px;
+--page-margin:var(--space-7);
+--page-margin-lg:var(--space-9);
+--section-y:var(--space-10);
+--section-y-sm:var(--space-8);
+--block-gap:var(--space-6);
+
+/* Controls — 48px min hit target */
+--control-h:56px;
+--control-h-sm:48px;
+--control-px:var(--space-5);
+--tap-min:48px; /* @kind spacing */
+}
