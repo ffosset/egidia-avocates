@@ -1,0 +1,47 @@
+---
+/**
+ * Action discrète : petites capitales espacées suivies d'un filet qui
+ * s'allonge au survol. Là où un `Button` crierait trop fort.
+ * Le libellé reste un verbe à l'infinitif. Une par cellule.
+ */
+interface Props { href?: string; class?: string }
+const { href, class: klass } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+<Tag href={href} class:list={['rule-link', klass]} type={href ? undefined : 'button'}>
+  <slot />
+  <span class="rule" aria-hidden="true"></span>
+</Tag>
+
+<style>
+  .rule-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--tap-min);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition-control);
+  }
+  .rule-link:hover,
+  .rule-link:focus-visible { color: var(--text-heading); }
+
+  .rule {
+    display: block;
+    height: 1px;
+    width: 32px;
+    background: currentColor;
+    transition: width var(--dur-base) var(--ease-standard);
+  }
+  .rule-link:hover .rule,
+  .rule-link:focus-visible .rule { width: 56px; }
+</style>

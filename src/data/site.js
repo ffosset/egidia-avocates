@@ -9,6 +9,8 @@ export const CONTACT = {
   email: 'info@egidia-avocates.be',
   // Le cabinet n'a pas de numéro général : chaque avocate a une ligne directe.
   telephone: null,
+  // Coordonnées approximatives, déduites de l'adresse — à confirmer par le cabinet.
+  coords: [50.828, 4.3562],
 };
 
 export const PHOTOS = {

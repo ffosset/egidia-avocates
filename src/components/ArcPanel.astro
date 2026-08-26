@@ -1,0 +1,61 @@
+---
+/**
+ * Panneau de papier posé PAR-DESSUS une photographie, dont le bord de fuite
+ * porte l'arc du bouclier. C'est la variante « héro » du motif : l'arc n'est
+ * plus découpé dans l'image mais dans le papier qui la recouvre.
+ *
+ * Doit vivre dans un parent `position: relative` qui porte aussi la photo.
+ */
+interface Props {
+  /** Largeur du panneau, en % du parent. */
+  width?: string;
+  /** Côté d'ancrage ; l'arc tombe sur le bord opposé. */
+  side?: 'right' | 'left';
+  tone?: 'page' | 'sand' | 'card';
+  /** Rayon elliptique de l'arc, « horizontal vertical ». */
+  sweep?: string;
+  class?: string;
+}
+const {
+  width = '54%',
+  side = 'right',
+  tone = 'page',
+  sweep = '40% 100%',
+  class: klass,
+} = Astro.props;
+---
+<div
+  class:list={['arc-panel', `t-${tone}`, `s-${side}`, klass]}
+  style={`--panel-w:${width};--sweep:${sweep}`}
+>
+  <slot />
+</div>
+
+<style>
+  .arc-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--panel-w);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+  }
+  .s-right { left: 0; border-bottom-right-radius: var(--sweep); }
+  .s-left  { right: 0; border-bottom-left-radius: var(--sweep); }
+
+  .t-page { background: var(--surface-page); }
+  .t-sand { background: var(--surface-margin); }
+  .t-card { background: var(--surface-card); }
+
+  /* Sous 1000px le panneau cesse de recouvrir : il redevient un bloc, et la
+     photo passe dessous. L'arc n'aurait plus rien à balayer. */
+  @media (max-width: 1000px) {
+    .arc-panel {
+      position: static;
+      width: 100%;
+      border-radius: 0;
+    }
+  }
+</style>

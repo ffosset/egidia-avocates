@@ -6,6 +6,8 @@ interface Props {
   corner?: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | 'shield' | 'none';
   ratio?: string;
   legend?: string;
+  /** object-position de la photo, ex. « 52% 42% » pour recadrer un groupe. */
+  objectPosition?: string;
   class?: string;
   loading?: 'lazy' | 'eager';
 }
@@ -15,6 +17,7 @@ const {
   corner = 'bottom-left',
   ratio,
   legend = 'Photographie à fournir',
+  objectPosition = 'center',
   class: klass,
   loading = 'lazy',
 } = Astro.props;
@@ -22,7 +25,7 @@ const style = ratio ? `aspect-ratio:${ratio}` : 'height:100%';
 ---
 {src ? (
   <div class:list={['arc', `c-${corner}`, klass]} style={style}>
-    <img src={src} alt={alt} loading={loading} decoding="async" />
+    <img src={src} alt={alt} loading={loading} decoding="async" style={`object-position:${objectPosition}`} />
   </div>
 ) : (
   <div class:list={['arc', `c-${corner}`, 'placeholder', klass]} style={style} role="img" aria-label={legend}>

@@ -26,16 +26,37 @@ Le dépôt contient deux choses distinctes, et il ne faut pas les confondre :
 standalone. Elle dépend d'un global `window.EgidiaDesignSystem_36aa4a` et n'est
 **pas** du code livrable : c'est la source dont `src/` a été porté.
 
-## Pourquoi zéro JavaScript
+## JavaScript : presque zéro
 
 Le design system porte son interactivité en CSS : la signature de la marque —
 l'inversion au survol — vit dans `.eg-invert` (`tokens/base.css`). Les
 composants React d'origine pilotaient le survol avec `useState` ; en `.astro`
-c'est `:hover`, et le site ne livre aucun script.
+c'est `:hover`.
 
-Aucune page n'utilise `Accordion`, `Dialog` ni `Tooltip`, donc il n'y a
-aujourd'hui **aucune île**. Si un besoin apparaît, ces trois-là sont les
-candidats — le reste doit rester statique.
+**Trois des quatre gabarits ne livrent aucun script.** Seul l'accueil en charge,
+et uniquement pour la carte d'accès :
+
+| Route | JS livré |
+| --- | --- |
+| `/` | 2 Ko (observateur) + Leaflet 147 Ko en import différé |
+| `/matieres/[id]` | aucun |
+| `/avocates/[slug]` | aucun |
+| `/aide-juridique` | aucun |
+
+`MapEmbed` exige Leaflet : le design system impose des tuiles OpenStreetMap
+réelles — « jamais un plan de rue dessiné ou illustré ». Trois décisions pour
+limiter la casse :
+
+1. **Leaflet est empaqueté**, pas chargé depuis un CDN — comme les icônes.
+2. **Import dynamique déclenché par `IntersectionObserver`** : les 147 Ko ne
+   partent que si la carte entre dans le champ. La carte est la dernière
+   section de la page ; qui ne descend pas jusqu'en bas ne paie rien.
+3. **`<noscript>` donne l'adresse et un lien d'itinéraire.** Sans JavaScript on
+   ne perd pas l'information, seulement la carte.
+
+Aucune page n'utilise `Accordion`, `Dialog` ni `Tooltip` — il n'y a donc pas
+d'autre île. Si un besoin apparaît, ce sont les trois candidats ; le reste doit
+rester statique.
 
 Le site ne comporte **aucun formulaire**, par décision du cabinet : il ne
 collecte aucune donnée personnelle. Tout appel à l'action est un `mailto:` ou
@@ -46,7 +67,9 @@ un `tel:`. Ne pas réintroduire de composants de formulaire.
 ```
 src/
   data/          Contenu transcrit — matieres, avocates, prodeo, site
-  components/    21 composants .astro portés du design system
+  components/    24 composants .astro portés du design system
+                 (dont ArcPanel — le héros, RuleLink — action discrète,
+                  et MapEmbed — la carte d'accès Leaflet)
   layouts/       Base.astro — <head>, filets de marge, en-tête, pied de page
   pages/
     index.astro              Accueil, 7 sections en scroll
@@ -85,7 +108,8 @@ acquiert un.
 
 - `equipe-2.jpg` n'a jamais été fourni ; `PHOTOS.equipeAlt` retombe sur la photo
   principale.
-- Pas de photographie ni de plan d'accès pour « Nous trouver ».
+- Les coordonnées de la carte (`CONTACT.coords`) sont déduites de l'adresse —
+  **à faire confirmer par le cabinet** avant mise en ligne.
 - Pas de numéro général pour le cabinet ; Floriane Delplancke n'a pas encore de
   ligne directe (sa fiche affiche « Ligne directe à venir »).
 - LinkedIn absent pour Delplancke, Doyen, Ghymers et Vryens.

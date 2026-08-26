@@ -181,5 +181,19 @@ export const AVOCATES = [
   },
 ];
 
+const CODE_LANGUE = {
+  Français: 'FR',
+  Anglais: 'EN',
+  Néerlandais: 'NL',
+  Espagnol: 'ES',
+  Arabe: 'AR',
+  Allemand: 'DE',
+  Italien: 'IT',
+};
+
+/** « FR · EN · ES » — la mention en petites capitales d'une cellule-portrait. */
+export const languesCourtes = (langues) =>
+  (langues || []).map((l) => CODE_LANGUE[l] || l.slice(0, 2).toUpperCase()).join(' · ');
+
 export const getAvocate = (slug) => AVOCATES.find((a) => a.slug === slug);
 export const parNom = (nom) => AVOCATES.find((a) => a.nom === nom);

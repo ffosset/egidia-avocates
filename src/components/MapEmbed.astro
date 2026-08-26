@@ -1,0 +1,136 @@
+---
+/**
+ * Carte de rue réelle : tuiles OpenStreetMap via Leaflet, teintées aux tons du
+ * cabinet. Aucun tracé dessiné à la main — la géographie est une donnée.
+ *
+ * Leaflet est empaqueté (pas de CDN) et chargé en import dynamique quand la
+ * carte entre dans le champ : le reste de la page ne paie pas ses ~150 Ko.
+ * Sans JavaScript, le <noscript> donne l'adresse et un lien d'itinéraire.
+ */
+import 'leaflet/dist/leaflet.css';
+
+interface Props {
+  lat: number;
+  lon: number;
+  zoom?: number;
+  label?: string;
+  tint?: boolean;
+  /** false verrouille le déplacement et masque le zoom — carte d'accès figée. */
+  interactive?: boolean;
+  class?: string;
+}
+const { lat, lon, zoom = 16, label, tint = true, interactive = true, class: klass } = Astro.props;
+const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(label ?? `${lat},${lon}`)}`;
+---
+<div class:list={['map-wrap', klass]}>
+  <div
+    class:list={['map', { tint }]}
+    data-map
+    data-lat={lat}
+    data-lon={lon}
+    data-zoom={zoom}
+    data-label={label}
+    data-interactive={String(interactive)}
+    role="img"
+    aria-label={label ? `Carte : ${label}` : 'Carte'}
+  ></div>
+  <noscript>
+    <div class="fallback">
+      <span>{label}</span>
+      <a href={itineraire} rel="noopener">Itinéraire</a>
+    </div>
+  </noscript>
+</div>
+
+<script>
+  const nodes = document.querySelectorAll<HTMLElement>('[data-map]');
+  if (nodes.length) {
+    const init = async (el: HTMLElement) => {
+      try {
+        const L = (await import('leaflet')).default;
+        const lat = Number(el.dataset.lat);
+        const lon = Number(el.dataset.lon);
+        const interactive = el.dataset.interactive !== 'false';
+        const label = el.dataset.label;
+
+        const map = L.map(el, {
+          center: [lat, lon],
+          zoom: Number(el.dataset.zoom ?? 16),
+          zoomControl: interactive,
+          // Ne jamais confisquer le défilement de la page.
+          scrollWheelZoom: false,
+          dragging: interactive,
+          attributionControl: true,
+        });
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          // L'attribution OpenStreetMap est une obligation de licence.
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 19,
+        }).addTo(map);
+
+        const pin = L.divIcon({
+          className: '',
+          html: '<span class="eg-pin"></span>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
+        });
+        const marker = L.marker([lat, lon], { icon: pin, title: label, alt: label ?? '' }).addTo(map);
+        if (label) marker.bindPopup(label);
+      } catch {
+        el.classList.add('failed');
+      }
+    };
+
+    const io = new IntersectionObserver(
+      (entries, obs) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          obs.unobserve(e.target);
+          init(e.target as HTMLElement);
+        }
+      },
+      { rootMargin: '300px' },
+    );
+    nodes.forEach((n) => io.observe(n));
+  }
+</script>
+
+<style>
+  .map-wrap {
+    position: relative;
+    overflow: hidden;
+    min-height: 320px;
+    background: var(--surface-inset);
+  }
+  .map { position: absolute; inset: 0; }
+  /* Désaturée et légèrement chaude, pour ne pas trancher avec le papier. */
+  .map.tint { filter: grayscale(1) contrast(0.92) brightness(1.06) sepia(0.14); }
+
+  .fallback,
+  .map.failed::after {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    gap: var(--space-3);
+    text-align: center;
+    padding: var(--space-6);
+    font-size: 16px;
+    color: var(--text-label);
+  }
+  .map.failed::after { content: 'Carte indisponible.'; }
+
+  .map-wrap :global(.eg-pin) {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: var(--brun-profond);
+    box-shadow: 0 0 0 6px rgba(70, 101, 74, 0.35);
+  }
+  /* Leaflet impose ses propres couleurs : on les ramène au papier du cabinet. */
+  .map-wrap :global(.leaflet-container) { background: var(--surface-inset); font-family: var(--font-body); }
+  .map-wrap :global(.leaflet-control-attribution) { background: rgba(250, 247, 244, 0.86); font-size: 11px; }
+  .map-wrap :global(.leaflet-popup-content-wrapper),
+  .map-wrap :global(.leaflet-popup-tip) { border-radius: 0; }
+</style>
