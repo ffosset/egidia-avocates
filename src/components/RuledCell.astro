@@ -1,0 +1,80 @@
+---
+interface Props {
+  title?: string;
+  lead?: string;
+  eyebrow?: string;
+  href?: string;
+  minHeight?: number | string;
+  align?: 'top' | 'center';
+  /** Une cellule contre un filet prend --content-inset de ce côté. */
+  edge?: 'left' | 'right' | 'both';
+  class?: string;
+  style?: string;
+}
+const {
+  title,
+  lead,
+  eyebrow,
+  href,
+  minHeight = 260,
+  align = 'top',
+  edge,
+  class: klass,
+  style,
+} = Astro.props;
+const Tag = href ? 'a' : 'div';
+const mh = typeof minHeight === 'number' ? `${minHeight}px` : minHeight;
+---
+<Tag
+  href={href}
+  class:list={[
+    'cell',
+    `a-${align}`,
+    edge && `e-${edge}`,
+    href && 'eg-invert',
+    klass,
+  ]}
+  style={[`min-height:${mh}`, style].filter(Boolean).join(';')}
+>
+  {eyebrow && <span class="eg-label">{eyebrow}</span>}
+  {title && <h3>{title}</h3>}
+  {lead && <p>{lead}</p>}
+  <slot />
+</Tag>
+
+<style>
+  .cell {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--cell-pad);
+    border-right: var(--divider);
+    border-bottom: var(--divider);
+    background: transparent;
+    text-align: left;
+    text-decoration: none;
+    color: inherit;
+  }
+  .a-top { justify-content: flex-start; }
+  .a-center { justify-content: center; }
+
+  .e-left,  .e-both { padding-left: var(--content-inset); }
+  .e-right, .e-both { padding-right: var(--content-inset); }
+
+  .cell h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(24px, 2vw, 30px);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+    color: var(--text-heading);
+    max-width: 18ch;
+  }
+  .cell p {
+    margin: 0;
+    font-size: var(--fs-body-sm);
+    line-height: 1.55;
+    color: var(--text-muted);
+    max-width: 34ch;
+  }
+</style>

@@ -145,4 +145,7 @@ vite.config.ts.timestamp-*
 # Egidia — full-resolution camera originals, kept locally only.
 # Shipped versions live alongside at the design-system spec
 # (portraits 900px wide, wide shots 1600–1900px, JPEG q82).
-assets/photos/_originals/
+_originals/
+
+# Astro
+.astro/

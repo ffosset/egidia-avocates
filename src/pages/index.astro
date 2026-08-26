@@ -1,0 +1,322 @@
+---
+import Base from '../layouts/Base.astro';
+import Page from '../components/Page.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Button from '../components/Button.astro';
+import Card from '../components/Card.astro';
+import Icon from '../components/Icon.astro';
+import Band from '../components/Band.astro';
+import ArcImage from '../components/ArcImage.astro';
+import RuledGrid from '../components/RuledGrid.astro';
+import RuledCell from '../components/RuledCell.astro';
+import PersonCell from '../components/PersonCell.astro';
+import LinkList from '../components/LinkList.astro';
+import { MATIERES } from '../data/matieres.js';
+import { AVOCATES } from '../data/avocates.js';
+import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
+---
+<Base title="Egidia">
+  <main>
+    <!-- 1 — HERO -->
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Chaque personne a droit à être écoutée, conseillée et défendue</h1>
+        <p>
+          Cabinet bruxellois en droit des étrangers, de la famille, de l'aide sociale et de la
+          jeunesse. Une relation fondée sur l'écoute et la transparence.
+        </p>
+        <div class="cta"><Button href="#matieres">Voir nos domaines</Button></div>
+      </div>
+      <div class="hero-img">
+        <ArcImage src={PHOTOS.equipe} alt={ALT.equipe} corner="bottom-left" loading="eager" />
+      </div>
+    </section>
+
+    <!-- 2 — VALEURS -->
+    <Band tone="sage" id="valeurs">
+      <h2 class="band-title">Une justice claire et humaine</h2>
+      <div class="band-copy">
+        <p>
+          Derrière chaque dossier, il y a une personne et une histoire. Nous prenons le temps de
+          comprendre la vôtre avant de vous conseiller. Nous expliquons chaque étape pour vous
+          aider à y voir plus clair dans votre situation, comprendre les enjeux et les choix qui
+          s'offrent à vous.
+        </p>
+        <p>
+          Une procédure est souvent une épreuve. Nous vous accompagnons pour la traverser ensemble.
+          Nous travaillons en lien étroit avec le réseau associatif bruxellois, pour que
+          l'accompagnement ne s'arrête pas à la porte du tribunal.
+        </p>
+      </div>
+    </Band>
+
+    <!-- 3 — MATIÈRES : la grille-registre -->
+    <section id="matieres">
+      <RuledGrid columns="minmax(0, 1fr) minmax(0, 1fr) 420px" noLeft noTop class="matieres">
+        <RuledCell align="center" edge="left">
+          <h2 class="grid-title">Services offerts par le cabinet</h2>
+        </RuledCell>
+        {MATIERES.map((m, i) => {
+          const n = i + 1;
+          const col = n % 2 === 0 ? 1 : 2;
+          return (
+            <RuledCell
+              title={m.titre}
+              lead={m.resume}
+              href={`/matieres/${m.id}`}
+              edge={col === 1 ? 'left' : undefined}
+              style={`grid-column:${col};grid-row:${Math.floor(n / 2) + 1}`}
+            >
+              <span class="count eg-accent">
+                <span>{m.nb} avocates</span><Icon name="arrow-right" size={18} />
+              </span>
+            </RuledCell>
+          );
+        })}
+        <div class="matiere-photo">
+          <ArcImage src={PHOTOS.ambiance} alt={ALT.ambiance} corner="none" />
+        </div>
+      </RuledGrid>
+    </section>
+
+    <!-- 4 — HONORAIRES -->
+    <section id="honoraires" class="honoraires">
+      <Page>
+        <SectionHead eyebrow="Honoraires" title="Des prix transparents" />
+        <div class="split">
+          <div class="prose">
+            <p>
+              Nos honoraires varient selon la nature de l'affaire, sa complexité et votre situation.
+              Nous les fixons avec modération, et nous vous les expliquons clairement.
+            </p>
+            <p class="muted">
+              Pour comprendre comment se calculent les honoraires d'un avocat en Belgique :
+              <a href="https://avocats.be/fr/tout-savoir/combien-ca-coute" rel="noopener">combien coûte un avocat ?</a>
+            </p>
+          </div>
+          <Card tone="framed" padding="var(--space-7)">
+            <Eyebrow>Aide juridique</Eyebrow>
+            <p class="tight">
+              L'aide juridique permet d'être défendu par un avocat lorsque vos ressources ne vous
+              permettent pas d'en payer un. Selon vos revenus, elle est entièrement ou partiellement
+              gratuite.
+            </p>
+            <p class="claim">Ce n'est pas une faveur : c'est un droit.</p>
+            <p class="muted">
+              Toutes les avocates du cabinet travaillent dans le cadre de l'aide juridique. Nous
+              vérifions avec vous si vous remplissez les conditions et nous vous aidons à constituer
+              votre demande.
+            </p>
+            <Button href="/aide-juridique" size="md" icon="file-text" iconPosition="left">
+              Liste des documents à produire
+            </Button>
+          </Card>
+        </div>
+      </Page>
+    </section>
+
+    <!-- 5 — ÉQUIPE -->
+    <section id="equipe" class="equipe">
+      <RuledGrid columns="1fr 1fr" noLeft noTop>
+        <RuledCell align="center" edge="left" minHeight={280}>
+          <Eyebrow>Équipe</Eyebrow>
+          <h2 class="big">Nos avocates</h2>
+        </RuledCell>
+        <RuledCell align="center" edge="right" minHeight={280}>
+          <p class="statement">Sept avocates. Cinq matières. Une seule interlocutrice pour votre dossier.</p>
+          <p class="sub">
+            Celle que vous rencontrez est celle qui plaide. Cliquez sur un nom pour lire son
+            parcours, ses publications, et la contacter directement.
+          </p>
+        </RuledCell>
+      </RuledGrid>
+      <RuledGrid columns="repeat(4, 1fr)" noLeft noTop class="people">
+        {AVOCATES.map((a, i) => (
+          <PersonCell
+            name={a.nom}
+            photo={a.photo}
+            meta={a.depuis ? `Depuis ${a.depuis}` : null}
+            edge={i % 4 === 0 ? 'left' : i % 4 === 3 ? 'right' : undefined}
+            href={`/avocates/${a.slug}`}
+          />
+        ))}
+        <!-- La rangée ne tombe pas juste : on comble avec une vraie phrase, jamais un vide. -->
+        <RuledCell align="center" edge="right" minHeight={200}>
+          <p class="filler">Toutes travaillent dans le cadre de l'aide juridique.</p>
+          <a href="/aide-juridique" class="filler-link eg-accent">
+            Documents à apporter <Icon name="arrow-right" size={20} />
+          </a>
+        </RuledCell>
+      </RuledGrid>
+    </section>
+
+    <!-- 6 — CONTACT ET ACCÈS -->
+    <section id="contact" class="contact">
+      <Page>
+        <SectionHead
+          eyebrow="Contact et accès"
+          title="Les consultations ont lieu uniquement sur rendez-vous"
+          lead="Contactez-nous par téléphone ou par e-mail pour convenir d'une date."
+        />
+      </Page>
+      <div class="cells">
+        <RuledGrid columns="1fr 1fr 1fr" noLeft>
+          <RuledCell eyebrow="Nous trouver" minHeight={200} edge="left">
+            <div class="lines">
+              <span><Icon name="map-pin" size={22} />{CONTACT.adresse}</span>
+              <span><Icon name="accessibility" size={22} />{CONTACT.acces}</span>
+            </div>
+          </RuledCell>
+          <RuledCell eyebrow="En transports en commun" minHeight={200}>
+            <div class="lines">
+              <span><Icon name="train-front" size={22} />{CONTACT.metro}</span>
+              <span><Icon name="tram-front" size={22} />{CONTACT.tram}</span>
+            </div>
+          </RuledCell>
+          <RuledCell eyebrow="Nous joindre" minHeight={200} edge="right">
+            <div class="lines">
+              <a href={`mailto:${CONTACT.email}`}><Icon name="mail" size={22} />{CONTACT.email}</a>
+              <span class="muted-line"><Icon name="phone" size={22} />Ligne directe de chaque avocate : voir sa fiche</span>
+            </div>
+          </RuledCell>
+        </RuledGrid>
+      </div>
+    </section>
+
+    <!-- 7 — LIENS UTILES -->
+    <section id="liens" class="liens">
+      <Page>
+        <SectionHead eyebrow="Liens utiles" title="Ressources externes" />
+        <div class="link-cols">
+          {LIENS_ACCUEIL.map(([titre, liens]) => (
+            <div>
+              <h3>{titre}</h3>
+              <LinkList items={liens} />
+            </div>
+          ))}
+        </div>
+      </Page>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+    border-bottom: var(--divider);
+    min-height: 620px;
+  }
+  .hero-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--section-y-sm) var(--space-7) var(--section-y-sm) var(--content-inset);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(34px, 3.6vw, 56px);
+    font-weight: var(--fw-bold);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    color: var(--text-heading);
+    max-width: 18ch;
+  }
+  .hero p {
+    margin-top: var(--stack);
+    margin-bottom: 0;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--brun-moyen);
+    max-width: 42ch;
+  }
+  .cta { margin-top: var(--space-7); }
+  .hero-img { min-height: 620px; }
+
+  .band-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 2.8vw, 40px);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+    color: var(--text-on-accent);
+  }
+  .band-copy { max-width: 48ch; margin: 0 auto; }
+  .band-copy p { margin-top: var(--space-6); font-size: var(--fs-body); line-height: 1.7; color: rgba(255,255,255,.92); }
+  .band-copy p:last-child { margin-bottom: 0; }
+
+  .grid-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(28px, 2.6vw, 40px);
+    font-weight: var(--fw-bold);
+    line-height: 1.15;
+    max-width: 12ch;
+  }
+  .count {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: var(--fw-semibold);
+    color: var(--sauge-obscur);
+  }
+  .matiere-photo { grid-column: 3; grid-row: 1 / span 3; border-bottom: var(--divider); }
+
+  .honoraires { padding: var(--section-y) 0; }
+  .split {
+    display: grid;
+    grid-template-columns: 6fr 6fr;
+    gap: var(--space-9);
+    margin-top: var(--space-7);
+    align-items: start;
+  }
+  .prose { max-width: var(--measure-prose); }
+  .prose p { font-size: var(--fs-body); line-height: 1.6; }
+  .muted { font-size: var(--fs-body-sm); color: var(--text-muted); }
+  .tight { margin-top: var(--stack-tight); font-size: var(--fs-body-sm); line-height: 1.6; }
+  .claim { font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); line-height: 1.35; color: var(--brun-profond); }
+
+  .equipe { border-top: var(--divider); }
+  .big {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(40px, 5vw, 84px);
+    font-weight: var(--fw-bold);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+  .statement { margin: 0; font-family: var(--font-display); font-size: clamp(24px, 2.2vw, 32px); font-weight: var(--fw-bold); line-height: 1.25; max-width: 22ch; }
+  .sub { margin: var(--stack) 0 0; font-size: var(--fs-body-sm); line-height: 1.6; color: var(--text-muted); max-width: 46ch; }
+  .filler { margin: 0; font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); line-height: 1.3; max-width: 16ch; }
+  .filler-link {
+    margin-top: var(--stack);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--fs-body-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--sauge-obscur);
+    text-decoration: none;
+  }
+
+  .contact { padding: var(--section-y) 0 0; }
+  .cells { margin-top: var(--stack-loose); }
+  .lines { display: grid; gap: var(--space-4); font-size: var(--fs-body-sm); line-height: 1.5; }
+  .lines span, .lines a { display: flex; gap: 12px; }
+  .muted-line { color: var(--text-muted); }
+
+  .liens { background: var(--surface-inset); padding: var(--section-y) 0; border-top: var(--divider); }
+  .link-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-9); margin-top: var(--space-7); }
+  .link-cols h3 { font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); margin-bottom: 8px; }
+
+  @media (max-width: 1000px) {
+    .hero { grid-template-columns: 1fr; min-height: 0; }
+    .hero-img { min-height: 420px; }
+    .hero-text { padding: var(--space-8) var(--content-inset); }
+    .split, .link-cols { grid-template-columns: 1fr; gap: var(--space-7); }
+    .matiere-photo { display: none; }
+  }
+</style>

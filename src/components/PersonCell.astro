@@ -1,0 +1,88 @@
+---
+/** Cellule-portrait : photo pleine cellule, nom dans un bandeau sauge au pied. */
+import Icon from './Icon.astro';
+import ArcImage from './ArcImage.astro';
+
+interface Props {
+  name: string;
+  photo?: string;
+  meta?: string | null;
+  ratio?: string;
+  edge?: 'left' | 'right' | 'both';
+  href?: string;
+}
+const { name, photo, meta, ratio = '4 / 5', edge, href } = Astro.props;
+const [prenom, ...reste] = String(name).split(' ');
+const nom = reste.join(' ');
+const Tag = href ? 'a' : 'div';
+---
+<Tag href={href} class:list={['person', edge && `e-${edge}`, { clickable: !!href }]}>
+  <span class="media">
+    <ArcImage src={photo} alt={name} ratio={ratio} corner="none" legend="Portrait à fournir" />
+    {meta && <span class="meta">{meta}</span>}
+  </span>
+  <span class="band">
+    <span class="name">{prenom}<br />{nom}</span>
+    {href && <span class="arrow"><Icon name="arrow-right" size={24} /></span>}
+  </span>
+</Tag>
+
+<style>
+  .person {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-right: var(--divider);
+    border-bottom: var(--divider);
+    background: var(--surface-card);
+    text-decoration: none;
+    color: inherit;
+  }
+  .media { position: relative; display: block; flex: 1; }
+  .meta {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 8px var(--space-3);
+    background: var(--surface-page);
+    border-left: var(--divider);
+    border-bottom: var(--divider);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--text-label);
+    white-space: nowrap;
+  }
+  .e-right .meta, .e-both .meta { right: var(--gutter); }
+
+  .band {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    min-height: 108px;
+    background: var(--surface-accent-soft);
+    color: var(--text-heading);
+    transition: var(--transition-control);
+  }
+  .e-left .band,  .e-both .band { padding-left: var(--content-inset); }
+  .e-right .band, .e-both .band { padding-right: var(--content-inset); }
+
+  .name {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 1.6vw, 24px);
+    font-weight: var(--fw-bold);
+    line-height: 1.18;
+  }
+  .arrow { flex: 0 0 auto; padding-bottom: 2px; }
+
+  /* Le bandeau bascule en brun profond au survol, nom et flèche avec lui. */
+  .clickable:hover .band,
+  .clickable:focus-visible .band {
+    background: var(--hover-invert-bg);
+    color: var(--hover-invert-fg);
+  }
+</style>

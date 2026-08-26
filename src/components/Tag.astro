@@ -1,0 +1,25 @@
+---
+interface Props { selected?: boolean; href?: string }
+const { selected, href } = Astro.props;
+const Tag = href ? 'a' : 'span';
+---
+<Tag href={href} class:list={['tag', { selected }, href && 'eg-invert']}><slot /></Tag>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--tap-min);
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-body-sm);
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--line-strong);
+    text-decoration: none;
+    transition: var(--transition-control);
+  }
+  .tag.selected { background: var(--brun-profond); color: var(--creme); border-color: var(--brun-profond); }
+</style>

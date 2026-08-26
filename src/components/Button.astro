@@ -1,0 +1,113 @@
+---
+/**
+ * Le survol par inversion est en CSS pur : aucun JS.
+ * Libellés à l'infinitif, jamais « Cliquez ici ».
+ */
+interface Props {
+  variant?: 'primary' | 'secondary' | 'accent' | 'quiet';
+  size?: 'lg' | 'md';
+  icon?: string;
+  iconPosition?: 'left' | 'right';
+  fullWidth?: boolean;
+  disabled?: boolean;
+  href?: string;
+  class?: string;
+}
+import Icon from './Icon.astro';
+
+const {
+  variant = 'primary',
+  size = 'lg',
+  icon,
+  iconPosition = 'right',
+  fullWidth,
+  disabled,
+  href,
+  class: klass,
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const iconSize = size === 'lg' ? 22 : 20;
+---
+
+<Tag
+  href={href}
+  disabled={!href && disabled ? true : undefined}
+  aria-disabled={disabled ? 'true' : undefined}
+  class:list={['btn', `v-${variant}`, `s-${size}`, { full: fullWidth }, klass]}
+>
+  {icon && iconPosition === 'left' && <Icon name={icon} size={iconSize} />}
+  <span><slot /></span>
+  {icon && iconPosition === 'right' && <Icon name={icon} size={iconSize} />}
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    font-family: var(--font-body);
+    font-weight: var(--fw-semibold);
+    line-height: 1;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-decoration: none;
+    transition: var(--transition-control), transform var(--dur-instant) var(--ease-standard);
+  }
+  .btn.full { display: flex; width: 100%; }
+  .btn:active { transform: scale(var(--press-scale)); }
+
+  .s-lg { height: var(--control-h); padding: 0 var(--space-6); font-size: var(--fs-body); }
+  .s-md { height: var(--control-h-sm); padding: 0 var(--space-5); font-size: var(--fs-body-sm); }
+
+  .v-primary {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-fg);
+    border: 1px solid var(--btn-primary-bg);
+  }
+  .v-primary:hover {
+    background: var(--btn-primary-bg-hover);
+    border-color: var(--btn-primary-bg-hover);
+  }
+
+  /* Inversion : le cadre clair devient un aplat brun profond. */
+  .v-secondary {
+    background: transparent;
+    color: var(--btn-secondary-fg);
+    border: 1px solid var(--btn-secondary-border);
+  }
+  .v-secondary:hover {
+    background: var(--hover-invert-bg);
+    border-color: var(--hover-invert-bg);
+    color: var(--hover-invert-fg);
+  }
+
+  .v-accent {
+    background: var(--btn-accent-bg);
+    color: var(--btn-accent-fg);
+    border: 1px solid var(--btn-accent-bg);
+  }
+  .v-accent:hover {
+    background: var(--btn-accent-bg-hover);
+    border-color: var(--btn-accent-bg-hover);
+  }
+
+  .v-quiet {
+    background: transparent;
+    color: var(--text-link);
+    border: 1px solid transparent;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .v-quiet:hover { color: var(--text-link-hover); }
+
+  .btn[aria-disabled='true'],
+  .btn:disabled {
+    background: var(--gris);
+    color: #8e877c;
+    border-color: var(--gris);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+</style>

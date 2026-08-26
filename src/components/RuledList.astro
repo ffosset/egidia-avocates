@@ -1,0 +1,36 @@
+---
+/** Liste éditoriale : filet fin et tiret caramel, jamais de disque coloré. */
+interface Props { items: string[]; columns?: number }
+const { items, columns = 1 } = Astro.props;
+---
+<ul style={`grid-template-columns:repeat(${columns},1fr)`}>
+  {items.map((it) => (
+    <li><span class="dash" aria-hidden="true"></span><span>{it}</span></li>
+  ))}
+</ul>
+
+<style>
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    column-gap: var(--space-7);
+  }
+  li {
+    display: flex;
+    gap: var(--space-4);
+    align-items: baseline;
+    padding: var(--space-4) 0;
+    border-top: var(--divider);
+    font-size: var(--fs-body);
+    line-height: 1.5;
+  }
+  .dash {
+    width: 14px;
+    height: 1px;
+    background: var(--caramel);
+    flex: 0 0 auto;
+    transform: translateY(-6px);
+  }
+</style>

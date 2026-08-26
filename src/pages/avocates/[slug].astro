@@ -1,0 +1,203 @@
+---
+import Base from '../../layouts/Base.astro';
+import Page from '../../components/Page.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import Card from '../../components/Card.astro';
+import Tag from '../../components/Tag.astro';
+import Button from '../../components/Button.astro';
+import Icon from '../../components/Icon.astro';
+import ArcImage from '../../components/ArcImage.astro';
+import LinkList from '../../components/LinkList.astro';
+import ContactBand from '../../components/ContactBand.astro';
+import { AVOCATES } from '../../data/avocates.js';
+import { MATIERES, matieresDe } from '../../data/matieres.js';
+
+export function getStaticPaths() {
+  return AVOCATES.map((a) => ({ params: { slug: a.slug }, props: { a } }));
+}
+
+const { a } = Astro.props;
+const duCabinet = matieresDe(a.nom);
+// Certaines avocates pratiquent au-delà des cinq matières du cabinet : ces
+// mots-clés restent des étiquettes non cliquables.
+const horsCabinet = a.motsCles.length > duCabinet.length;
+const telHref = a.tel ? `tel:+32${a.tel.replace(/\D/g, '').slice(1)}` : null;
+const autres = AVOCATES.filter((x) => x.slug !== a.slug);
+---
+<Base
+  title={a.nom}
+  description={`${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` depuis ${a.depuis}` : ''} — ${a.motsCles.join(', ')}.`}
+>
+  <main>
+    <section class="crumbs">
+      <Page>
+        <Breadcrumb items={[
+          { label: 'Accueil', href: '/' },
+          { label: 'Nos avocates', href: '/#equipe' },
+          { label: a.nom },
+        ]} />
+      </Page>
+    </section>
+
+    <Page>
+      <div class="split">
+        <div class="side">
+          <ArcImage src={a.photo} alt={a.nom} ratio="3 / 4" corner="bottom-left" loading="eager" />
+          <Card padding="var(--space-6)">
+            <Eyebrow>Contact</Eyebrow>
+            <div class="contact">
+              <a href={`mailto:${a.email}`} class="line break"><Icon name="mail" size={22} />{a.email}</a>
+              {telHref ? (
+                <a href={telHref} class="line ruled"><Icon name="phone" size={22} />{a.tel}</a>
+              ) : (
+                <span class="line ruled pending"><Icon name="phone" size={22} />Ligne directe à venir</span>
+              )}
+              {a.linkedin && (
+                <a href={a.linkedin} class="line ruled" rel="noopener"><Icon name="linkedin" size={22} />Profil LinkedIn</a>
+              )}
+            </div>
+          </Card>
+          <Card tone="inset" padding="var(--space-6)">
+            <Eyebrow>En bref</Eyebrow>
+            <div class="rows">
+              {a.depuis && <div class="row"><span class="k">Au barreau depuis</span><span class="v">{a.depuis}</span></div>}
+              <div class="row"><span class="k">Langues</span><span class="v">{a.langues.join(', ')}</span></div>
+              {a.cabinets.passe && <div class="row"><span class="k">Auparavant</span><span class="v">{a.cabinets.passe}</span></div>}
+              <div class="row"><span class="k">TVA</span><span class="v mono">{a.tva}</span></div>
+            </div>
+          </Card>
+        </div>
+
+        <div>
+          <h1>{a.nom}</h1>
+          <p class="role">Avocate au barreau de Bruxelles{a.depuis ? ` depuis ${a.depuis}` : ''}</p>
+
+          <div class="block">
+            <Eyebrow>Matières préférentielles</Eyebrow>
+            <div class="chips">
+              {a.motsCles.map((t) => {
+                const m = MATIERES.find((x) => x.titre.toLowerCase() === t.toLowerCase());
+                return m
+                  ? <Button href={`/matieres/${m.id}`} variant="secondary" size="md" icon="arrow-right">{t}</Button>
+                  : <Tag>{t}</Tag>;
+              })}
+            </div>
+            {horsCabinet && (
+              <p class="hint">
+                Les matières sans lien ne font pas partie des cinq matières préférentielles du cabinet.
+              </p>
+            )}
+          </div>
+
+          <div class="block prose">
+            <Eyebrow>Parcours</Eyebrow>
+            <div class="spaced">
+              {a.parcours.map((p, i) => <p class={i === 0 ? 'first' : ''}>{p}</p>)}
+            </div>
+          </div>
+
+          {a.publications.length > 0 && (
+            <div class="block prose">
+              <Eyebrow>Publications</Eyebrow>
+              <ol>
+                {a.publications.map((p, i) => (
+                  <li><span class="num">{String(i + 1).padStart(2, '0')}</span><span>{p}</span></li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {a.liens.length > 0 && (
+            <div class="block prose">
+              <Eyebrow>Recherches et publications en ligne</Eyebrow>
+              <div class="tight"><LinkList items={a.liens} /></div>
+            </div>
+          )}
+
+          <div class="block">
+            <Eyebrow>Les autres avocates</Eyebrow>
+            <div class="chips">
+              {autres.map((x) => (
+                <a href={`/avocates/${x.slug}`} class="peer eg-invert">{x.nom}</a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Page>
+    <ContactBand />
+  </main>
+</Base>
+
+<style>
+  .crumbs { border-bottom: var(--divider); padding: var(--space-6) 0; }
+  .split {
+    display: grid;
+    grid-template-columns: 4fr 8fr;
+    gap: var(--space-9);
+    padding: var(--space-8) 0 0;
+    align-items: start;
+  }
+  .side { display: grid; gap: var(--space-5); position: sticky; top: 24px; }
+
+  h1 { font-family: var(--font-display); font-size: var(--fs-h1); font-weight: var(--fw-bold); line-height: 1.12; }
+  .role { margin: var(--stack-tight) 0 0; font-size: var(--fs-lead); line-height: 1.5; color: var(--brun-moyen); }
+
+  .contact { margin-top: var(--stack-tight); display: grid; }
+  .line { display: flex; gap: var(--space-3); align-items: center; font-size: var(--fs-body-sm); }
+  .break { padding-bottom: var(--space-4); word-break: break-all; }
+  .ruled { padding: var(--space-4) 0; border-top: var(--divider); }
+  .pending { color: var(--text-label); font-style: italic; }
+
+  .rows { margin-top: var(--space-2); }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    border-top: var(--divider);
+  }
+  .k { font-size: 16px; color: var(--text-label); }
+  .v { font-size: var(--fs-body-sm); text-align: right; }
+  .mono { font-family: var(--font-mono); font-size: 16px; }
+
+  .block { margin-top: var(--space-8); }
+  .block:first-of-type { margin-top: var(--space-7); }
+  .prose { max-width: var(--measure-prose); }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--stack-tight); }
+  .hint { margin: var(--stack-tight) 0 0; font-size: 16px; color: var(--text-label); }
+  .spaced { margin-top: var(--space-5); }
+  .spaced p { font-size: var(--fs-body); line-height: 1.6; color: var(--brun-moyen); }
+  .spaced p.first { font-size: var(--fs-lead); line-height: 1.5; color: var(--text-body); }
+  .tight { margin-top: var(--stack-tight); }
+
+  ol { list-style: none; margin: 20px 0 0; padding: 0; }
+  ol li {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: var(--space-4);
+    padding: var(--space-5) 0;
+    border-top: var(--divider);
+  }
+  .num { font-family: var(--font-display); font-size: 22px; font-weight: var(--fw-bold); color: var(--caramel); }
+  ol li span:last-child { font-size: var(--fs-body-sm); line-height: 1.55; }
+
+  .peer {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-min);
+    font-size: var(--fs-body-sm);
+    padding: 0 var(--space-5);
+    border: 1px solid var(--line-strong);
+    text-decoration: none;
+    color: var(--text-body);
+    background: var(--surface-card);
+  }
+
+  @media (max-width: 1000px) {
+    .split { grid-template-columns: 1fr; gap: var(--space-7); }
+    .side { position: static; }
+  }
+</style>

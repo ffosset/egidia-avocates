@@ -1,0 +1,15 @@
+---
+/** Conteneur de page : applique la loi des marges (--content-inset). */
+interface Props { class?: string }
+const { class: klass } = Astro.props;
+---
+<div class:list={['page', klass]}><slot /></div>
+
+<style>
+  .page {
+    width: 100%;
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--content-inset);
+  }
+</style>

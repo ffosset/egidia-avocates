@@ -1,0 +1,158 @@
+---
+import Base from '../layouts/Base.astro';
+import Page from '../components/Page.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Card from '../components/Card.astro';
+import Callout from '../components/Callout.astro';
+import Icon from '../components/Icon.astro';
+import RuledList from '../components/RuledList.astro';
+import LinkList from '../components/LinkList.astro';
+import ContactBand from '../components/ContactBand.astro';
+import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
+---
+<Base
+  title="Documents pour l'aide juridique"
+  description="La liste des documents à apporter pour constituer une demande d'aide juridique (pro deo) au cabinet Egidia."
+>
+  <main>
+    <section class="hero">
+      <Page>
+        <Breadcrumb items={[
+          { label: 'Accueil', href: '/' },
+          { label: 'Honoraires', href: '/#honoraires' },
+          { label: "Documents pour l'aide juridique" },
+        ]} />
+        <h1>Documents à apporter pour l'aide juridique</h1>
+        <p class="lead">
+          Apportez les documents généraux, puis ceux qui correspondent à votre situation.
+          Si un document manque, venez quand même : nous verrons ensemble comment l'obtenir.
+        </p>
+      </Page>
+    </section>
+
+    <Page>
+      <div class="split">
+        <div>
+          <div class="step"><span class="letter">A</span><h2>Dans tous les cas</h2></div>
+          <div class="prose"><RuledList items={GENERAUX} /></div>
+          <div class="prose spaced">
+            <Callout tone="urgent" title="Ce n'est pas la proposition de déclaration simplifiée">
+              L'Avertissement-Extrait de Rôle est le document définitif. La proposition de
+              déclaration simplifiée n'est qu'un calcul provisoire et ne sera pas acceptée.
+            </Callout>
+          </div>
+
+          <div class="step far"><span class="letter">B</span><h2>Preuves de revenus, selon votre situation</h2></div>
+          <div class="situations">
+            {REVENUS.map(([titre, docs], i) => (
+              <Card padding="var(--space-5) var(--space-6)">
+                <div class="sit">
+                  <span class="num">{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <div class="sit-title">{titre}</div>
+                    <ul>
+                      {docs.map((d) => (
+                        <li><span class="check"><Icon name="check" size={20} /></span>{d}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <div class="step far"><span class="letter">C</span><h2>Si vous vivez avec d'autres personnes majeures</h2></div>
+          <p class="after">
+            Chaque adulte mentionné sur votre composition de ménage doit fournir ses preuves de
+            revenus et son AER — sauf s'il s'agit de votre conjoint et que vous demandez un divorce
+            ou une séparation.
+          </p>
+        </div>
+
+        <aside>
+          <Card tone="sage" padding="var(--space-6)">
+            <Eyebrow>L'aide juridique</Eyebrow>
+            <p class="claim">Ce n'est pas une faveur : c'est un droit.</p>
+            <p class="note">
+              Toutes les avocates du cabinet travaillent dans le cadre de l'aide juridique.
+              Nous vérifions avec vous si vous remplissez les conditions.
+            </p>
+          </Card>
+          <Card tone="inset" padding="var(--space-6)">
+            <Eyebrow>Liens utiles</Eyebrow>
+            <div class="tight"><LinkList items={LIENS_PRODEO} /></div>
+          </Card>
+        </aside>
+      </div>
+    </Page>
+    <ContactBand />
+  </main>
+</Base>
+
+<style>
+  .hero {
+    background: var(--surface-margin);
+    border-bottom: var(--divider);
+    padding: var(--space-6) 0 var(--space-9);
+  }
+  h1 {
+    margin-top: var(--space-5);
+    font-family: var(--font-display);
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-bold);
+    line-height: 1.12;
+    max-width: 24ch;
+  }
+  .lead {
+    margin-top: var(--space-5);
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+    color: var(--brun-moyen);
+    max-width: 50ch;
+  }
+  .split {
+    display: grid;
+    grid-template-columns: 8fr 4fr;
+    gap: var(--space-9);
+    padding: var(--space-9) 0 0;
+  }
+  .step { display: flex; align-items: baseline; gap: var(--space-4); }
+  .step.far { margin-top: var(--space-10); }
+  .letter { font-family: var(--font-display); font-size: 40px; font-weight: var(--fw-bold); color: var(--caramel); }
+  .step h2 { font-family: var(--font-display); font-size: var(--fs-h3); font-weight: var(--fw-bold); }
+
+  .prose { margin-top: var(--space-5); max-width: var(--measure-prose); }
+  .prose.spaced { margin-top: var(--space-6); }
+  .situations { margin-top: var(--space-5); display: grid; gap: var(--space-4); }
+  .sit { display: grid; grid-template-columns: 48px 1fr; gap: var(--space-5); }
+  .num { font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); color: var(--sauge-obscur); }
+  .sit-title { font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); }
+  .sit ul { margin: 10px 0 0; padding-left: 0; list-style: none; display: grid; gap: 8px; }
+  .sit li {
+    display: flex;
+    gap: var(--space-3);
+    font-size: var(--fs-body-sm);
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .check { color: var(--sauge-obscur); flex: 0 0 auto; margin-top: 2px; }
+  .after { margin-top: var(--stack-tight); font-size: var(--fs-body); line-height: 1.6; max-width: var(--measure-prose); }
+
+  aside { display: grid; gap: var(--space-5); align-content: start; position: sticky; top: 24px; }
+  .claim {
+    margin-top: var(--stack-tight);
+    margin-bottom: 0;
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: var(--fw-bold);
+    line-height: 1.35;
+  }
+  .note { margin-top: var(--stack-tight); margin-bottom: 0; font-size: var(--fs-body-sm); color: var(--text-muted); line-height: 1.6; }
+  .tight { margin-top: var(--stack-tight); }
+
+  @media (max-width: 1000px) {
+    .split { grid-template-columns: 1fr; gap: var(--space-7); }
+    aside { position: static; }
+  }
+</style>

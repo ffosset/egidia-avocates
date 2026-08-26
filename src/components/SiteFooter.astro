@@ -1,0 +1,87 @@
+---
+import Page from './Page.astro';
+import Eyebrow from './Eyebrow.astro';
+import { CONTACT } from '../data/site.js';
+import { MATIERES } from '../data/matieres.js';
+---
+<footer>
+  <Page>
+    <div class="cols">
+      <div class="col">
+        <!-- Le blason est pour surfaces claires : sur brun profond il va dans une puce crème. -->
+        <span class="chip"><img src="/logo.svg" alt="Egidia" width="72" height="84" /></span>
+        <div class="blurb">
+          Cabinet bruxellois en droit des étrangers, de la famille, de l'aide sociale et de la jeunesse.
+        </div>
+      </div>
+      <div class="col">
+        <Eyebrow class="pale">Matières</Eyebrow>
+        {MATIERES.map((m) => <a href={`/matieres/${m.id}`}>{m.titre}</a>)}
+      </div>
+      <div class="col">
+        <Eyebrow class="pale">Le cabinet</Eyebrow>
+        <a href="/#equipe">Nos avocates</a>
+        <a href="/aide-juridique">Documents pour l'aide juridique</a>
+        <a href="/#honoraires">Honoraires</a>
+      </div>
+      <div class="col">
+        <Eyebrow class="pale">Contact</Eyebrow>
+        <span class="plain">{CONTACT.adresse}</span>
+        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+        <span class="small">{CONTACT.metro} · {CONTACT.tram}</span>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Egidia · Ordre français des avocats du barreau de Bruxelles</span>
+      <span class="legal-links">
+        <a href="/mentions-legales">Mentions légales</a>
+        <a href="/vie-privee">Vie privée</a>
+      </span>
+    </div>
+  </Page>
+</footer>
+
+<style>
+  footer {
+    background: var(--surface-ink);
+    color: var(--text-on-dark);
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-7);
+  }
+  .cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-7); }
+  .col { display: grid; gap: var(--space-3); align-content: start; }
+
+  .chip {
+    display: inline-block;
+    background: var(--creme);
+    border-radius: 4px;
+    padding: var(--space-3) var(--space-4);
+    width: fit-content;
+  }
+  .chip img { height: 72px; width: auto; display: block; }
+
+  .blurb { font-size: var(--fs-body-sm); color: var(--sable); max-width: 300px; line-height: 1.6; }
+  .col a { color: var(--sauge-clair); font-size: var(--fs-body-sm); text-decoration: none; }
+  .col a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+  .plain { font-size: var(--fs-body-sm); color: var(--sable); line-height: 1.6; }
+  .small { font-size: 16px; color: var(--sable); }
+  .pale { color: var(--sauge-clair); }
+
+  .legal {
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: 1px solid rgba(250, 247, 244, 0.18);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 16px;
+    color: var(--sable);
+  }
+  .legal-links { display: flex; gap: 24px; }
+  .legal-links a { color: var(--sauge-clair); text-decoration: none; }
+
+  @media (max-width: 900px) {
+    .cols { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

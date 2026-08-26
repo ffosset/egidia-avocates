@@ -1,0 +1,147 @@
+---
+import Base from '../../layouts/Base.astro';
+import Page from '../../components/Page.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import Card from '../../components/Card.astro';
+import Callout from '../../components/Callout.astro';
+import Icon from '../../components/Icon.astro';
+import RuledGrid from '../../components/RuledGrid.astro';
+import RuledList from '../../components/RuledList.astro';
+import LinkList from '../../components/LinkList.astro';
+import PersonCell from '../../components/PersonCell.astro';
+import ContactBand from '../../components/ContactBand.astro';
+import { MATIERES } from '../../data/matieres.js';
+import { parNom } from '../../data/avocates.js';
+
+export function getStaticPaths() {
+  return MATIERES.map((m) => ({ params: { id: m.id }, props: { matiere: m } }));
+}
+
+const { matiere: m } = Astro.props;
+const autres = MATIERES.filter((x) => x.id !== m.id);
+---
+<Base title={m.titre} description={m.resume}>
+  <main>
+    <section class="hero">
+      <Page>
+        <Breadcrumb items={[
+          { label: 'Accueil', href: '/' },
+          { label: 'Matières', href: '/#matieres' },
+          { label: m.titre },
+        ]} />
+        <h1>{m.titre}</h1>
+        <p class="lead">{m.intro}</p>
+      </Page>
+    </section>
+
+    <Page>
+      <div class="split">
+        <div>
+          <Eyebrow>Ce que nous traitons</Eyebrow>
+          <div class="spaced"><RuledList items={m.traite} /></div>
+
+          <div class="far">
+            <Eyebrow>Avocates spécialisées</Eyebrow>
+            <div class="spaced">
+              <RuledGrid columns="repeat(3, 1fr)">
+                {m.avocates.map((nom) => {
+                  const a = parNom(nom);
+                  return (
+                    <PersonCell
+                      name={nom}
+                      photo={a?.photo}
+                      ratio="1 / 1"
+                      href={a ? `/avocates/${a.slug}` : undefined}
+                    />
+                  );
+                })}
+              </RuledGrid>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          {m.id === 'etrangers' && (
+            <Callout tone="attention" title="Les délais de recours sont très courts">
+              Un délai manqué se rattrape difficilement. Consultez-nous dès la réception d'une décision.
+            </Callout>
+          )}
+          <Card tone="inset" padding="var(--space-6)">
+            <Eyebrow>Liens utiles</Eyebrow>
+            <div class="tight">
+              {m.liens.length > 0 ? (
+                <LinkList items={m.liens} />
+              ) : (
+                <p class="empty">Liens à compléter par le cabinet.</p>
+              )}
+            </div>
+          </Card>
+          <Card padding="var(--space-6)">
+            <Eyebrow>Autres matières</Eyebrow>
+            <div class="others">
+              {autres.map((x) => (
+                <a href={`/matieres/${x.id}`} class="eg-invert">
+                  {x.titre}<span class="eg-accent chev"><Icon name="arrow-right" size={20} /></span>
+                </a>
+              ))}
+            </div>
+          </Card>
+        </aside>
+      </div>
+    </Page>
+    <ContactBand />
+  </main>
+</Base>
+
+<style>
+  .hero {
+    background: var(--surface-margin);
+    border-bottom: var(--divider);
+    padding: var(--space-6) 0 var(--space-9);
+  }
+  h1 {
+    margin-top: var(--space-5);
+    font-family: var(--font-display);
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-bold);
+    line-height: 1.12;
+    max-width: 20ch;
+  }
+  .lead {
+    margin-top: var(--space-5);
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+    color: var(--brun-moyen);
+    max-width: 52ch;
+  }
+  .split {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: var(--space-9);
+    padding: var(--space-9) 0 0;
+  }
+  .spaced { margin-top: var(--space-5); }
+  .far { margin-top: var(--space-9); }
+  aside { display: grid; gap: var(--space-5); align-content: start; }
+  .tight { margin-top: var(--stack-tight); }
+  .empty { margin: 0; font-size: 16px; color: var(--text-label); }
+
+  .others { margin-top: var(--space-3); }
+  .others a {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    margin: 0 calc(-1 * var(--space-4));
+    border-top: var(--divider);
+    font-size: var(--fs-body-sm);
+    text-decoration: none;
+    color: var(--text-body);
+  }
+  .chev { color: var(--sauge-obscur); }
+
+  @media (max-width: 1000px) {
+    .split { grid-template-columns: 1fr; gap: var(--space-7); }
+  }
+</style>

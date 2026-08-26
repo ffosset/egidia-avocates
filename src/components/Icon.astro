@@ -1,0 +1,81 @@
+---
+/**
+ * Glyphe Lucide inliné au build depuis node_modules — plus de CDN au runtime.
+ * Le SVG hérite de `currentColor`, comme dans le design system.
+ *
+ * Si le cabinet acquiert un jeu d'icônes sous licence, déposer les fichiers
+ * dans `assets/icons/` et changer la résolution ci-dessous : c'est le seul
+ * endroit à toucher.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { createRequire } from 'node:module';
+
+interface Props {
+  name?: string;
+  size?: number;
+  /** Nom accessible. Omis => l'icône est décorative et devient aria-hidden. */
+  label?: string;
+  class?: string;
+}
+
+const { name = 'arrow-right', size = 24, label, class: klass } = Astro.props;
+
+function loadGlyph(slug: string): string {
+  const req = createRequire(import.meta.url);
+  const candidates: string[] = [];
+  // 1) résolution par le paquet (chemin normal)
+  try {
+    candidates.push(req.resolve(`lucide-static/icons/${slug}.svg`));
+  } catch {
+    /* le champ "exports" du paquet peut bloquer les sous-chemins */
+  }
+  // 2) repli : chemin direct dans node_modules, depuis la racine du projet
+  candidates.push(
+    path.join(process.cwd(), 'node_modules', 'lucide-static', 'icons', `${slug}.svg`),
+  );
+
+  for (const file of candidates) {
+    try {
+      return fs
+        .readFileSync(file, 'utf8')
+        .replace(/\swidth="[^"]*"/, '')
+        .replace(/\sheight="[^"]*"/, '');
+    } catch {
+      /* on essaie le candidat suivant */
+    }
+  }
+  throw new Error(
+    `[Icon] glyphe Lucide « ${slug} » introuvable. ` +
+      `Avez-vous lancé « npm install » ? Vérifiez aussi que le nom est un slug Lucide valide.`,
+  );
+}
+
+// On échoue au build plutôt que de livrer une page sans icônes.
+const svg = loadGlyph(name);
+---
+
+<span
+  class:list={['eg-icon', klass]}
+  style={`--icon-size:${size}px`}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  set:html={svg}
+/>
+
+<style>
+  .eg-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    color: inherit;
+  }
+  .eg-icon :global(svg) {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+  }
+</style>

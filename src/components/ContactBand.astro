@@ -1,0 +1,54 @@
+---
+import Page from './Page.astro';
+import Eyebrow from './Eyebrow.astro';
+import Button from './Button.astro';
+import { CONTACT } from '../data/site.js';
+---
+<section class="contact-band">
+  <Page>
+    <div class="split">
+      <div>
+        <Eyebrow>Une question sur votre situation ?</Eyebrow>
+        <h2>Les consultations ont lieu uniquement sur rendez-vous.</h2>
+        <p>Contactez-nous par téléphone ou par e-mail pour convenir d'une date.</p>
+      </div>
+      <div class="actions">
+        <Button href={`mailto:${CONTACT.email}`} icon="mail" iconPosition="left">Écrire au cabinet</Button>
+        <Button href="/#contact" variant="secondary">Nous trouver</Button>
+      </div>
+    </div>
+  </Page>
+</section>
+
+<style>
+  .contact-band {
+    background: var(--surface-accent-soft);
+    padding: var(--space-9) 0;
+    margin-top: var(--space-10);
+  }
+  .split {
+    display: grid;
+    grid-template-columns: 6fr 6fr;
+    gap: var(--space-9);
+    align-items: center;
+  }
+  h2 {
+    margin-top: var(--stack-tight);
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    max-width: 24ch;
+  }
+  p {
+    margin-top: var(--stack-tight);
+    font-size: var(--fs-body-sm);
+    color: var(--brun-moyen);
+    max-width: 48ch;
+  }
+  .actions { display: flex; gap: var(--space-4); flex-wrap: wrap; justify-content: flex-end; }
+
+  @media (max-width: 900px) {
+    .split { grid-template-columns: 1fr; gap: var(--space-6); }
+    .actions { justify-content: flex-start; }
+  }
+</style>

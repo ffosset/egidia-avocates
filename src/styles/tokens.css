@@ -1,0 +1,27 @@
+/* Point d'entrée unique des tokens Egidia.
+   Les fichiers sources vivent à la racine et restent le miroir exact du
+   projet claude.ai/design — ne pas les éditer ici, les resynchroniser. */
+@import '../../tokens/fonts.css';
+@import '../../tokens/colors.css';
+@import '../../tokens/typography.css';
+@import '../../tokens/spacing.css';
+@import '../../tokens/borders.css';
+@import '../../tokens/elevation.css';
+@import '../../tokens/motion.css';
+@import '../../tokens/base.css';
+
+/* ---- Adaptation mobile de la loi des marges ----
+   La loi ne change pas : les filets restent à --page-margin, le texte commence
+   toujours à --content-inset, et il ne touche jamais un filet. Seules les deux
+   valeurs se resserrent, sinon 80px d'inset dévorent un écran de 375px.
+   (Les tokens à la racine sont le miroir du design system : on les surcharge
+   ici, on ne les édite pas là-bas.) */
+@media (max-width: 700px) {
+  :root {
+    --page-margin: 20px;
+    --gutter: 16px;   /* => --content-inset = 36px */
+    --cell-pad: var(--space-5);
+    --section-y: var(--space-8);
+    --section-y-sm: var(--space-7);
+  }
+}

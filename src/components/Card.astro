@@ -1,0 +1,39 @@
+---
+interface Props {
+  tone?: 'paper' | 'inset' | 'sage' | 'framed' | 'ink';
+  accentEdge?: boolean;
+  padding?: string;
+  href?: string;
+  class?: string;
+}
+const { tone = 'paper', accentEdge, padding, href, class: klass } = Astro.props;
+const Tag = href ? 'a' : 'div';
+const clickable = !!href && tone !== 'ink';
+---
+<Tag
+  href={href}
+  class:list={['card', `t-${tone}`, { accent: accentEdge }, clickable && 'eg-invert', klass]}
+  style={padding ? `padding:${padding}` : undefined}
+>
+  <slot />
+</Tag>
+
+<style>
+  .card {
+    display: block;
+    padding: var(--space-6);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-paper);
+    text-decoration: none;
+    color: inherit;
+  }
+  .card.accent { box-shadow: inset var(--border-accent) 0 0 0 var(--sauge-obscur), var(--shadow-paper); }
+
+  .t-paper { background: var(--surface-card); border: var(--border-card); }
+  .t-inset { background: var(--surface-inset); border: 1px solid transparent; }
+  .t-sage  { background: var(--surface-accent-soft); border: 1px solid transparent; }
+  .t-framed{ background: var(--surface-card); border: var(--border-frame-strong); }
+  .t-ink   { background: var(--surface-ink); border: 1px solid var(--surface-ink); color: var(--text-on-dark); }
+
+  a.t-paper { border-color: var(--line-strong); }
+</style>

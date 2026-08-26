@@ -1,0 +1,65 @@
+---
+import '../styles/tokens.css';
+import PageRules from '../components/PageRules.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const {
+  title,
+  description = "Cabinet bruxellois en droit des étrangers, de la famille, de l'aide sociale et de la jeunesse. Une relation fondée sur l'écoute et la transparence.",
+} = Astro.props;
+
+const fullTitle = title === 'Egidia' ? 'Egidia — cabinet d’avocates à Bruxelles' : `${title} — Egidia`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_BE" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL('/photos/equipe.jpg', Astro.site)} />
+  </head>
+  <body>
+    <a href="#contenu" class="skip">Aller au contenu</a>
+    <PageRules />
+    <SiteHeader />
+    <div id="contenu"><slot /></div>
+    <SiteFooter />
+  </body>
+</html>
+
+<style is:global>
+  /* Le lien d'évitement fait partie du contrat d'accessibilité du cabinet. */
+  .skip {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    background: var(--brun-profond);
+    color: var(--creme);
+    padding: var(--space-4) var(--space-5);
+    text-decoration: none;
+  }
+  .skip:focus { left: var(--content-inset); }
+
+  img { max-width: 100%; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>

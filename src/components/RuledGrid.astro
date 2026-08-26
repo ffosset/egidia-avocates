@@ -1,0 +1,32 @@
+---
+/** La grille-registre : cellules jointives séparées par des filets d'1px.
+    Les colonnes passent par --cols (et non par grid-template-columns en ligne)
+    pour que la bascule mobile ci-dessous puisse reprendre la main. */
+interface Props { columns?: number | string; class?: string; noLeft?: boolean; noTop?: boolean }
+const { columns = 2, class: klass, noLeft, noTop } = Astro.props;
+const tpl = typeof columns === 'number' ? `repeat(${columns}, 1fr)` : columns;
+---
+<div
+  class:list={['grid', { 'no-left': noLeft, 'no-top': noTop }, klass]}
+  style={`--cols:${tpl}`}
+>
+  <slot />
+</div>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: var(--cols);
+    border-top: var(--divider);
+    border-left: var(--divider);
+    background: var(--surface-card);
+  }
+  .no-left { border-left: none; }
+  .no-top { border-top: none; }
+
+  @media (max-width: 1000px) {
+    .grid { grid-template-columns: 1fr; }
+    /* Un enfant explicitement placé retrouve le flux normal. */
+    .grid > :global(*) { grid-column: auto !important; grid-row: auto !important; }
+  }
+</style>

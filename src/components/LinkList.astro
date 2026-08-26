@@ -1,0 +1,31 @@
+---
+import Icon from './Icon.astro';
+interface Props { items: Array<[string, string]> }
+const { items } = Astro.props;
+---
+<div class="links">
+  {items.map(([label, url]) => (
+    <a href={`https://${url}`} class="eg-invert" rel="noopener">
+      <span class="eg-accent glyph"><Icon name="arrow-up-right" size={20} /></span>
+      <span>{label}<span class="url">{url}</span></span>
+    </a>
+  ))}
+</div>
+
+<style>
+  .links { display: grid; gap: 0; }
+  a {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    margin: 0 calc(-1 * var(--space-4));
+    border-top: var(--divider);
+    text-decoration: none;
+    color: var(--text-body);
+    font-size: var(--fs-body-sm);
+    line-height: 1.5;
+  }
+  .glyph { color: var(--sauge-obscur); margin-top: 2px; }
+  .url { display: block; color: var(--text-label); font-size: 16px; margin-top: 2px; }
+</style>

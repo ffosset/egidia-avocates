@@ -1,0 +1,21 @@
+---
+/** Les deux filets de marge fixes, sur toute la hauteur du site. */
+---
+<div aria-hidden="true">
+  <span class="rule left"></span>
+  <span class="rule right"></span>
+</div>
+
+<style>
+  .rule {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--line-page-rule);
+    pointer-events: none;
+    z-index: 5;
+  }
+  .left  { left: var(--page-margin); }
+  .right { right: var(--page-margin); }
+</style>

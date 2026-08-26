@@ -1,0 +1,66 @@
+---
+/** Mot-symbole à gauche, navigation en cellules filetées à droite.
+    Aucun bouton d'action — l'en-tête ne fait que naviguer. */
+import { NAV } from '../data/site.js';
+---
+<header>
+  <div class="bar">
+    <a href="/" class="wordmark" aria-label="Egidia — accueil">EGIDIA</a>
+    <nav>
+      {NAV.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+  </div>
+</header>
+
+<style>
+  header {
+    border-bottom: var(--divider);
+    background: var(--surface-page);
+    position: relative;
+    z-index: 6;
+  }
+  .bar { display: grid; grid-template-columns: 1fr auto; align-items: stretch; }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    padding: var(--space-5) var(--space-5) var(--space-5) var(--content-inset);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: var(--fw-regular);
+    letter-spacing: 0.22em;
+    color: var(--text-heading);
+  }
+
+  nav { display: flex; align-items: stretch; }
+  nav a {
+    display: grid;
+    place-items: center;
+    min-width: 176px;
+    min-height: 92px;
+    padding: 0 var(--space-6);
+    border-left: var(--divider);
+    font-family: var(--font-body);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-decoration: none;
+    color: var(--text-muted);
+    transition: var(--transition-control);
+  }
+  nav a:hover,
+  nav a:focus-visible {
+    background: var(--hover-invert-bg);
+    color: var(--hover-invert-fg);
+  }
+
+  @media (max-width: 900px) {
+    .bar { grid-template-columns: 1fr; }
+    .wordmark { padding-left: var(--content-inset); }
+    nav { flex-wrap: wrap; border-top: var(--divider); }
+    nav a { min-width: 0; flex: 1 1 auto; min-height: 64px; }
+  }
+</style>

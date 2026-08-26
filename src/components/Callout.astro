@@ -1,0 +1,50 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  tone?: 'info' | 'success' | 'attention' | 'urgent';
+  title?: string;
+  icon?: string;
+}
+const { tone = 'info', title, icon } = Astro.props;
+const DEFAULT_ICON = {
+  info: 'info',
+  success: 'check',
+  attention: 'clock',
+  urgent: 'triangle-alert',
+} as const;
+---
+<div class:list={['callout', `t-${tone}`]}>
+  <span class="glyph"><Icon name={icon ?? DEFAULT_ICON[tone]} size={26} /></span>
+  <div>
+    {title && <div class="title">{title}</div>}
+    <div class="body"><slot /></div>
+  </div>
+</div>
+
+<style>
+  .callout {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-6);
+    border-radius: var(--radius-md);
+  }
+  .glyph { margin-top: 2px; }
+  .title {
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+    margin-bottom: var(--space-2);
+  }
+  .body { font-size: var(--fs-body-sm); line-height: var(--lh-body); color: var(--text-body); }
+
+  .t-info      { background: var(--status-info-bg); box-shadow: inset var(--border-accent) 0 0 0 var(--caramel); }
+  .t-success   { background: var(--status-success-bg); box-shadow: inset var(--border-accent) 0 0 0 var(--sauge-obscur); }
+  .t-attention { background: var(--status-attention-bg); box-shadow: inset var(--border-accent) 0 0 0 #b8792c; }
+  .t-urgent    { background: var(--status-urgent-bg); box-shadow: inset var(--border-accent) 0 0 0 #a8493a; }
+
+  .t-info .title, .t-info .glyph           { color: var(--status-info-fg); }
+  .t-success .title, .t-success .glyph     { color: var(--status-success-fg); }
+  .t-attention .title, .t-attention .glyph { color: var(--status-attention-fg); }
+  .t-urgent .title, .t-urgent .glyph       { color: var(--status-urgent-fg); }
+</style>
