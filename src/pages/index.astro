@@ -233,10 +233,11 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
 
 <style>
   /* ---- 1. HÉRO ---- */
+  /* Pas de filet sous le héros : la bande sauge enchaîne directement.
+     (Le design system en pose un — écart assumé.) */
   .hero {
     position: relative;
     min-height: 640px;
-    border-bottom: var(--divider);
     overflow: hidden;
   }
   /* Fond brun + fusion « overlay » : la photographie se réchauffe et se pose
@@ -251,7 +252,14 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     background-color: #6b5238;
     isolation: isolate;
   }
-  .hero-photo :global(img) { mix-blend-mode: overlay; }
+  .hero-photo :global(img) {
+    mix-blend-mode: overlay;
+    /* Un peu d'exposition, puis un zoom ancré au coin supérieur droit :
+       le groupe se recentre dans le cadre et gagne en présence. */
+    filter: brightness(1.09);
+    transform: scale(1.18);
+    transform-origin: 100% 0;
+  }
   .hero-inner {
     padding-left: var(--content-inset);
     padding-right: var(--space-10);

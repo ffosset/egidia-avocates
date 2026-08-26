@@ -25,3 +25,11 @@
     --section-y-sm: var(--space-7);
   }
 }
+
+/* ---- Filets de marge ----
+   Le cabinet veut des filets extérieurs plus présents que le gris translucide
+   du design system (`rgba(122,107,90,.38)`). Surcharge locale : les tokens à la
+   racine restent le miroir exact du projet claude.ai/design. */
+:root {
+  --line-page-rule: #B2A497;
+}

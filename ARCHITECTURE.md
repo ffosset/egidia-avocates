@@ -129,6 +129,9 @@ claude.ai/design. Une resynchronisation ne doit pas les écraser sans demander.
 | Photographie du héros | Photo non traitée | Fond `#6B5238` + `mix-blend-mode: overlay` | La photo se pose dans les tons du cabinet au lieu de trancher avec le papier. |
 | Bouton du héros | Bouton plein (`primary`) | Variante `shadow` : papier, filet, ombre chaude | Demande du cabinet. L'emphase vient de l'ombre, pas d'un aplat. |
 | Chapô du héros | « Cabinet bruxellois en droit… » | « **Egidia est un** cabinet bruxellois en droit… » | Demande du cabinet. À noter : la règle de voix proscrit la troisième personne — ici elle sert d'identification en ouverture, pas de posture. |
+| Cadrage du héros | Photo non retouchée | `brightness(1.09)` + `scale(1.18)`, origine au coin supérieur droit | Recentre le groupe dans le cadre et lui donne de la présence. |
+| Filet sous le héros | `border-bottom` sur la section | Aucun filet | La bande sauge doit enchaîner sans ligne claire. |
+| Filets de marge | `--line-page-rule: rgba(122,107,90,.38)` | `#B2A497` | Filets extérieurs plus présents. Surcharge dans `src/styles/tokens.css`. |
 
 Les trois premiers écarts portent un commentaire à leur point d'appel dans
 `src/pages/index.astro`. Le quatrième s'écarte aussi de
