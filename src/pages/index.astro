@@ -36,14 +36,18 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
           loading="eager"
         />
       </div>
-      <ArcPanel width="min(50%, 820px)">
+      {/* Balayage pleine hauteur, mais long et doux : le défaut du design
+          system (« 40% 100% ») creuse trop et mange la photo. Le rayon
+          horizontal est réduit — la courbe file du haut vers le bas sans
+          amputer l'image. Écart assumé par rapport au défaut. */}
+      <ArcPanel width="min(50%, 820px)" sweep="15% 100%">
         <div class="hero-inner">
           <h1>Chaque personne a droit à être écoutée, conseillée et défendue</h1>
           <p>
-            Cabinet bruxellois en droit des étrangers, de la famille, de l'aide sociale et de la
-            jeunesse. Une relation fondée sur l'écoute et la transparence.
+            Egidia est un cabinet bruxellois en droit des étrangers, de la famille, de l'aide
+            sociale et de la jeunesse. Une relation fondée sur l'écoute et la transparence.
           </p>
-          <div class="cta"><Button href="#matieres">Voir nos domaines</Button></div>
+          <div class="cta"><Button href="#matieres" variant="shadow">Voir nos domaines</Button></div>
         </div>
       </ArcPanel>
     </section>
@@ -235,7 +239,19 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     border-bottom: var(--divider);
     overflow: hidden;
   }
-  .hero-photo { position: absolute; top: 0; bottom: 0; right: 0; left: 38%; }
+  /* Fond brun + fusion « overlay » : la photographie se réchauffe et se pose
+     dans les tons du cabinet au lieu de trancher avec le papier.
+     `isolation` garde la fusion à l'intérieur du cadre. */
+  .hero-photo {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 38%;
+    background-color: #6b5238;
+    isolation: isolate;
+  }
+  .hero-photo :global(img) { mix-blend-mode: overlay; }
   .hero-inner {
     padding-left: var(--content-inset);
     padding-right: var(--space-10);

@@ -118,6 +118,22 @@ acquiert un.
   encore écrites.
 - Le domaine dans `astro.config.mjs` (`site`) est à confirmer.
 
+## Écarts assumés par rapport au design system
+
+Décisions du cabinet qui s'écartent du kit tel qu'il est publié sur
+claude.ai/design. Une resynchronisation ne doit pas les écraser sans demander.
+
+| Écart | Le design system dit | Le site fait | Pourquoi |
+| --- | --- | --- | --- |
+| Arc du héros | `ArcPanel` par défaut `40% 100%` | `sweep="15% 100%"` | Le défaut creuse trop et ampute la photographie. Le balayage reste pleine hauteur, mais le rayon horizontal est réduit. |
+| Photographie du héros | Photo non traitée | Fond `#6B5238` + `mix-blend-mode: overlay` | La photo se pose dans les tons du cabinet au lieu de trancher avec le papier. |
+| Bouton du héros | Bouton plein (`primary`) | Variante `shadow` : papier, filet, ombre chaude | Demande du cabinet. L'emphase vient de l'ombre, pas d'un aplat. |
+| Chapô du héros | « Cabinet bruxellois en droit… » | « **Egidia est un** cabinet bruxellois en droit… » | Demande du cabinet. À noter : la règle de voix proscrit la troisième personne — ici elle sert d'identification en ouverture, pas de posture. |
+
+Les trois premiers écarts portent un commentaire à leur point d'appel dans
+`src/pages/index.astro`. Le quatrième s'écarte aussi de
+`brand/contenu-site-web.txt`, qui reste la source du reste de la copie.
+
 ## Les règles à ne pas casser
 
 **Ce document fait autorité.** Les règles vivaient dans `readme.md`, redevenu un

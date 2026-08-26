@@ -4,7 +4,7 @@
  * Libellés à l'infinitif, jamais « Cliquez ici ».
  */
 interface Props {
-  variant?: 'primary' | 'secondary' | 'accent' | 'quiet';
+  variant?: 'primary' | 'secondary' | 'accent' | 'quiet' | 'shadow';
   size?: 'lg' | 'md';
   icon?: string;
   iconPosition?: 'left' | 'right';
@@ -91,6 +91,22 @@ const iconSize = size === 'lg' ? 22 : 20;
   .v-accent:hover {
     background: var(--btn-accent-bg-hover);
     border-color: var(--btn-accent-bg-hover);
+  }
+
+  /* Bouton d'ombre : du papier posé sur la page. L'emphase vient de l'ombre
+     chaude, pas d'un aplat de couleur. Au survol il s'inverse comme tout cadre
+     cliquable du système — l'ombre ne grossit pas. */
+  .v-shadow {
+    background: var(--surface-card);
+    color: var(--text-body);
+    border: 1px solid var(--line-hairline);
+    box-shadow: var(--shadow-raised);
+  }
+  .v-shadow:hover,
+  .v-shadow:focus-visible {
+    background: var(--hover-invert-bg);
+    border-color: var(--hover-invert-bg);
+    color: var(--hover-invert-fg);
   }
 
   .v-quiet {
