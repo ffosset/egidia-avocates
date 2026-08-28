@@ -24,25 +24,30 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
 ---
 <Base title={m.titre} description={m.resume}>
   <main>
-    <section class="hero">
-      <Page>
-        <Breadcrumb items={[
-          { label: 'Accueil', href: '/' },
-          { label: 'Matières', href: '/#matieres' },
-          { label: m.titre },
-        ]} />
-        <h1>{m.titre}</h1>
-        <p class="lead">{m.intro}</p>
-      </Page>
-    </section>
-
+    {/* PAS de bande de héros : la page de matière est le MIROIR de la page
+        d'avocate. Là-bas, la photographie ouvre la colonne de gauche et le
+        texte descend à droite ; ici l'aplat ouvre la colonne de droite et le
+        texte descend à gauche. Une bande aurait imposé sa hauteur au titre et
+        coupé l'aplat en deux ; ici les deux colonnes coulent. */}
     <Page>
       <div class="split">
-        <div>
-          <Eyebrow>Ce que nous traitons</Eyebrow>
-          <div class="spaced"><RuledList items={m.traite} /></div>
+        <div class="corps">
+          <div class="fil">
+            <Breadcrumb items={[
+              { label: 'Accueil', href: '/' },
+              { label: 'Services', href: '/#matieres' },
+              { label: m.titre },
+            ]} />
+          </div>
+          <h1>{m.titre}</h1>
+          <p class="lead">{m.intro}</p>
 
-          <div class="far">
+          <div class="block">
+            <Eyebrow>Ce que nous traitons</Eyebrow>
+            <div class="spaced"><RuledList items={m.traite} /></div>
+          </div>
+
+          <div class="block far">
             <Eyebrow>Avocates spécialisées</Eyebrow>
             <div class="spaced">
               <RuledGrid min={200}>
@@ -63,6 +68,7 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
         </div>
 
         <aside>
+          <div class="aplat" aria-hidden="true"></div>
           {m.id === 'etrangers' && (
             <Callout tone="attention" title="Les délais de recours sont très courts">
               Un délai manqué se rattrape difficilement. Consultez-nous dès la réception d'une décision.
@@ -79,7 +85,7 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
             </div>
           </Card>
           <Card padding="var(--space-6)">
-            <Eyebrow>Autres matières</Eyebrow>
+            <Eyebrow>Autres services</Eyebrow>
             <div class="others">
               {autres.map((x) => (
                 <a href={withBase(`/matieres/${x.id}`)} class="eg-invert">
@@ -96,26 +102,67 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
 </Base>
 
 <style>
-  .hero {
-    background: var(--surface-margin);
-    border-bottom: var(--divider);
-    padding: var(--space-6) 0 var(--space-9);
+  /* ---- L'APLAT ----
+     L'arc du bouclier, exactement celui du portrait de la page d'avocate
+     (`sweep: 78% 58%`), retourné : il ouvre la colonne de DROITE, donc son arc
+     tombe en bas à GAUCHE. Une seule différence, et elle est de nature : ce
+     n'est pas une photographie mais une couleur pleine — et la loi des marges
+     ne laisse franchir les filets qu'à la photographie. L'aplat s'arrête donc
+     PILE sur le filet : son débord latéral vaut UNE GOUTTIÈRE, exactement ce
+     qui sépare le contenu du filet (--content-inset = --page-margin + --gutter).
+     À droite il vient donc mourir sur le filet ; à gauche, une fois les colonnes
+     empilées, il meurt sur l'autre. Il ne peut pas les franchir.
+
+     Les cartes flottent sur lui au lieu de le remplir.
+
+     Sa hauteur est celle du portrait, mais bornée par la colonne : sur une
+     matière sans liens l'aside est court, et un aplat de 78vh pendrait dans le
+     vide sous la dernière carte. `min()` le fait épouser le plus petit des
+     deux. */
+  aside {
+    --debord: var(--space-6);
+    position: relative;
+    /* Le débord du HAUT est un padding, pas un décalage négatif : l'aplat part
+       du bord supérieur de la colonne — donc de l'en-tête — et ce sont les
+       cartes qui descendent. Un `top` négatif aurait glissé l'aplat SOUS
+       l'en-tête, qui l'aurait mangé. */
+    padding-top: var(--debord);
   }
+  .aplat {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: calc(-1 * var(--gutter));
+    right: calc(-1 * var(--gutter));
+    height: min(clamp(440px, 78vh, 820px), calc(100% + var(--debord)));
+    background: var(--brun-moyen);
+    border-bottom-left-radius: 78% 58%;
+  }
+  /* Une fois les colonnes empilées, l'aplat n'est plus une colonne debout : il
+     épouse simplement la pile de cartes, et garde son arc. */
+  @media (--lap) {
+    .aplat { height: calc(100% + var(--debord)); }
+  }
+
+  /* Le fil d'Ariane n'est pas l'étiquette du titre (ce serait --stack-bind) :
+     c'est un bloc distinct qui le précède. */
+  .fil { margin-bottom: var(--stack); }
+
   h1 {
-    margin-top: var(--space-5);
     font-family: var(--font-display);
     font-size: var(--fs-h1);
     font-weight: var(--fw-bold);
     line-height: 1.12;
-    max-width: 20ch;
   }
   .lead {
-    margin-top: var(--space-5);
+    margin-top: var(--stack-tight);
     font-size: var(--fs-lead);
     line-height: 1.5;
     color: var(--brun-moyen);
-    max-width: 52ch;
   }
+  /* Le titre et son chapô cassent sur la même verticale (voir RuledCell). */
+  h1, .lead { max-width: 33rem; }
+
   /* Deux colonnes proportionnelles tant qu'elles tiennent, puis empilées.
      `flex-wrap` fait deux choses qu'une grille à points de rupture ne fait pas :
      l'asymétrie se DÉTEND vers l'égalité à mesure que la place manque, puis le
@@ -129,14 +176,21 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
   .split {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-start;
     gap: var(--space-9);
-    padding: var(--space-9) 0 0;
+    padding: 0 0 var(--section-y);
   }
-  .split > div   { flex: 7 1 34ch; }
-  .split > aside { flex: 5 1 26ch; }
+  /* L'aplat touche l'en-tête ; seul le TEXTE descend. */
+  .split > .corps { flex: 7 1 34ch; padding-top: var(--section-y); }
+  .split > aside  { flex: 5 1 26ch; }
+  @media (--lap) {
+    .split > .corps { padding-top: var(--section-y-sm); }
+  }
+
+  aside { display: grid; gap: var(--space-5); align-content: start; }
+  .block { margin-top: var(--stack-loose); }
   .spaced { margin-top: var(--space-5); }
   .far { margin-top: var(--space-9); }
-  aside { display: grid; gap: var(--space-5); align-content: start; }
   .tight { margin-top: var(--stack-tight); }
   .empty { margin: 0; font-size: 16px; color: var(--text-label); }
 

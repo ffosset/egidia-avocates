@@ -12,17 +12,13 @@ import ArcImage from '../../components/ArcImage.astro';
 import LinkList from '../../components/LinkList.astro';
 import ContactBand from '../../components/ContactBand.astro';
 import { AVOCATES } from '../../data/avocates.js';
-import { MATIERES, matieresDe } from '../../data/matieres.js';
+import { MATIERES } from '../../data/matieres.js';
 
 export function getStaticPaths() {
   return AVOCATES.map((a) => ({ params: { slug: a.slug }, props: { a } }));
 }
 
 const { a } = Astro.props;
-const duCabinet = matieresDe(a.nom);
-// Certaines avocates pratiquent au-delà des cinq matières du cabinet : ces
-// mots-clés restent des étiquettes non cliquables.
-const horsCabinet = a.motsCles.length > duCabinet.length;
 const telHref = a.tel ? `tel:+32${a.tel.replace(/\D/g, '').slice(1)}` : null;
 const autres = AVOCATES.filter((x) => x.slug !== a.slug);
 ---
@@ -31,28 +27,22 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
   description={`${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` depuis ${a.depuis}` : ''} — ${a.motsCles.join(', ')}.`}
 >
   <main>
-    <section class="crumbs">
-      <Page>
-        <Breadcrumb items={[
-          { label: 'Accueil', href: '/' },
-          { label: 'Nos avocates', href: '/#equipe' },
-          { label: a.nom },
-        ]} />
-      </Page>
-    </section>
-
+    {/* PAS de bande de héros : la photographie ouvre simplement la colonne de
+        gauche, et la colonne de droite s'ouvre sur le fil d'Ariane et le titre
+        puis enchaîne sans rupture. Une bande aurait imposé sa hauteur au texte
+        et creusé un vide sous le titre ; ici les deux colonnes coulent. */}
     <Page>
       <div class="split">
         <div class="side">
-          <ArcImage src={a.photo} alt={a.nom} ratio="3 / 4" corner="bottom-left" loading="eager" />
+          <div class="portrait">
+            <ArcImage src={a.photo} alt={a.nom} corner="bottom-right" sweep="78% 58%" loading="eager" />
+          </div>
           <Card padding="var(--space-6)">
             <Eyebrow>Contact</Eyebrow>
             <div class="contact">
               <a href={`mailto:${a.email}`} class="line break"><Icon name="mail" size={22} />{a.email}</a>
-              {telHref ? (
+              {telHref && (
                 <a href={telHref} class="line ruled"><Icon name="phone" size={22} />{a.tel}</a>
-              ) : (
-                <span class="line ruled pending"><Icon name="phone" size={22} />Ligne directe à venir</span>
               )}
               {a.linkedin && (
                 <a href={a.linkedin} class="line ruled" rel="noopener"><Icon name="linkedin" size={22} />Profil LinkedIn</a>
@@ -63,7 +53,6 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
             <Eyebrow>En bref</Eyebrow>
             <div class="rows">
               {a.depuis && <div class="row"><span class="k">Au barreau depuis</span><span class="v">{a.depuis}</span></div>}
-              <div class="row"><span class="k">Langues</span><span class="v">{a.langues.join(', ')}</span></div>
               {a.cabinets.passe && <div class="row"><span class="k">Auparavant</span><span class="v">{a.cabinets.passe}</span></div>}
               <div class="row"><span class="k">TVA</span><span class="v mono">{a.tva}</span></div>
             </div>
@@ -71,11 +60,17 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
         </div>
 
         <div>
+          <div class="fil">
+            <Breadcrumb items={[
+              { label: 'Accueil', href: '/' },
+              { label: 'Nos avocates', href: '/#equipe' },
+              { label: a.nom },
+            ]} />
+          </div>
           <h1>{a.nom}</h1>
-          <p class="role">Avocate au barreau de Bruxelles{a.depuis ? ` depuis ${a.depuis}` : ''}</p>
 
           <div class="block">
-            <Eyebrow>Matières préférentielles</Eyebrow>
+            <Eyebrow>Services préférentiels</Eyebrow>
             <div class="chips">
               {a.motsCles.map((t) => {
                 const m = MATIERES.find((x) => x.titre.toLowerCase() === t.toLowerCase());
@@ -84,11 +79,13 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
                   : <Tag>{t}</Tag>;
               })}
             </div>
-            {horsCabinet && (
-              <p class="hint">
-                Les matières sans lien ne font pas partie des cinq matières préférentielles du cabinet.
-              </p>
-            )}
+          </div>
+
+          <div class="block">
+            <Eyebrow>Langues</Eyebrow>
+            <div class="chips">
+              {a.langues.map((l) => <Tag>{l}</Tag>)}
+            </div>
           </div>
 
           <div class="block prose">
@@ -132,7 +129,29 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
 </Base>
 
 <style>
-  .crumbs { border-bottom: var(--divider); padding: var(--space-6) 0; }
+  /* ---- LE PORTRAIT ----
+     Debout, en tête de la colonne de gauche, et il part du bord de la FENÊTRE :
+     il franchit le filet de marge — seule chose du site qui en ait le droit.
+     Le débord vaut exactement la distance qui sépare le bord de la fenêtre du
+     début du contenu, centrage au-delà de --page-max compris ; la photographie
+     ne peut donc pas dériver du cadre.
+     Son arc est plus profond que l'arc de vignette (42%/52%) : il balaye toute
+     la hauteur d'un portrait debout, et non le coin d'une image. */
+  .portrait {
+    --bleed: calc(max(0px, (100vw - var(--page-max)) / 2) + var(--content-inset));
+    margin-left: calc(-1 * var(--bleed));
+    width: calc(100% + var(--bleed));
+    height: clamp(440px, 78vh, 820px);
+  }
+  /* Une fois les colonnes empilées, le portrait n'est plus une colonne debout
+     mais un bandeau : il reprend la hauteur des photos de bas de page. */
+  @media (--lap) {
+    .portrait { height: 380px; }
+  }
+  /* Le fil d'Ariane n'est pas l'étiquette du titre (ce serait --stack-bind) :
+     c'est un bloc distinct qui le précède. */
+  .fil { margin-bottom: var(--stack); }
+
   /* Deux colonnes proportionnelles tant qu'elles tiennent, puis empilées.
      `flex-wrap` fait deux choses qu'une grille à points de rupture ne fait pas :
      l'asymétrie se DÉTEND vers l'égalité à mesure que la place manque, puis le
@@ -148,22 +167,22 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
     flex-wrap: wrap;
     align-items: flex-start;
     gap: var(--space-9);
-    padding: var(--space-8) 0 0;
+    padding: 0 0 var(--section-y);
   }
   .split > .side          { flex: 4 1 22ch; }
-  .split > div:not(.side) { flex: 8 1 40ch; }
-  /* Une fois empilée, la colonne latérale ferme la page : il ne reste rien à
-     défiler sous elle, le `sticky` devient sans effet. Pas de @media à écrire. */
-  .side { display: grid; gap: var(--space-5); position: sticky; top: 24px; }
+  /* Le portrait touche l'en-tête ; seul le TEXTE descend. */
+  .split > div:not(.side) { flex: 8 1 40ch; padding-top: var(--section-y); }
+  @media (--lap) {
+    .split > div:not(.side) { padding-top: var(--section-y-sm); }
+  }
+  .side { display: grid; gap: var(--space-5); }
 
   h1 { font-family: var(--font-display); font-size: var(--fs-h1); font-weight: var(--fw-bold); line-height: 1.12; }
-  .role { margin: var(--stack-tight) 0 0; font-size: var(--fs-lead); line-height: 1.5; color: var(--brun-moyen); }
 
   .contact { margin-top: var(--stack-tight); display: grid; }
   .line { display: flex; gap: var(--space-3); align-items: center; font-size: var(--fs-body-sm); }
   .break { padding-bottom: var(--space-4); word-break: break-all; }
   .ruled { padding: var(--space-4) 0; border-top: var(--divider); }
-  .pending { color: var(--text-label); font-style: italic; }
 
   .rows { margin-top: var(--space-2); }
   .row {
@@ -179,10 +198,10 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
   .mono { font-family: var(--font-mono); font-size: 16px; }
 
   .block { margin-top: var(--space-8); }
-  .block:first-of-type { margin-top: var(--space-7); }
+  /* Le titre et le premier bloc : le pas « bloc → bloc » de la pile. */
+  h1 + .block { margin-top: var(--stack-loose); }
   .prose { max-width: var(--measure-prose); }
   .chips { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--stack-tight); }
-  .hint { margin: var(--stack-tight) 0 0; font-size: 16px; color: var(--text-label); }
   .spaced { margin-top: var(--space-5); }
   .spaced p { font-size: var(--fs-body); line-height: 1.6; color: var(--brun-moyen); }
   .spaced p.first { font-size: var(--fs-lead); line-height: 1.5; color: var(--text-body); }
@@ -209,6 +228,8 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
     text-decoration: none;
     color: var(--text-body);
     background: var(--surface-card);
+    /* Le fond qui reste visible pendant le balayage (voir `survol.css`). */
+    --survol-lit: var(--surface-card);
   }
 
 </style>

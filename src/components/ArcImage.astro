@@ -9,6 +9,10 @@ interface Props {
   legend?: string;
   /** object-position de la photo, ex. « 52% 42% » pour recadrer un groupe. */
   objectPosition?: string;
+  /** Rayon elliptique de l'arc, « horizontal vertical » — comme `ArcPanel`.
+      Un arc qui balaye toute la hauteur d'un héros a besoin d'un balayage plus
+      profond que celui qui adoucit le coin d'une vignette. */
+  sweep?: string;
   class?: string;
   loading?: 'lazy' | 'eager';
 }
@@ -19,10 +23,11 @@ const {
   ratio,
   legend = 'Photographie à fournir',
   objectPosition = 'center',
+  sweep = '42% 52%',
   class: klass,
   loading = 'lazy',
 } = Astro.props;
-const style = ratio ? `aspect-ratio:${ratio}` : 'height:100%';
+const style = [ratio ? `aspect-ratio:${ratio}` : 'height:100%', `--sweep:${sweep}`].join(';');
 ---
 {src ? (
   <div class:list={['arc', `c-${corner}`, klass]} style={style}>
@@ -38,10 +43,10 @@ const style = ratio ? `aspect-ratio:${ratio}` : 'height:100%';
   .arc { overflow: hidden; }
   .arc img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  .c-bottom-left  { border-bottom-left-radius: 42% 52%; }
-  .c-bottom-right { border-bottom-right-radius: 42% 52%; }
-  .c-top-left     { border-top-left-radius: 42% 52%; }
-  .c-top-right    { border-top-right-radius: 42% 52%; }
+  .c-bottom-left  { border-bottom-left-radius: var(--sweep); }
+  .c-bottom-right { border-bottom-right-radius: var(--sweep); }
+  .c-top-left     { border-top-left-radius: var(--sweep); }
+  .c-top-right    { border-top-right-radius: var(--sweep); }
   .c-shield       { border-radius: 0 0 46% 46% / 0 0 34% 34%; }
 
   .placeholder {
