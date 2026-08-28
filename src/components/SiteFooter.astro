@@ -16,7 +16,7 @@ import { withBase } from '../lib/base.js';
         </div>
       </div>
       <div class="col">
-        <Eyebrow class="pale">Matières</Eyebrow>
+        <Eyebrow class="pale">Services</Eyebrow>
         {MATIERES.map((m) => <a href={withBase(`/matieres/${m.id}`)}>{m.titre}</a>)}
       </div>
       <div class="col">
@@ -32,14 +32,21 @@ import { withBase } from '../lib/base.js';
         <span class="small">{CONTACT.metro} · {CONTACT.tram}</span>
       </div>
     </div>
-    <div class="legal">
-      <span>© 2026 Egidia · Ordre français des avocats du barreau de Bruxelles</span>
-      <span class="legal-links">
-        <a href={withBase("/mentions-legales")}>Mentions légales</a>
-        <a href={withBase("/vie-privee")}>Vie privée</a>
-      </span>
-    </div>
   </Page>
+  <!-- Le filet des mentions traverse toute la fenêtre, comme ceux de
+       l'en-tête : il porte donc sur une bande pleine largeur, et c'est le
+       `Page` intérieur qui ramène le texte dans la loi des marges. -->
+  <div class="legal-band">
+    <Page>
+      <div class="legal">
+        <span>© 2026 Egidia · <a class="signature" href="https://fosset.co" rel="noopener">Made with care by fosset.co</a></span>
+        <span class="legal-links">
+          <a href={withBase("/mentions-legales")}>Mentions légales</a>
+          <a href={withBase("/vie-privee")}>Vie privée</a>
+        </span>
+      </div>
+    </Page>
+  </div>
 </footer>
 
 <style>
@@ -75,10 +82,12 @@ import { withBase } from '../lib/base.js';
   .small { font-size: 16px; color: var(--sable); }
   .pale { color: var(--sauge-clair); }
 
-  .legal {
+  .legal-band {
     margin-top: var(--space-8);
     padding-top: var(--space-5);
     border-top: 1px solid rgba(250, 247, 244, 0.18);
+  }
+  .legal {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -86,6 +95,8 @@ import { withBase } from '../lib/base.js';
     font-size: 16px;
     color: var(--sable);
   }
+  .signature { color: var(--sauge-clair); text-decoration: none; }
+  .signature:hover { text-decoration: underline; text-decoration-thickness: 2px; }
   .legal-links { display: flex; gap: 24px; }
   .legal-links a { color: var(--sauge-clair); text-decoration: none; }
 
