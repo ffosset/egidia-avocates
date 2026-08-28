@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/base.js';
 /**
  * Le survol par inversion est en CSS pur : aucun JS.
  * Libellés à l'infinitif, jamais « Cliquez ici ».
@@ -27,11 +28,12 @@ const {
 } = Astro.props;
 
 const Tag = href ? 'a' : 'button';
+const hrefOut = withBase(href);
 const iconSize = size === 'lg' ? 22 : 20;
 ---
 
 <Tag
-  href={href}
+  href={hrefOut}
   disabled={!href && disabled ? true : undefined}
   aria-disabled={disabled ? 'true' : undefined}
   class:list={['btn', `v-${variant}`, `s-${size}`, { full: fullWidth }, klass]}

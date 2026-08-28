@@ -3,26 +3,27 @@ import Page from './Page.astro';
 import Eyebrow from './Eyebrow.astro';
 import { CONTACT } from '../data/site.js';
 import { MATIERES } from '../data/matieres.js';
+import { withBase } from '../lib/base.js';
 ---
 <footer>
   <Page>
     <div class="cols">
       <div class="col">
         <!-- Le blason est pour surfaces claires : sur brun profond il va dans une puce crème. -->
-        <span class="chip"><img src="/logo.svg" alt="Egidia" width="72" height="84" /></span>
+        <span class="chip"><img src={withBase("/logo.svg")} alt="Egidia" width="72" height="84" /></span>
         <div class="blurb">
           Cabinet bruxellois en droit des étrangers, de la famille, de l'aide sociale et de la jeunesse.
         </div>
       </div>
       <div class="col">
         <Eyebrow class="pale">Matières</Eyebrow>
-        {MATIERES.map((m) => <a href={`/matieres/${m.id}`}>{m.titre}</a>)}
+        {MATIERES.map((m) => <a href={withBase(`/matieres/${m.id}`)}>{m.titre}</a>)}
       </div>
       <div class="col">
         <Eyebrow class="pale">Le cabinet</Eyebrow>
-        <a href="/#equipe">Nos avocates</a>
-        <a href="/aide-juridique">Documents pour l'aide juridique</a>
-        <a href="/#honoraires">Honoraires</a>
+        <a href={withBase("/#equipe")}>Nos avocates</a>
+        <a href={withBase("/aide-juridique")}>Documents pour l'aide juridique</a>
+        <a href={withBase("/#honoraires")}>Honoraires</a>
       </div>
       <div class="col">
         <Eyebrow class="pale">Contact</Eyebrow>
@@ -34,8 +35,8 @@ import { MATIERES } from '../data/matieres.js';
     <div class="legal">
       <span>© 2026 Egidia · Ordre français des avocats du barreau de Bruxelles</span>
       <span class="legal-links">
-        <a href="/mentions-legales">Mentions légales</a>
-        <a href="/vie-privee">Vie privée</a>
+        <a href={withBase("/mentions-legales")}>Mentions légales</a>
+        <a href={withBase("/vie-privee")}>Vie privée</a>
       </span>
     </div>
   </Page>

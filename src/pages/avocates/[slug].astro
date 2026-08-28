@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../../lib/base.js';
 import Base from '../../layouts/Base.astro';
 import Page from '../../components/Page.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
@@ -119,7 +120,7 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
             <Eyebrow>Les autres avocates</Eyebrow>
             <div class="chips">
               {autres.map((x) => (
-                <a href={`/avocates/${x.slug}`} class="peer eg-invert">{x.nom}</a>
+                <a href={withBase(`/avocates/${x.slug}`)} class="peer eg-invert">{x.nom}</a>
               ))}
             </div>
           </div>

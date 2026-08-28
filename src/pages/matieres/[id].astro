@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../../lib/base.js';
 import Base from '../../layouts/Base.astro';
 import Page from '../../components/Page.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
@@ -81,7 +82,7 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
             <Eyebrow>Autres matières</Eyebrow>
             <div class="others">
               {autres.map((x) => (
-                <a href={`/matieres/${x.id}`} class="eg-invert">
+                <a href={withBase(`/matieres/${x.id}`)} class="eg-invert">
                   {x.titre}<span class="eg-accent chev"><Icon name="arrow-right" size={20} /></span>
                 </a>
               ))}

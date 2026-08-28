@@ -27,7 +27,14 @@ const injectBreakpoints = {
 };
 
 export default defineConfig({
-  site: 'https://www.egidia-avocates.be', // TODO: confirmer le domaine définitif
+  /* Publié en *project page* GitHub : le site vit sous un sous-chemin, pas à la
+     racine du domaine. `base` doit donc être posé — et tout lien écrit à la main
+     doit passer par `withBase()` (src/lib/base.js), qu'Astro n'applique pas seul.
+     Le jour où le cabinet confirme son domaine : remettre `site` à
+     https://www.egidia-avocates.be et supprimer `base`. `withBase()` redevient
+     alors une fonction identité, sans autre changement à faire. */
+  site: 'https://ffosset.github.io',
+  base: '/egidia-avocates',
   publicDir: './assets',
   build: { format: 'directory' },
   // Astro ne lit pas PORT de lui-même : sans cette ligne, deux sessions de

@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/base.js';
 /** Cellule-portrait : photo pleine cellule, nom dans un bandeau sauge au pied. */
 import Icon from './Icon.astro';
 import ArcImage from './ArcImage.astro';
@@ -16,7 +17,7 @@ const [prenom, ...reste] = String(name).split(' ');
 const nom = reste.join(' ');
 const Tag = href ? 'a' : 'div';
 ---
-<Tag href={href} class:list={['person', edge && `e-${edge}`, { clickable: !!href }]}>
+<Tag href={withBase(href)} class:list={['person', edge && `e-${edge}`, { clickable: !!href }]}>
   <span class="media">
     <ArcImage src={photo} alt={name} ratio={ratio} corner="none" legend="Portrait à fournir" />
     {meta && <span class="meta">{meta}</span>}

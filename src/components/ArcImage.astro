@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/base.js';
 /** L'arc du bouclier — le seul arrondi du système, réservé à la photographie. */
 interface Props {
   src?: string;
@@ -25,7 +26,7 @@ const style = ratio ? `aspect-ratio:${ratio}` : 'height:100%';
 ---
 {src ? (
   <div class:list={['arc', `c-${corner}`, klass]} style={style}>
-    <img src={src} alt={alt} loading={loading} decoding="async" style={`object-position:${objectPosition}`} />
+    <img src={withBase(src)} alt={alt} loading={loading} decoding="async" style={`object-position:${objectPosition}`} />
   </div>
 ) : (
   <div class:list={['arc', `c-${corner}`, 'placeholder', klass]} style={style} role="img" aria-label={legend}>

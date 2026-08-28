@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/base.js';
 import Base from '../layouts/Base.astro';
 import Page from '../components/Page.astro';
 import Eyebrow from '../components/Eyebrow.astro';
@@ -128,7 +129,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
         {/* La rangée ne tombe pas juste : on comble avec une vraie phrase, jamais un vide. */}
         <RuledCell align="center" minHeight={200}>
           <p class="filler eg-title">Toutes travaillent dans le cadre de l'aide juridique.</p>
-          <a href="/aide-juridique" class="filler-link eg-accent">
+          <a href={withBase("/aide-juridique")} class="filler-link eg-accent">
             Documents à apporter <Icon name="arrow-right" size={20} />
           </a>
         </RuledCell>

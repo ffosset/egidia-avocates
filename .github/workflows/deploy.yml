@@ -1,0 +1,56 @@
+# Publication sur GitHub Pages.
+#
+# Ce dépôt est un site Astro, pas un site Jekyll. Le workflow par défaut de
+# Pages (« Deploy from a branch ») lance Jekyll sur la racine du dépôt : il lit
+# les `---` d'ouverture des composants `.astro` comme de l'en-tête YAML, y
+# trouve les `import` et échoue. D'où le build rouge à chaque poussée.
+#
+# On construit donc nous-mêmes et on publie `dist/`.
+#
+# ATTENTION — pour que ce workflow serve à quelque chose, la source de Pages
+# doit être passée sur « GitHub Actions » dans Settings > Pages. Tant qu'elle
+# reste sur « Deploy from a branch », c'est le job Jekyll qui publie, et il
+# continuera d'échouer.
+
+name: Déployer sur GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Une seule publication à la fois ; on ne coupe pas celle qui est en cours.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

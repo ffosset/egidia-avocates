@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/base.js';
 /** Mot-symbole à gauche, navigation en cellules filetées à droite.
     Aucun bouton d'action — l'en-tête ne fait que naviguer.
 
@@ -20,10 +21,10 @@ import Icon from './Icon.astro';
 ---
 <header>
   <div class="bar">
-    <a href="/" class="wordmark" aria-label="Egidia — accueil">EGIDIA</a>
+    <a href={withBase("/")} class="wordmark" aria-label="Egidia — accueil">EGIDIA</a>
 
     <nav class="cells" aria-label="Navigation principale">
-      {NAV.map((l) => <a href={l.href}>{l.label}</a>)}
+      {NAV.map((l) => <a href={withBase(l.href)}>{l.label}</a>)}
     </nav>
 
     <details class="menu" data-menu>
@@ -33,7 +34,7 @@ import Icon from './Icon.astro';
         <span>Menu</span>
       </summary>
       <nav class="drawer" aria-label="Navigation principale">
-        {NAV.map((l) => <a href={l.href}>{l.label}</a>)}
+        {NAV.map((l) => <a href={withBase(l.href)}>{l.label}</a>)}
       </nav>
     </details>
   </div>

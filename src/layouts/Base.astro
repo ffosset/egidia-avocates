@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/base.js';
 import '../styles/tokens.css';
 import '../styles/pile.css';
 import PageRules from '../components/PageRules.astro';
@@ -25,12 +26,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <link rel="icon" href={withBase("/logo.svg")} type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_BE" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL('/photos/equipe.jpg', Astro.site)} />
+    <meta property="og:image" content={new URL(withBase('/photos/equipe.jpg'), Astro.site)} />
   </head>
   <body>
     <a href="#contenu" class="skip">Aller au contenu</a>
