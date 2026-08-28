@@ -111,12 +111,25 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
     color: var(--brun-moyen);
     max-width: 50ch;
   }
+  /* Deux colonnes proportionnelles tant qu'elles tiennent, puis empilées.
+     `flex-wrap` fait deux choses qu'une grille à points de rupture ne fait pas :
+     l'asymétrie se DÉTEND vers l'égalité à mesure que la place manque, puis le
+     bloc passe dessous. La bascule est décidée par la mesure du texte (en ch),
+     pas par un pixel deviné — donc pas de @media.
+
+     Pas de `min-width: 0` sur les colonnes : ce serait les autoriser à devenir
+     plus étroites que leur propre contenu, et les cartes déborderaient au lieu
+     de passer à la ligne. Le `min-width: auto` par défaut est ce qui déclenche
+     le retour à la ligne au bon moment. */
   .split {
-    display: grid;
-    grid-template-columns: 8fr 4fr;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
     gap: var(--space-9);
     padding: var(--space-9) 0 0;
   }
+  .split > div   { flex: 8 1 40ch; }
+  .split > aside { flex: 4 1 24ch; }
   .step { display: flex; align-items: baseline; gap: var(--space-4); }
   .step.far { margin-top: var(--space-10); }
   .letter { font-family: var(--font-display); font-size: 40px; font-weight: var(--fw-bold); color: var(--caramel); }
@@ -151,8 +164,4 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
   .note { margin-top: var(--stack-tight); margin-bottom: 0; font-size: var(--fs-body-sm); color: var(--text-muted); line-height: 1.6; }
   .tight { margin-top: var(--stack-tight); }
 
-  @media (max-width: 1000px) {
-    .split { grid-template-columns: 1fr; gap: var(--space-7); }
-    aside { position: static; }
-  }
 </style>

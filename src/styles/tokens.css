@@ -10,20 +10,35 @@
 @import '../../tokens/motion.css';
 @import '../../tokens/base.css';
 
-/* ---- Adaptation mobile de la loi des marges ----
-   La loi ne change pas : les filets restent à --page-margin, le texte commence
-   toujours à --content-inset, et il ne touche jamais un filet. Seules les deux
-   valeurs se resserrent, sinon 80px d'inset dévorent un écran de 375px.
+/* ---- Le cadre est fluide, la rythmique ne l'est pas ----
+   La loi des marges ne change pas : les filets restent à --page-margin, le
+   texte commence toujours à --content-inset, et il ne touche jamais un filet.
+   Ce qui change, c'est que ces valeurs ne sautent plus à 700px — elles glissent.
+
+   Chaque clamp retombe EXACTEMENT sur les deux valeurs d'avant (mobile en bas,
+   bureau en haut) et interpole entre les deux. L'ancien palier à 700px servait
+   surtout à éviter que 80px d'inset ne dévorent un téléphone ; il dévorait
+   aussi une tablette, qui n'avait droit à rien.
+
+       viewport   inset avant   inset après
+        375px        36px          36px
+        768px        80px          41px
+       1000px        80px          54px
+      >1500px        80px          80px
+
+   On ne rend fluide que le CADRE — marges, gouttière, respiration des sections,
+   padding de cellule. Les trois pas de la pile verticale (--stack-tight,
+   --stack, --stack-loose) restent sur l'échelle fixe de 8px : ce sont eux que
+   la loi nomme, et c'est eux qu'on lit comme un rythme à l'intérieur d'un bloc.
+
    (Les tokens à la racine sont le miroir du design system : on les surcharge
    ici, on ne les édite pas là-bas.) */
-@media (max-width: 700px) {
-  :root {
-    --page-margin: 20px;
-    --gutter: 16px;   /* => --content-inset = 36px */
-    --cell-pad: var(--space-5);
-    --section-y: var(--space-8);
-    --section-y-sm: var(--space-7);
-  }
+:root {
+  --page-margin:  clamp(20px, 3.2vw, 48px);
+  --gutter:       clamp(16px, 2.2vw, 32px);  /* => --content-inset = 36px … 80px */
+  --cell-pad:     clamp(24px, 3vw,   48px);
+  --section-y:    clamp(64px, 8vw,  128px);
+  --section-y-sm: clamp(48px, 5vw,   64px);
 }
 
 /* ---- Filets de marge ----

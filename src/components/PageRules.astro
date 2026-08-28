@@ -1,21 +1,33 @@
 ---
-/** Les deux filets de marge fixes, sur toute la hauteur du site. */
+/** Les deux filets de marge fixes, sur toute la hauteur du site.
+    Ils suivent le CADRE DU CONTENU, pas le bord de la fenêtre : au-delà de
+    --page-max le contenu se centre, et les filets se centrent avec lui. En
+    dessous, `max(0px, …)` vaut 0 et le calcul se réduit à --page-margin —
+    strictement identique au comportement d'avant.
+
+    Le filet enveloppe est un conteneur `fixed` : les pourcentages s'y
+    résolvent sur le bloc initial, qui exclut la barre de défilement. `100vw`
+    l'aurait incluse et décalé les filets d'un demi-scrollbar sous Windows. */
 ---
-<div aria-hidden="true">
+<div class="frame" aria-hidden="true">
   <span class="rule left"></span>
   <span class="rule right"></span>
 </div>
 
 <style>
-  .rule {
+  .frame {
     position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .rule {
+    position: absolute;
     top: 0;
     bottom: 0;
     width: 1px;
     background: var(--line-page-rule);
-    pointer-events: none;
-    z-index: 5;
   }
-  .left  { left: var(--page-margin); }
-  .right { right: var(--page-margin); }
+  .left  { left:  calc(max(0px, (100% - var(--page-max)) / 2) + var(--page-margin)); }
+  .right { right: calc(max(0px, (100% - var(--page-max)) / 2) + var(--page-margin)); }
 </style>

@@ -48,7 +48,14 @@ import { MATIERES } from '../data/matieres.js';
     padding-top: var(--space-8);
     padding-bottom: var(--space-7);
   }
-  .cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-7); }
+  /* `auto-fit` ne peut pas créer plus de colonnes qu'il n'y a de blocs : le
+     plafond de 4 est donné par le contenu, pas par un @media. Le garde
+     `min(100%, 220px)` empêche le débordement sous 260px de large. */
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: var(--space-7);
+  }
   .col { display: grid; gap: var(--space-3); align-content: start; }
 
   .chip {
@@ -81,7 +88,4 @@ import { MATIERES } from '../data/matieres.js';
   .legal-links { display: flex; gap: 24px; }
   .legal-links a { color: var(--sauge-clair); text-decoration: none; }
 
-  @media (max-width: 900px) {
-    .cols { grid-template-columns: repeat(2, 1fr); }
-  }
 </style>

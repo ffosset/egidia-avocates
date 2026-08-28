@@ -44,7 +44,7 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
           <div class="far">
             <Eyebrow>Avocates spécialisées</Eyebrow>
             <div class="spaced">
-              <RuledGrid columns="repeat(3, 1fr)">
+              <RuledGrid min={200}>
                 {m.avocates.map((nom) => {
                   const a = parNom(nom);
                   return (
@@ -115,12 +115,24 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
     color: var(--brun-moyen);
     max-width: 52ch;
   }
+  /* Deux colonnes proportionnelles tant qu'elles tiennent, puis empilées.
+     `flex-wrap` fait deux choses qu'une grille à points de rupture ne fait pas :
+     l'asymétrie se DÉTEND vers l'égalité à mesure que la place manque, puis le
+     bloc passe dessous. La bascule est décidée par la mesure du texte (en ch),
+     pas par un pixel deviné — donc pas de @media.
+
+     Pas de `min-width: 0` sur les colonnes : ce serait les autoriser à devenir
+     plus étroites que leur propre contenu, et les cartes déborderaient au lieu
+     de passer à la ligne. Le `min-width: auto` par défaut est ce qui déclenche
+     le retour à la ligne au bon moment. */
   .split {
-    display: grid;
-    grid-template-columns: 7fr 5fr;
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--space-9);
     padding: var(--space-9) 0 0;
   }
+  .split > div   { flex: 7 1 34ch; }
+  .split > aside { flex: 5 1 26ch; }
   .spaced { margin-top: var(--space-5); }
   .far { margin-top: var(--space-9); }
   aside { display: grid; gap: var(--space-5); align-content: start; }
@@ -141,7 +153,4 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
   }
   .chev { color: var(--sauge-obscur); }
 
-  @media (max-width: 1000px) {
-    .split { grid-template-columns: 1fr; gap: var(--space-7); }
-  }
 </style>

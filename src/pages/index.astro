@@ -40,7 +40,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
           system (« 40% 100% ») creuse trop et mange la photo. Le rayon
           horizontal est réduit — la courbe file du haut vers le bas sans
           amputer l'image. Écart assumé par rapport au défaut. */}
-      <ArcPanel width="min(50%, 820px)" sweep="15% 100%">
+      <ArcPanel width="var(--hero-split)" sweep="15% 100%">
         <div class="hero-inner">
           <h1>Chaque personne a droit à être écoutée, conseillée et défendue</h1>
           <p>
@@ -73,7 +73,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     {/* 3 — MATIÈRES : le filet gauche du registre tombe sur le filet de marge ;
         seule la photographie franchit le filet de droite. */}
     <section id="matieres" class="matieres">
-      <RuledGrid columns="minmax(0, 1fr) minmax(0, 1fr) 420px" noTop>
+      <RuledGrid columns="minmax(0, 1fr) minmax(0, 1fr) var(--photo-track)" noTop>
         <RuledCell align="center">
           <h2 class="grid-title">Services offerts par le cabinet</h2>
         </RuledCell>
@@ -101,7 +101,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
 
     {/* 4 — HONORAIRES : deux cellules du registre, l'aide juridique sur voile sauge */}
     <section id="honoraires" class="ruled-section">
-      <RuledGrid columns="minmax(0, 1fr) minmax(0, 1fr)" noTop>
+      <RuledGrid min={380} noTop>
         <RuledCell minHeight={360}>
           <Eyebrow>Honoraires</Eyebrow>
           <h2 class="cell-title">Des prix transparents</h2>
@@ -138,7 +138,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
 
     {/* 5 — ÉQUIPE */}
     <section id="equipe" class="ruled-section">
-      <RuledGrid columns="minmax(0, 1fr) minmax(0, 1fr)" noTop>
+      <RuledGrid min={380} noTop>
         <RuledCell align="center" minHeight={280}>
           <Eyebrow>Équipe</Eyebrow>
           <h2 class="big">Nos avocates</h2>
@@ -151,7 +151,9 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
           </p>
         </RuledCell>
       </RuledGrid>
-      <RuledGrid columns="repeat(4, minmax(0, 1fr))" noTop>
+      {/* 240px de cellule minimale, 4 colonnes au plus : la grille descend
+          d'elle-même 4 → 3 → 2 → 1, là où les portraits cessent de tenir. */}
+      <RuledGrid min={240} maxCols={4} noTop>
         {AVOCATES.map((a) => (
           <PersonCell
             name={a.nom}
@@ -187,7 +189,9 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
 
     {/* 7 — CONTACT ET ACCÈS : registre à trois colonnes, la carte occupe deux */}
     <section id="contact" class="ruled-section">
-      <RuledGrid columns="repeat(3, minmax(0, 1fr))" noTop>
+      {/* La carte occupe deux colonnes : à 3 colonnes elle ferme la rangée,
+          à 2 elle en fait une pleine, à 1 elle se réduit — aucune case vide. */}
+      <RuledGrid min={320} maxCols={3} noTop>
         <RuledCell align="center" minHeight={300}>
           <Eyebrow>Contact et accès</Eyebrow>
           <h2 class="cell-lead">Les consultations ont lieu uniquement sur rendez-vous</h2>
@@ -236,8 +240,13 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   /* Pas de filet sous le héros : la bande sauge enchaîne directement.
      (Le design system en pose un — écart assumé.) */
   .hero {
+    /* UNE seule source pour la coupe : le panneau prend --hero-split, la photo
+       commence à 76 % de cette valeur (le rapport 38/50 d'avant). Les deux ne
+       peuvent plus dériver l'une par rapport à l'autre. Le plancher de 480px
+       empêche le panneau d'écraser le titre entre 1000 et 1200px. */
+    --hero-split: clamp(480px, 50%, 820px);
     position: relative;
-    min-height: 640px;
+    min-height: clamp(520px, 62vh, 720px);
     overflow: hidden;
   }
   /* Fond brun + fusion « overlay » : la photographie se réchauffe et se pose
@@ -248,7 +257,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     top: 0;
     bottom: 0;
     right: 0;
-    left: 38%;
+    left: calc(var(--hero-split) * 0.76);
     background-color: #6b5238;
     isolation: isolate;
   }
@@ -303,8 +312,11 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   .band-copy p:last-child { margin-bottom: 0; }
 
   /* ---- Sections en registre : le filet du registre tombe sur le filet de marge ---- */
-  .matieres { padding-left: var(--page-margin); }
-  .ruled-section { padding: 0 var(--page-margin); border-top: var(--divider); }
+  /* Composition dessinée à la main (placement en zigzag + photo sur trois
+     rangées) : elle garde le point de rupture unique. Seule la piste photo
+     devient fluide, pour qu'elle ne mange plus la moitié d'un portable. */
+  .matieres { --photo-track: clamp(300px, 26vw, 420px); padding-left: var(--page-margin); }
+  .ruled-section { padding: 0 var(--page-margin); border-top: var(--divider); container: registre / inline-size; }
 
   .grid-title {
     margin: 0;
@@ -373,7 +385,12 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
 
   /* ---- 6. LIENS UTILES ---- */
   .liens { background: var(--surface-inset); padding: var(--section-y) 0; border-top: var(--divider); }
-  .link-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-9); margin-top: var(--space-7); }
+  .link-cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: var(--space-9);
+    margin-top: var(--space-7);
+  }
   .link-cols h3 { font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); margin-bottom: 8px; }
 
   /* ---- 7. CONTACT ---- */
@@ -391,15 +408,26 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   .lines { margin-top: var(--stack); display: grid; gap: var(--space-3); font-size: var(--fs-body-sm); line-height: 1.5; }
   .muted-line { color: var(--text-muted); }
   .map-cell { grid-column: span 2; border-bottom: var(--divider); }
+  /* À une seule colonne, `span 2` fabriquerait une colonne implicite et
+     casserait la grille : on le retire. Requête de CONTENEUR — la mesure est
+     celle du registre, pas celle de l'écran. */
+  @container registre (width < 44rem) {
+    .map-cell { grid-column: auto; }
+  }
 
-  @media (max-width: 1000px) {
+  /* Ne restent ici que de vrais changements de MODE : le panneau du héros
+     cesse de recouvrir la photo, et le registre des matières cesse d'être une
+     composition. Les sections gardent leur padding — le registre s'aligne donc
+     sur les filets à toutes les largeurs, au lieu de les franchir (seule la
+     photographie a le droit de les franchir). */
+  @media (--lap) {
     .hero { min-height: 0; }
-    .hero-photo { position: static; height: 380px; }
-    .hero-inner { padding: var(--space-8) var(--content-inset); }
-    .matieres { padding-left: 0; }
-    .ruled-section { padding: 0; }
-    .link-cols { grid-template-columns: 1fr; gap: var(--space-7); }
-    .matiere-photo { display: none; }
+    .hero-photo { position: static; height: 380px; left: auto; }
+    .hero-inner { padding: var(--section-y-sm) var(--content-inset); }
+    /* La photo d'ambiance ne disparaît plus : elle ferme le registre en pleine
+       largeur. C'est la seule chose qui a le droit de franchir un filet. */
+    .matiere-photo { margin-left: calc(-1 * var(--page-margin)); }
+    .matiere-photo :global(.arc) { height: auto; aspect-ratio: 16 / 9; }
     .map-cell { min-height: 320px; }
   }
 </style>

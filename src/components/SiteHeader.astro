@@ -57,7 +57,9 @@ import { NAV } from '../data/site.js';
     color: var(--hover-invert-fg);
   }
 
-  @media (max-width: 900px) {
+  /* La nav cesse de tenir sur une ligne : c'est un vrai changement de mode,
+     pas une marche — il garde donc le point de rupture unique. */
+  @media (--lap) {
     .bar { grid-template-columns: 1fr; }
     .wordmark { padding-left: var(--content-inset); }
     nav { flex-wrap: wrap; border-top: var(--divider); }

@@ -104,6 +104,110 @@ Lucide est une **substitution assumée** : aucun jeu d'icônes n'a été fourni 
 la marque. `Icon.astro` est le seul endroit à changer le jour où le cabinet en
 acquiert un.
 
+## Comment le site se replie
+
+**Une seule règle de lecture : intrinsèque là où des cellules se répètent, point
+de rupture là où la mise en page est composée.**
+
+### Le cadre glisse, il ne saute pas
+
+`--page-margin`, `--gutter`, `--cell-pad`, `--section-y` et `--section-y-sm`
+sont des `clamp()`. Chacun retombe exactement sur les deux anciennes valeurs
+(mobile en bas, bureau en haut) et interpole entre les deux. Il n'y a plus de
+palier à 700px, et une tablette n'est plus traitée comme un grand téléphone :
+
+| viewport | `--content-inset` avant | après |
+| --- | --- | --- |
+| 375px | 36px | 36px |
+| 768px | **80px** | **41px** |
+| 1000px | 80px | 54px |
+| ≥1500px | 80px | 80px |
+
+Les **trois pas de la pile verticale** (`--stack-tight`, `--stack`,
+`--stack-loose`) restent sur l'échelle fixe de 8px. C'est délibéré : ce sont eux
+que la loi nomme, et c'est eux qu'on lit comme un rythme à l'intérieur d'un bloc.
+Le cadre respire, la rythmique non.
+
+### Les filets suivent le contenu
+
+`PageRules` se cale sur le cadre du contenu, pas sur le bord de la fenêtre :
+
+```css
+left: calc(max(0px, (100% - var(--page-max)) / 2) + var(--page-margin));
+```
+
+Sous `--page-max` (1680px) le `max()` vaut 0 et le calcul se réduit à
+`--page-margin` — comportement identique à avant. Au-delà, le contenu se centre
+et les filets se centrent avec lui : l'écart filet → texte reste `--gutter` à
+toutes les largeurs, y compris sur un écran de 3440px.
+
+### `RuledGrid` : deux modes
+
+| Mode | Déclencheur | Comportement |
+| --- | --- | --- |
+| **Intrinsèque** | `min` (+ `maxCols`) | `auto-fit` : la grille descend 4 → 3 → 2 → 1 là où le **contenu** cesse de tenir. Aucun `@media`. |
+| **Composé** | `columns` | Gabarit explicite, cellules placées à la main. Se replie sur une colonne à `--lap`. |
+
+Le registre n'a pas de gouttière — les filets sont des bordures portées par les
+cellules — donc `100% / maxCols` est exact, rien à soustraire :
+
+```css
+repeat(auto-fit, minmax(max(var(--cell-min), 100% / var(--cols-max)), 1fr))
+```
+
+Ce qui donne, pour les sept portraits de l'équipe (`min={240} maxCols={4}`) :
+
+| viewport | 1440 | 1024 | 768 | 400 |
+| --- | --- | --- | --- | --- |
+| colonnes | 4 | 3 | 2 | 1 |
+
+Restent composés — et gardent donc `--lap` — le **registre des matières**
+(placement en zigzag, photo sur trois rangées) et le **héros**. La carte d'accès
+est intrinsèque : son `grid-column: span 2` reste juste à 3, 2 et 1 colonnes.
+
+### Les colonnes proportionnelles se replient sur le texte
+
+Les découpes `7fr 5fr` (matière), `4fr 8fr` (fiche avocate) et `8fr 4fr` (aide
+juridique) sont des `flex-wrap` à bases en `ch`, pas des grilles à points de
+rupture. Deux effets qu'un `@media` ne donne pas : l'asymétrie **se détend vers
+l'égalité** quand la place manque, puis le bloc passe dessous — et la bascule
+est décidée par la mesure du texte, pas par un pixel deviné.
+
+Pas de `min-width: 0` sur ces colonnes : ce serait les autoriser à devenir plus
+étroites que leur contenu, et les cartes déborderaient au lieu de passer à la
+ligne.
+
+### Un seul point de rupture, et il est nommé
+
+`@media (--lap)` — `(max-width: 1000px)` — trois occurrences dans tout le site
+(`RuledGrid`, `SiteHeader` + `ArcPanel`, `index.astro`). Avant : dix occurrences
+réparties sur trois valeurs (700, 900, 1000).
+
+Une variable CSS **ne fonctionne pas** dans un `@media` : `var()` n'y est pas
+résolu. On passe donc par `@custom-media`, que PostCSS remplace au build. Astro
+compile chaque `<style>` de composant séparément et `postcss-custom-media` ne lit
+que le fichier courant : un petit greffon défini dans `astro.config.mjs` injecte
+la définition en tête de chaque feuille avant qu'il ne s'exécute. **La valeur
+1000px vit à un seul endroit : la constante `LAP` dans `astro.config.mjs`.**
+
+Deux bascules restent locales et passent par une **requête de conteneur**, pas de
+fenêtre : l'alignement des boutons de `ContactBand`, et le `span 2` de la carte
+d'accès (qui fabriquerait une colonne implicite s'il survivait à une seule
+colonne). Elles ne créent aucun point de rupture global.
+
+### La rangée incomplète est assumée
+
+À 3 colonnes (environ 1000–1160px), les sept portraits plus la cellule de
+complément font huit cellules : la dernière rangée s'arrête une case trop tôt et
+le registre porte une encoche en bas à droite. À 4, 2 et 1 colonnes le compte
+tombe juste.
+
+**C'est voulu.** Dans un registre, une rangée incomplète se lit comme la fin
+d'une liste, pas comme une erreur de mise en page. Ne pas « corriger » l'encoche
+en forçant un nombre de colonnes, en masquant un portrait ou en ajoutant une
+cellule vide : ce serait sacrifier le repli continu 4 → 3 → 2 → 1, qui est le
+point de tout le dispositif.
+
 ## Ce qui manque encore
 
 - `equipe-2.jpg` n'a jamais été fourni ; `PHOTOS.equipeAlt` retombe sur la photo
@@ -196,8 +300,9 @@ un besoin semble en réclamer un, la réponse est un lien `mailto:` ou `tel:`.
 5. Sections séparées par `--section-y`, `--section-y-sm` pour un héros ou une
    bande compressée.
 
-En mobile (≤700px) `src/styles/tokens.css` resserre marge et gouttière à 20/16.
-La loi ne change pas — seules les deux valeurs se réduisent.
+Le cadre est **fluide** : `src/styles/tokens.css` fait glisser `--page-margin`
+et `--gutter` de 20/16 à 48/32 par `clamp()`. La loi ne change pas — seules les
+deux valeurs varient, et sans marche. Voir « Comment le site se replie ».
 
 ### Formes et couleur
 

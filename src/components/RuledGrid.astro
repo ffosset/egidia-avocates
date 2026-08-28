@@ -1,13 +1,44 @@
 ---
 /** La grille-registre : cellules jointives séparées par des filets d'1px.
-    Les colonnes passent par --cols (et non par grid-template-columns en ligne)
-    pour que la bascule mobile ci-dessous puisse reprendre la main. */
-interface Props { columns?: number | string; class?: string; noLeft?: boolean; noTop?: boolean }
-const { columns = 2, class: klass, noLeft, noTop } = Astro.props;
-const tpl = typeof columns === 'number' ? `repeat(${columns}, 1fr)` : columns;
+ *
+ *  Deux modes, et le choix entre les deux est une décision de mise en page :
+ *
+ *  1. INTRINSÈQUE (`min`) — le mode par défaut à privilégier. On ne déclare
+ *     pas un nombre de colonnes, on déclare la largeur minimale d'une cellule ;
+ *     la grille se replie toute seule, 4 → 3 → 2 → 1, là où le CONTENU cesse
+ *     de tenir. Aucun point de rupture, aucune marche. `maxCols` empêche
+ *     seulement d'aller plus large qu'on ne l'a dessiné.
+ *
+ *     Le registre n'a pas de gouttière — les filets sont des bordures portées
+ *     par les cellules — donc `100% / maxCols` est exact : rien à soustraire.
+ *
+ *  2. COMPOSÉ (`columns`) — pour les mises en page dessinées à la main, où des
+ *     cellules sont placées explicitement (matières, carte d'accès). Celles-là
+ *     ne peuvent pas se replier toutes seules : elles gardent le point de
+ *     rupture unique `--lap` et passent alors sur une colonne.
+ */
+interface Props {
+  /** Mode composé : gabarit de colonnes explicite. */
+  columns?: number | string;
+  /** Mode intrinsèque : largeur minimale d'une cellule (px si nombre). */
+  min?: number | string;
+  /** Plafond de colonnes en mode intrinsèque. */
+  maxCols?: number;
+  class?: string;
+  noLeft?: boolean;
+  noTop?: boolean;
+}
+const { columns = 2, min, maxCols = 12, class: klass, noLeft, noTop } = Astro.props;
+
+const minW = typeof min === 'number' ? `${min}px` : min;
+const tpl = minW
+  ? `repeat(auto-fit, minmax(max(${minW}, 100% / ${maxCols}), 1fr))`
+  : typeof columns === 'number'
+    ? `repeat(${columns}, 1fr)`
+    : columns;
 ---
 <div
-  class:list={['grid', { 'no-left': noLeft, 'no-top': noTop }, klass]}
+  class:list={['grid', { composed: !minW, 'no-left': noLeft, 'no-top': noTop }, klass]}
   style={`--cols:${tpl}`}
 >
   <slot />
@@ -24,9 +55,11 @@ const tpl = typeof columns === 'number' ? `repeat(${columns}, 1fr)` : columns;
   .no-left { border-left: none; }
   .no-top { border-top: none; }
 
-  @media (max-width: 1000px) {
-    .grid { grid-template-columns: 1fr; }
+  /* Seul le mode composé a besoin d'une rupture : ses cellules sont placées à
+     la main et ne savent pas se replier. Le mode intrinsèque n'a AUCUN @media. */
+  @media (--lap) {
+    .composed { grid-template-columns: 1fr; }
     /* Un enfant explicitement placé retrouve le flux normal. */
-    .grid > :global(*) { grid-column: auto !important; grid-row: auto !important; }
+    .composed > :global(*) { grid-column: auto !important; grid-row: auto !important; }
   }
 </style>

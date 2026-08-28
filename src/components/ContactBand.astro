@@ -22,16 +22,20 @@ import { CONTACT } from '../data/site.js';
 
 <style>
   .contact-band {
+    container: band / inline-size;
     background: var(--surface-accent-soft);
     padding: var(--space-9) 0;
     margin-top: var(--space-10);
   }
+  /* Deux colonnes égales tant qu'elles tiennent, puis empilées — le point de
+     bascule est donné par la mesure du texte (en ch), pas par un pixel deviné. */
   .split {
-    display: grid;
-    grid-template-columns: 6fr 6fr;
-    gap: var(--space-9);
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    gap: var(--space-9);
   }
+  .split > * { flex: 1 1 26ch; }
   h2 {
     margin-top: var(--stack-tight);
     font-family: var(--font-display);
@@ -45,10 +49,13 @@ import { CONTACT } from '../data/site.js';
     color: var(--brun-moyen);
     max-width: 48ch;
   }
+  /* Alignées à droite face au texte, recalées à gauche une fois empilées.
+     Une requête de CONTENEUR, pas de fenêtre : la bascule dépend de la place
+     dont dispose la bande, pas de la taille de l'écran. Aucun point de rupture
+     global n'est introduit ici. */
   .actions { display: flex; gap: var(--space-4); flex-wrap: wrap; justify-content: flex-end; }
-
-  @media (max-width: 900px) {
-    .split { grid-template-columns: 1fr; gap: var(--space-6); }
+  @container band (width < 56rem) {
     .actions { justify-content: flex-start; }
   }
+
 </style>
