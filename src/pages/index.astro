@@ -5,7 +5,6 @@ import Page from '../components/Page.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import SectionHead from '../components/SectionHead.astro';
 import Button from '../components/Button.astro';
-import RuleLink from '../components/RuleLink.astro';
 import Icon from '../components/Icon.astro';
 import Band from '../components/Band.astro';
 import ArcImage from '../components/ArcImage.astro';
@@ -18,8 +17,6 @@ import LinkList from '../components/LinkList.astro';
 import { MATIERES } from '../data/matieres.js';
 import { AVOCATES, languesCourtes } from '../data/avocates.js';
 import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
-
-const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(CONTACT.adresse)}`;
 ---
 <Base title="Egidia">
   <main>
@@ -108,7 +105,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
           <h2 class="big">Nos avocates</h2>
         </RuledCell>
         <RuledCell align="center" minHeight={280}>
-          <p class="statement eg-title">Sept avocates. Cinq matières. Une seule interlocutrice pour votre dossier.</p>
+          <p class="statement eg-title">Sept avocates. Cinq services. Une seule interlocutrice pour votre dossier.</p>
           <p class="sub">
             Celle que vous rencontrez est celle qui plaide. Cliquez sur un nom pour lire son
             parcours, ses publications, et la contacter directement.
@@ -136,41 +133,46 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
       </RuledGrid>
     </section>
 
-    {/* 5 — HONORAIRES : deux cellules du registre, sur la seule couleur de la section */}
-    <section id="honoraires" class="ruled-section">
-      <RuledGrid min={380} noTop>
-        <RuledCell minHeight={360}>
-          <Eyebrow>Honoraires</Eyebrow>
-          <h2 class="cell-title">Des prix transparents</h2>
-          <p class="body">
-            Nos honoraires varient selon la nature de l'affaire, sa complexité et votre situation.
-            Nous les fixons avec modération, et nous vous les expliquons clairement.
-          </p>
-          <p class="muted">
-            Pour comprendre comment se calculent les honoraires d'un avocat en Belgique :
-            <a href="https://avocats.be/fr/tout-savoir/combien-ca-coute" rel="noopener">combien coûte un avocat ?</a>
-          </p>
-        </RuledCell>
-        <RuledCell minHeight={360}>
-          <Eyebrow>Aide juridique</Eyebrow>
-          <h2 class="cell-title">Ce n'est pas une faveur : c'est un droit</h2>
-          <p class="body">
-            L'aide juridique permet d'être défendu par un avocat lorsque vos ressources ne vous
-            permettent pas d'en payer un. Selon vos revenus, elle est entièrement ou partiellement
-            gratuite.
-          </p>
-          <p class="muted">
-            Toutes les avocates du cabinet travaillent dans le cadre de l'aide juridique. Nous
-            vérifions avec vous si vous remplissez les conditions et nous vous aidons à constituer
-            votre demande.
-          </p>
-          <div class="pile-foot">
-            <Button href="/aide-juridique" size="md" icon="file-text" iconPosition="left">
-              Liste des documents à produire
-            </Button>
+    {/* 5 — HONORAIRES : plus de registre ici. Deux blocs posés sur la couleur
+        de la section — le propos à gauche, l'aide juridique en panneau plein à
+        droite. Ils se replient d'eux-mêmes sur une colonne, sans point de
+        rupture (voir `.hono-grid`). */}
+    <section id="honoraires" class="hono">
+      <Page>
+        <div class="hono-grid">
+          <div class="pile hono-propos">
+            <Eyebrow>Honoraires</Eyebrow>
+            <h2 class="hono-titre">Combien ça coûte ?</h2>
+            <p class="body">
+              Nos honoraires varient selon la nature de l'affaire, sa complexité et votre
+              situation. Nous les fixons avec modération et nous vous les expliquons clairement.
+            </p>
+            <p class="body hono-note">
+              Pour comprendre comment se calculent les honoraires d'un avocat en Belgique :
+              <a href="https://avocats.be/fr/tout-savoir/combien-ca-coute" rel="noopener">combien coûte un avocat ?</a>
+            </p>
           </div>
-        </RuledCell>
-      </RuledGrid>
+          {/* Le panneau porte sa propre couleur : c'est le seul aplat sombre de
+              la section, et il tient sa hauteur de son contenu — jamais de la
+              colonne d'à côté (d'où `align-items: start` sur la grille). */}
+          <aside class="pile hono-panneau">
+            <h2 class="panneau-titre">Aide juridique</h2>
+            <p class="body">
+              L'aide juridique permet d'être défendu par un avocat lorsque vos ressources ne vous
+              permettent pas d'en payer un. Selon vos revenus, elle est entièrement ou
+              partiellement gratuite.
+            </p>
+            <p class="body">
+              Toutes les avocates du cabinet Egidia travaillent dans le cadre de l'aide juridique.
+              Nous vérifions avec vous si vous remplissez les conditions et nous vous aidons à
+              constituer votre demande.
+            </p>
+            <div class="pile-block">
+              <Button href="/aide-juridique" variant="secondary" size="md">Faire la demande</Button>
+            </div>
+          </aside>
+        </div>
+      </Page>
     </section>
 
     {/* 6 — LIENS UTILES */}
@@ -194,39 +196,57 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     <section id="contact" class="ruled-section">
       {/* La carte occupe deux colonnes : à 3 colonnes elle ferme la rangée,
           à 2 elle en fait une pleine, à 1 elle se réduit — aucune case vide. */}
+      {/* UNE mesure pour les quatre cellules, et c'est celle de la carte
+          (`MapEmbed` pose 320px) : le registre entier tient donc sur un seul
+          plancher, et la rangée du bas ne peut plus être plus haute que celle
+          du haut. Aucune ne porte `align` : les quatre partent du HAUT, comme
+          les trois titres qu'elles portent. Le centrage n'avait de sens que
+          tant qu'un lien était posé au pied de la cellule. */}
       <RuledGrid min={320} maxCols={3} noTop>
-        <RuledCell align="center" minHeight={300}>
+        <RuledCell minHeight={320}>
           <Eyebrow>Contact et accès</Eyebrow>
           <h2 class="cell-lead">Les consultations ont lieu uniquement sur rendez-vous</h2>
         </RuledCell>
 
-        <RuledCell minHeight={300}>
-          <h3 class="cell-h3 with-icon"><Icon name="mail" size={28} />Nous joindre</h3>
+        <RuledCell minHeight={320}>
+          <h3 class="cell-h3">Nous joindre</h3>
           <div class="lines">
-            <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
-            <span class="muted-line">Ligne directe de chaque avocate : voir sa fiche.</span>
-          </div>
-          <div class="pile-foot">
-            <RuleLink href={`mailto:${CONTACT.email}`}>Envoyer un message</RuleLink>
+            <span class="line">
+              <span class="ico"><Icon name="mail" size={18} /></span>
+              <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+            </span>
+            <span class="line muted-line">
+              <span class="ico"><Icon name="phone" size={18} /></span>
+              Ligne directe de chaque avocate : voir sa fiche.
+            </span>
           </div>
         </RuledCell>
 
-        <RuledCell minHeight={300}>
+        <RuledCell minHeight={320}>
           <h3 class="cell-h3">Nous trouver</h3>
           <div class="lines">
-            <span>{CONTACT.adresse}</span>
-            <span class="muted-line">{CONTACT.acces}</span>
+            <span class="line">
+              <span class="ico"><Icon name="map-pin" size={18} /></span>
+              {CONTACT.adresse}
+            </span>
+            <span class="line muted-line">
+              <span class="ico"><Icon name="accessibility" size={18} /></span>
+              {CONTACT.acces}
+            </span>
           </div>
         </RuledCell>
 
-        <RuledCell align="center" minHeight={420}>
-          <h3 class="cell-h3 narrow">En transports en commun</h3>
+        <RuledCell minHeight={320}>
+          <h3 class="cell-h3">En transports en commun</h3>
           <div class="lines">
-            <span>{CONTACT.metro}</span>
-            <span>{CONTACT.tram}</span>
-          </div>
-          <div class="pile-foot">
-            <RuleLink href={itineraire}>Itinéraire</RuleLink>
+            <span class="line">
+              <span class="ico"><Icon name="train-front-tunnel" size={18} /></span>
+              {CONTACT.metro}
+            </span>
+            <span class="line">
+              <span class="ico"><Icon name="tram-front" size={18} /></span>
+              {CONTACT.tram}
+            </span>
           </div>
         </RuledCell>
 
@@ -311,15 +331,32 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   /* .cta porte `pile-block` : l'écart est nommé par la pile, pas écrit ici. */
 
   /* ---- 2. VALEURS ---- */
+  /* Le titre de la bande tient sur UNE ligne, toujours : c'est une phrase, et
+     une phrase cassée en deux cesse d'être lue d'un trait. `nowrap` scelle la
+     ligne ; la taille garantit qu'elle rentre, donc rien ne déborde.
+
+     La ligne mesure 13,3em en Playfair — mais 15em en Georgia, l'empattement
+     de secours le plus large de la pile, qui s'affiche pendant le `swap` de la
+     webfont. On divise donc par 15 : tant que la fenêtre offre cette largeur
+     entre ses filets, le titre garde ses 40px ; en dessous il rétrécit avec
+     elle au lieu de casser. Le plancher de 28px disparaît — une phrase de
+     29 signes ne tient pas à 28px sur un téléphone, il fallait choisir. */
   .band-title {
     font-family: var(--font-display);
-    font-size: clamp(28px, 2.8vw, 40px);
+    font-size: min(40px, (100vw - 2 * var(--content-inset)) / 15);
+    white-space: nowrap;
     font-weight: var(--fw-bold);
     line-height: 1.2;
     color: var(--text-on-accent);
   }
-  /* `margin-inline` et non `margin` : le pas vertical appartient à la pile. */
-  .band-copy { max-width: 48ch; margin-inline: auto; }
+  /* Le titre de la bande et sa copie cassent sur la même verticale : une seule
+     mesure pour les deux (voir RuledCell). `margin-inline` et non `margin` :
+     le pas vertical appartient à la pile.
+
+     Cette mesure est celle du TITRE : sa ligne fait 532px à 40px, et 34rem la
+     loge sans la serrer. La copie y gagne ~68 signes par ligne, ce qui reste
+     dans la fourchette de lecture. */
+  .band-title, .band-copy { max-width: 34rem; margin-inline: auto; }
   .band-copy p {
     font-size: var(--fs-body);
     line-height: 1.7;
@@ -346,7 +383,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
      de part et d'autre du registre. Le registre, lui, reprend la même valeur par
      `--section-surface` (voir RuledGrid). Une seule valeur par section, donc
      aucune dérive possible entre l'intérieur du registre et la bande de marge. */
-  .matieres, .ruled-section, .liens { background: var(--section-surface); }
+  .matieres, .ruled-section, .hono, .liens { background: var(--section-surface); }
 
   #matieres   { --section-surface: var(--surface-services); }
   #equipe     { --section-surface: var(--surface-equipe); }
@@ -371,16 +408,63 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   }
   .matiere-photo { grid-column: 3; grid-row: 1 / span 3; border-bottom: var(--divider); }
 
-  /* ---- 4. HONORAIRES ---- */
-  .cell-title {
-    font-family: var(--font-display);
-    font-size: clamp(28px, 2.6vw, 40px);
-    font-weight: var(--fw-bold);
-    line-height: 1.2;
-    max-width: 16ch;
+  /* ---- 4. HONORAIRES ----
+     La section a quitté le registre : ni filets, ni cellules. Deux blocs sur la
+     couleur de la section, séparés par de l'air. La grille se replie SEULE —
+     `auto-fit` sur une piste de 400px minimum — donc pas de point de rupture de
+     plus à tenir : dès que deux colonnes ne tiennent plus, il n'y en a qu'une. */
+  .hono { padding: var(--section-y) 0; border-top: var(--divider); }
+  /* Le titre, le texte et le renvoi cassent tous sur la même verticale : la
+     mesure est portée par la colonne, une seule fois (voir RuledCell). */
+  .hono-propos { max-width: 30rem; }
+  .hono-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+    gap: var(--space-8);
+    /* Le panneau tient sa hauteur de son texte, pas de la colonne d'à côté. */
+    align-items: start;
   }
-  .body { font-size: var(--fs-body); line-height: 1.6; max-width: 44ch; }
-  .muted { font-size: var(--fs-body-sm); line-height: 1.6; color: var(--text-muted); max-width: 46ch; }
+  /* Le seul titre de l'accueil qui parle au lecteur à la première personne :
+     il est plus grand que les titres de cellule, il n'en est pas un. */
+  .hono-titre {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 4.5vw, 68px);
+    font-weight: var(--fw-bold);
+    line-height: 1.08;
+    letter-spacing: var(--ls-display);
+  }
+  /* Le renvoi vers avocats.be : c'est une seconde voix, pas une note de bas de
+     page — elle est en gras, et le lien porte son soulignement. */
+  .hono-note { font-weight: var(--fw-semibold); }
+  .hono-note a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .hono-note a:hover { color: var(--text-link); }
+
+  /* Le panneau : le seul aplat sombre de la section. Le bouton secondaire s'y
+     retourne par les tokens qu'il lit déjà (cadre crème, inversion en crème
+     pleine) — aucune règle ne va chercher l'intérieur du composant. */
+  .hono-panneau {
+    background: var(--sauge-obscur);
+    color: var(--text-on-dark);
+    padding: var(--cell-pad);
+    --btn-secondary-fg: var(--creme);
+    --btn-secondary-border: var(--creme);
+    --hover-invert-bg: var(--creme);
+    --hover-invert-fg: var(--sauge-obscur);
+  }
+  .panneau-titre {
+    font-family: var(--type-subtitle-family);
+    font-size: var(--type-subtitle-size);
+    font-weight: var(--type-subtitle-weight);
+    color: var(--creme);
+  }
+  /* Dans le panneau, la mesure est déjà donnée par la colonne. */
+  .hono-panneau .body { max-width: none; }
+
+  .body { font-size: var(--fs-body); line-height: 1.6; }
 
   /* ---- 5. ÉQUIPE ---- */
   .big {
@@ -393,7 +477,10 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   /* `.statement` et `.filler` sont des <p> qui tiennent le rôle d'un titre :
      `eg-title` leur donne l'œil du display ET le pas qui va avec (voir pile.css).
      Il ne reste ici que ce qui leur est propre — la taille et la mesure. */
-  .statement { font-size: clamp(24px, 2.2vw, 32px); line-height: 1.25; max-width: 22ch; }
+  /* Dans une cellule du registre, la mesure appartient à la cellule : la
+     déclaration et le texte qui la suit cassent sur la même verticale. */
+  .statement, .sub { max-width: var(--cell-measure); }
+  .statement { font-size: clamp(24px, 2.2vw, 32px); line-height: 1.25; }
   .filler { font-size: 26px; line-height: 1.3; max-width: 16ch; }
   .filler-link {
     display: inline-flex;
@@ -412,7 +499,12 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
     gap: var(--space-9);
   }
-  .link-cols h3 { font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); }
+  .link-cols h3 {
+    font-family: var(--type-subtitle-family);
+    font-size: var(--type-subtitle-size);
+    font-weight: var(--type-subtitle-weight);
+    color: var(--type-subtitle-color);
+  }
 
   /* ---- 7. CONTACT ---- */
   .cell-lead {
@@ -422,10 +514,35 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     line-height: 1.18;
     max-width: 16ch;
   }
-  .cell-h3 { font-family: var(--font-display); font-size: 30px; font-weight: var(--fw-bold); }
-  .cell-h3.with-icon { display: flex; align-items: center; gap: var(--space-4); }
-  .cell-h3.narrow { max-width: 14ch; }
+  .cell-h3 {
+    font-family: var(--type-subtitle-family);
+    font-size: var(--type-subtitle-size);
+    font-weight: var(--type-subtitle-weight);
+    color: var(--type-subtitle-color);
+  }
+  /* Même carré que sur les noms de matières — il remplace l'icône enveloppe
+     qui ouvrait « Nous joindre » : les trois cellules du registre s'ouvrent
+     maintenant du même geste, et non deux d'un côté et une de l'autre. */
+  .cell-h3::before {
+    content: '';
+    display: inline-block;
+    width: var(--type-subtitle-mark);
+    height: var(--type-subtitle-mark);
+    margin-right: var(--type-subtitle-mark-gap);
+    background: currentColor;
+  }
+  /* Même règle que dans le registre des matières : le nom de la cellule et les
+     lignes qui le suivent partagent la mesure de la cellule. */
+  .cell-h3, .lines { max-width: var(--cell-measure); }
   .lines { display: grid; gap: var(--stack-bind); font-size: var(--fs-body-sm); line-height: 1.5; }
+  /* Chaque ligne s'ouvre par son glyphe : ce qu'elle EST se lit avant ce
+     qu'elle dit — une adresse, un téléphone, un métro. */
+  .line { display: flex; gap: var(--space-3); }
+  /* Le glyphe est posé sur la PREMIÈRE ligne, pas centré sur le bloc :
+     l'adresse en prend deux, et une icône centrée flotterait entre les deux.
+     Les 3px rattrapent la demi-différence entre la hauteur de ligne (27px) et
+     le glyphe (18px), moins ce que le trait laisse d'air en haut. */
+  .ico { flex: 0 0 auto; margin-top: 3px; color: var(--text-label); }
   .muted-line { color: var(--text-muted); }
   .map-cell { grid-column: span 2; border-bottom: var(--divider); }
   /* À une seule colonne, `span 2` fabriquerait une colonne implicite et

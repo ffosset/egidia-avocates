@@ -1,42 +1,25 @@
 ---
-/** Bande pleine largeur, texte centré sur mesure courte, bouclier en filigrane. */
+/** Bande pleine largeur, texte centré sur mesure courte. */
 interface Props {
   tone?: 'sage' | 'ink' | 'sand' | 'cream';
-  watermark?: boolean;
   align?: 'center' | 'left';
   id?: string;
 }
-const { tone = 'sage', watermark = true, align = 'center', id } = Astro.props;
+const { tone = 'sage', align = 'center', id } = Astro.props;
 ---
 <section id={id} class:list={['band', `t-${tone}`]} style={`text-align:${align}`}>
-  {watermark && <span class="watermark" aria-hidden="true"></span>}
   <div class="inner pile"><slot /></div>
 </section>
 
 <style>
-  .band { position: relative; overflow: hidden; padding: var(--section-y) 0; }
+  .band { padding: var(--section-y) 0; }
   .inner {
-    position: relative;
     max-width: var(--page-max);
     margin: 0 auto;
     padding: 0 var(--content-inset);
-  }
-  .watermark {
-    position: absolute;
-    left: -30%;
-    top: -55%;
-    width: 160%;
-    height: 145%;
-    border-radius: 0 0 40% 40% / 0 0 46% 46%;
-    pointer-events: none;
   }
   .t-sage  { background: var(--sauge-obscur); color: var(--text-on-accent); }
   .t-ink   { background: var(--surface-ink); color: var(--text-on-dark); }
   .t-sand  { background: var(--surface-margin); color: var(--text-body); }
   .t-cream { background: var(--surface-page); color: var(--text-body); }
-
-  .t-sage  .watermark { background: rgba(255, 255, 255, 0.05); }
-  .t-ink   .watermark { background: rgba(250, 247, 244, 0.045); }
-  .t-sand  .watermark { background: rgba(59, 46, 30, 0.035); }
-  .t-cream .watermark { background: rgba(59, 46, 30, 0.03); }
 </style>
