@@ -36,7 +36,16 @@ const iconSize = size === 'lg' ? 22 : 20;
   href={hrefOut}
   disabled={!href && disabled ? true : undefined}
   aria-disabled={disabled ? 'true' : undefined}
-  class:list={['btn', `v-${variant}`, `s-${size}`, { full: fullWidth }, klass]}
+  class:list={[
+    'btn',
+    `v-${variant}`,
+    `s-${size}`,
+    { full: fullWidth },
+    // Les deux variantes qui s'inversent au survol prennent le balayage
+    // commun ; les autres ne font qu'approfondir leur propre couleur.
+    (variant === 'secondary' || variant === 'shadow') && 'eg-survol',
+    klass,
+  ]}
 >
   {icon && iconPosition === 'left' && <Icon name={icon} size={iconSize} />}
   <span><slot /></span>
@@ -79,8 +88,9 @@ const iconSize = size === 'lg' ? 22 : 20;
     color: var(--btn-secondary-fg);
     border: 1px solid var(--btn-secondary-border);
   }
+  /* L'aplat vient du calque de `.eg-survol` (voir `styles/survol.css`) : le
+     bouton ne pose que son cadre et son encre. */
   .v-secondary:hover {
-    background: var(--hover-invert-bg);
     border-color: var(--hover-invert-bg);
     color: var(--hover-invert-fg);
   }
@@ -106,7 +116,6 @@ const iconSize = size === 'lg' ? 22 : 20;
   }
   .v-shadow:hover,
   .v-shadow:focus-visible {
-    background: var(--hover-invert-bg);
     border-color: var(--hover-invert-bg);
     color: var(--hover-invert-fg);
   }

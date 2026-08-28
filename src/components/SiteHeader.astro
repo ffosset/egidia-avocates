@@ -24,17 +24,17 @@ import Icon from './Icon.astro';
     <a href={withBase("/")} class="wordmark" aria-label="Egidia — accueil">EGIDIA</a>
 
     <nav class="cells" aria-label="Navigation principale">
-      {NAV.map((l) => <a href={withBase(l.href)}>{l.label}</a>)}
+      {NAV.map((l) => <a href={withBase(l.href)} class="eg-survol">{l.label}</a>)}
     </nav>
 
     <details class="menu" data-menu>
-      <summary>
+      <summary class="eg-survol">
         <span class="glyph i-open"><Icon name="menu" size={20} /></span>
         <span class="glyph i-close"><Icon name="x" size={20} /></span>
         <span>Menu</span>
       </summary>
       <nav class="drawer" aria-label="Navigation principale">
-        {NAV.map((l) => <a href={withBase(l.href)}>{l.label}</a>)}
+        {NAV.map((l) => <a href={withBase(l.href)} class="eg-survol">{l.label}</a>)}
       </nav>
     </details>
   </div>
@@ -113,11 +113,11 @@ import Icon from './Icon.astro';
     color: var(--text-muted);
     transition: var(--transition-control);
   }
+  /* Le fond du survol est posé par le calque de `.eg-survol` (voir
+     `styles/survol.css`) : la cellule ne repeint que son encre, sans quoi
+     l'aplat arriverait d'un bloc et couvrirait le balayage. */
   .cells a:hover,
-  .cells a:focus-visible {
-    background: var(--hover-invert-bg);
-    color: var(--hover-invert-fg);
-  }
+  .cells a:focus-visible { color: var(--hover-invert-fg); }
 
   /* ---- Le menu, sous le point de rupture ---- */
   .menu { display: none; }
@@ -140,10 +140,7 @@ import Icon from './Icon.astro';
   }
   .menu > summary::-webkit-details-marker { display: none; }
   .menu > summary:hover,
-  .menu > summary:focus-visible {
-    background: var(--hover-invert-bg);
-    color: var(--hover-invert-fg);
-  }
+  .menu > summary:focus-visible { color: var(--hover-invert-fg); }
   /* Le glyphe dit l'état : barres fermé, croix ouvert. (Le sélecteur porte sur
      une enveloppe locale, pas sur `Icon` : les styles de ce composant ne
      descendent pas dans le gabarit d'un autre.) */
@@ -177,10 +174,7 @@ import Icon from './Icon.astro';
     transition: var(--transition-control);
   }
   .drawer a:hover,
-  .drawer a:focus-visible {
-    background: var(--hover-invert-bg);
-    color: var(--hover-invert-fg);
-  }
+  .drawer a:focus-visible { color: var(--hover-invert-fg); }
 
   /* Les quatre intitulés cessent de tenir sur une ligne à côté du mot-symbole :
      c'est un vrai changement de mode, pas une marche — il garde donc le point

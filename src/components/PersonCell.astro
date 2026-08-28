@@ -1,6 +1,6 @@
 ---
 import { withBase } from '../lib/base.js';
-/** Cellule-portrait : photo pleine cellule, nom dans un bandeau sauge au pied. */
+/** Cellule-portrait : photo pleine cellule, nom dans un bandeau caramel au pied. */
 import Icon from './Icon.astro';
 import ArcImage from './ArcImage.astro';
 
@@ -65,25 +65,68 @@ const Tag = href ? 'a' : 'div';
     gap: var(--space-4);
     padding: var(--space-5);
     min-height: 108px;
-    background: var(--surface-accent-soft);
-    color: var(--text-heading);
+    /* Voile de caramel : la même famille chaude que le brun du nom, plutôt
+       qu'un vert qui n'appartient à rien d'autre dans la cellule. */
+    background: var(--surface-warm-soft);
+    /* La couleur du sous-titre est posée ICI, sur le bandeau, et non sur
+       `.name` : c'est elle que la règle de survol remplace. Écrite sur le nom,
+       elle survivrait à l'inversion et laisserait un brun moyen sur brun
+       profond. La flèche suit, par `currentColor`. */
+    color: var(--type-subtitle-color);
     transition: var(--transition-control);
   }
   .e-left .band,  .e-both .band { padding-left: var(--content-inset); }
   .e-right .band, .e-both .band { padding-right: var(--content-inset); }
 
   .name {
-    font-family: var(--font-display);
-    font-size: clamp(20px, 1.6vw, 24px);
-    font-weight: var(--fw-bold);
+    font-family: var(--type-subtitle-family);
+    font-size: var(--type-subtitle-size);
+    font-weight: var(--type-subtitle-weight);
     line-height: 1.18;
   }
   .arrow { flex: 0 0 auto; padding-bottom: 2px; }
 
-  /* Le bandeau bascule en brun profond au survol, nom et flèche avec lui. */
-  .clickable:hover .band,
-  .clickable:focus-visible .band {
+  /* ---- LE FRONT, D'UN SEUL TENANT ----
+     UN calque pour la photographie ET le bandeau. Ils en avaient un chacun, et
+     deux fronts empilés — chacun avec son nez arrondi, chacun dans sa boîte —
+     se lisaient comme deux formes qui avancent côte à côte, jamais comme le
+     seul balayage qui traverse le reste du site. Le calque est donc porté par
+     la CELLULE : un seul nez, une seule traversée, du portrait jusqu'au nom.
+
+     Il ne couvre pas, il TEINTE : `multiply` garde les valeurs de la
+     photographie sous la couleur, là où un aplat les aurait effacées. Le
+     portrait reste lisible, en caramel ; le bandeau, qui est déjà un crème
+     chaud, vire au caramel avec lui. Le nom passe dessous, et le mélange le
+     fonce encore — il tient à 4,8:1 sur le bandeau teinté, mieux que s'il
+     flottait au-dessus.
+
+     `isolation` enferme ce mélange dans la cellule : sans elle, `multiply`
+     irait chercher le fond de la section derrière. */
+  .clickable { isolation: isolate; }
+  .clickable::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    /* AU-DESSUS de la photographie, qui est un enfant en flux : le z-index
+       négatif du calque commun (`survol.css`) passerait derrière elle. */
+    z-index: 1;
     background: var(--hover-invert-bg);
-    color: var(--hover-invert-fg);
+    mix-blend-mode: multiply;
+    clip-path: var(--survol-ferme);
+    transition: clip-path var(--survol-duree) var(--ease-out);
+    pointer-events: none;
+  }
+  .clickable:hover::after,
+  .clickable:focus-visible::after { clip-path: var(--survol-ouvert); }
+
+  /* Le nom et la flèche foncent au passage du front. La couleur est posée sur
+     le BANDEAU et non sur `.name` : écrite sur le nom, elle lui survivrait et
+     laisserait un brun moyen sous le caramel. */
+  .clickable:hover .band,
+  .clickable:focus-visible .band { color: var(--hover-invert-fg); }
+
+  /* Comme partout : qui refuse le mouvement reçoit la teinte d'un coup. */
+  @media (prefers-reduced-motion: reduce) {
+    .clickable::after { transition-duration: 0s; }
   }
 </style>

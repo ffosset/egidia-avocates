@@ -1,0 +1,72 @@
+/* ---- LE BALAYAGE ----
+   Tout ce qui se survole sur ce site s'allume de la même façon : un aplat
+   caramel qui pousse depuis le bord GAUCHE, arrondi tant qu'il avance, et
+   d'équerre une fois arrivé. Une seule mécanique, ici, pour tout le site.
+   (La couleur et la durée, elles, sont dans `tokens.css`.)
+
+   Elle tient dans un calque `::before`, et non dans le fond de l'élément : un
+   `background-color` ne sait pas d'où il vient, il ne peut que fondre. Le
+   calque, lui, se DÉCOUPE — `clip-path: inset(…)` n'en laisse voir qu'une
+   fenêtre, et on fait glisser le bord droit de cette fenêtre d'un bord de la
+   cellule à l'autre. UNE SEULE valeur bouge, l'écart de droite ; le rayon ne
+   bouge pas. Le front garde donc sa forme d'un bout à l'autre, et le geste se
+   lit comme un déplacement et non comme une croissance.
+
+   Les deux états sont dans `tokens.css` (`--survol-ferme`, `--survol-ouvert`) :
+   ils sont la même forme à deux positions, et rien ici n'a le droit de les
+   redessiner en chemin.
+
+   Le calque se glisse SOUS le texte et AU-DESSUS du fond propre de l'élément :
+   c'est exactement ce que fait un enfant en z-index négatif. `isolation`
+   l'enferme dans l'élément — sans elle il passerait derrière le fond de la
+   section, et on ne verrait plus rien.
+
+   Deux crochets, un seul geste :
+   - `.eg-invert` — la classe du système (`tokens/base.css`), portée par les
+     cellules, les cartes, les listes de liens ;
+   - `.eg-survol` — pour les surfaces qui écrivent leur survol dans leur propre
+     composant : l'en-tête, le bandeau des portraits, les boutons. Elles n'ont
+     plus qu'une chose à faire : ne PAS repeindre leur fond au survol. */
+
+.eg-invert,
+.eg-survol { position: relative; isolation: isolate; }
+
+.eg-invert::before,
+.eg-survol::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--hover-invert-bg);
+  /* Fermé : le front est rangé contre le bord gauche, largeur nulle. */
+  clip-path: var(--survol-ferme);
+  transition: clip-path var(--survol-duree) var(--ease-out);
+  pointer-events: none;
+}
+
+.eg-invert:hover::before,
+.eg-invert:focus-visible::before,
+.eg-survol:hover::before,
+.eg-survol:focus-visible::before { clip-path: var(--survol-ouvert); }
+
+/* `base.css` repeint le fond de l'élément d'un aplat `!important` au survol :
+   il couvrirait le balayage d'un bloc, avant même qu'il ait commencé. On le
+   ramène au LIT — le fond que l'élément avait au repos, celui qui doit rester
+   visible dans la part que la pastille n'a pas encore atteinte. Transparent par
+   défaut, ce qui suffit partout où la cellule n'a pas de fond à elle ; une
+   surface qui EN A un le déclare (`--survol-lit`), faute de quoi on verrait la
+   page au travers pendant le mouvement. */
+.eg-invert:hover,
+.eg-invert:focus-visible { background-color: var(--survol-lit, transparent) !important; }
+
+/* Sur le caramel, le vert clair de l'accent tombe à 2:1. L'accent rejoint donc
+   l'encre du survol : une cellule survolée parle d'une seule couleur. */
+.eg-invert:hover .eg-accent,
+.eg-invert:focus-visible .eg-accent { color: var(--hover-invert-fg) !important; }
+
+/* Le geste est un confort, pas une information : qui le refuse reçoit l'aplat,
+   d'un coup. */
+@media (prefers-reduced-motion: reduce) {
+  .eg-invert::before,
+  .eg-survol::before { transition-duration: 0s; }
+}

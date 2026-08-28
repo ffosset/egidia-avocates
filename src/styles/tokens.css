@@ -124,3 +124,43 @@
   --type-subtitle-mark:     0.27em;
   --type-subtitle-mark-gap: 0.5em;
 }
+
+/* ---- Le survol ----
+   La signature interactive du site change de couleur ET de geste. L'aplat brun
+   profond devient CARAMEL, et il ne s'allume plus d'un bloc : il pousse depuis
+   le bord gauche de la cellule, arrondi, et se cale d'équerre en arrivant à
+   droite. L'arrondi n'existe donc que PENDANT le mouvement — au repos comme à
+   l'arrivée, le site garde ses angles droits (voir `tokens/borders.css`).
+
+   L'encre passe au brun profond et non au crème : sur le caramel, le crème ne
+   tient que 2,8:1 là où le brun profond monte à 4,3:1 — le maximum que la
+   palette permette sur une valeur aussi moyenne.
+
+   Le mécanisme est dans `survol.css` ; ici, seulement ce qu'il lit. */
+:root {
+  --hover-invert-bg:   var(--caramel);
+  --hover-invert-fg:   var(--brun-profond);
+  --hover-invert-line: rgba(59, 46, 30, .28);
+
+  /* ---- La forme du front ----
+     Le caramel ne grandit pas depuis un point : il TRAVERSE. Un front de forme
+     constante part du bord gauche de la cellule et va jusqu'au bord droit —
+     bord d'attaque arrondi, bord de fuite plaqué d'équerre contre le bord
+     gauche de la cellule. Rien ne se déforme en route ; c'est ce qui fait lire
+     un déplacement plutôt qu'un gonflement.
+
+     Il dépasse à l'arrivée de la valeur exacte de son rayon : l'arrondi sort
+     ainsi de la cellule au lieu d'y rester, et le survol se cale d'équerre —
+     le site garde ses angles droits (voir `tokens/borders.css`).
+
+     Le rayon est une longueur FIXE et non une pastille : le front doit avoir la
+     même allure dans une cellule de 44px de haut et dans une de 285px. Sur les
+     plus basses il se referme de lui-même en demi-cercle (un rayon se borne à
+     la moitié du côté), ce qui est exactement ce qu'on veut. */
+  --survol-rayon: 24px;
+  --survol-ferme:  inset(0 100% 0 0 round 0 var(--survol-rayon) var(--survol-rayon) 0);
+  --survol-ouvert: inset(0 calc(-1 * var(--survol-rayon)) 0 0 round 0 var(--survol-rayon) var(--survol-rayon) 0);
+  /* « Vite » : le pas le plus court de l'échelle qui laisse encore voir un
+     geste. Le même que celui des changements de couleur du système. */
+  --survol-duree: var(--dur-fast);
+}
