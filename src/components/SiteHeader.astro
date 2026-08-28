@@ -1,30 +1,84 @@
 ---
 /** Mot-symbole à gauche, navigation en cellules filetées à droite.
-    Aucun bouton d'action — l'en-tête ne fait que naviguer. */
+    Aucun bouton d'action — l'en-tête ne fait que naviguer.
+
+    L'en-tête est une BOÎTE, pas une bande pleine largeur :
+
+    - elle flotte d'une gouttière sous le haut de la page ;
+    - ses deux filets horizontaux traversent toute la largeur, comme tous les
+      filets de section du site ;
+    - ses cellules s'arrêtent exactement sur les deux filets de marge — la
+      dernière (« Contact ») ferme la boîte sur le filet de droite ;
+    - la première cellule tombe sur --hero-split, la couture : le filet qui
+      sépare le mot-symbole de « Services » est le trait même où commence la
+      photographie du héros, juste en dessous.
+
+    Sous 1000px la barre disparaît dans un menu. Il repose sur `<details>` :
+    il s'ouvre et se ferme sans JavaScript. */
 import { NAV } from '../data/site.js';
+import Icon from './Icon.astro';
 ---
 <header>
   <div class="bar">
     <a href="/" class="wordmark" aria-label="Egidia — accueil">EGIDIA</a>
-    <nav>
+
+    <nav class="cells" aria-label="Navigation principale">
       {NAV.map((l) => <a href={l.href}>{l.label}</a>)}
     </nav>
+
+    <details class="menu" data-menu>
+      <summary>
+        <span class="glyph i-open"><Icon name="menu" size={20} /></span>
+        <span class="glyph i-close"><Icon name="x" size={20} /></span>
+        <span>Menu</span>
+      </summary>
+      <nav class="drawer" aria-label="Navigation principale">
+        {NAV.map((l) => <a href={l.href}>{l.label}</a>)}
+      </nav>
+    </details>
   </div>
 </header>
 
 <style>
   header {
+    /* La boîte respire d'une gouttière sous le haut de la page : la bande
+       claire au-dessus est la page elle-même, traversée par les filets. */
+    margin-top: var(--gutter);
+    border-top: var(--divider);
     border-bottom: var(--divider);
     background: var(--surface-page);
     position: relative;
-    z-index: 6;
+    /* SOUS les filets de marge (z-index 5) : ils traversent l'en-tête au lieu
+       de s'y interrompre, et dessinent ainsi les deux bords verticaux de la
+       boîte. Au-dessus du panneau du héros (2), pour que le menu ouvert le
+       recouvre. */
+    z-index: 4;
+    /* La hauteur de la barre glisse avec le cadre, comme les marges. */
+    --bar-h: clamp(64px, 5vw, 88px);
   }
-  .bar { display: grid; grid-template-columns: 1fr auto; align-items: stretch; }
+
+  .bar {
+    position: relative; /* ancre du tiroir */
+    max-width: var(--page-max);
+    margin-inline: auto;
+    /* Les cellules s'arrêtent sur les filets de marge, jamais sur le bord de
+       la fenêtre : c'est tout le sujet de la boîte. */
+    padding-inline: var(--page-margin);
+    display: grid;
+    /* Colonne 1 : du filet de gauche à la couture. Elle PLAFONNE à cette
+       valeur (`minmax(0, …)`) et cède d'elle-même si les intitulés de la
+       navigation ne tiennent plus — l'alignement sur la photo est un idéal,
+       pas une raison de couper un mot. */
+    grid-template-columns: minmax(0, calc(var(--hero-split) - var(--frame-inset))) auto;
+    align-items: stretch;
+  }
 
   .wordmark {
     display: flex;
     align-items: center;
-    padding: var(--space-5) var(--space-5) var(--space-5) var(--content-inset);
+    min-height: var(--bar-h);
+    /* Une gouttière après le filet : le texte commence à --content-inset. */
+    padding-inline: var(--gutter) var(--space-5);
     text-decoration: none;
     font-family: var(--font-display);
     font-size: 26px;
@@ -33,13 +87,20 @@ import { NAV } from '../data/site.js';
     color: var(--text-heading);
   }
 
-  nav { display: flex; align-items: stretch; }
-  nav a {
+  .cells { display: flex; }
+  .cells a {
+    /* Cellules d'égale largeur, qui remplissent exactement l'espace de la
+       couture au filet de droite ; `max-content` interdit qu'un intitulé se
+       coupe — c'est alors le mot-symbole qui rend la place. */
+    flex: 1 1 0;
+    min-width: max-content;
     display: grid;
     place-items: center;
-    min-width: 176px;
-    min-height: 92px;
-    padding: 0 var(--space-6);
+    min-height: var(--bar-h);
+    /* Le blanc de la cellule glisse avec le cadre : c'est lui qui décide, tout
+       en bas de l'échelle, si les quatre intitulés tiennent encore entre la
+       couture et le filet de droite. */
+    padding: 0 clamp(12px, 1.5vw, 24px);
     border-left: var(--divider);
     font-family: var(--font-body);
     font-size: var(--fs-label);
@@ -51,18 +112,96 @@ import { NAV } from '../data/site.js';
     color: var(--text-muted);
     transition: var(--transition-control);
   }
-  nav a:hover,
-  nav a:focus-visible {
+  .cells a:hover,
+  .cells a:focus-visible {
     background: var(--hover-invert-bg);
     color: var(--hover-invert-fg);
   }
 
-  /* La nav cesse de tenir sur une ligne : c'est un vrai changement de mode,
-     pas une marche — il garde donc le point de rupture unique. */
+  /* ---- Le menu, sous le point de rupture ---- */
+  .menu { display: none; }
+  .menu > summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--bar-h);
+    padding-inline: var(--space-5);
+    border-left: var(--divider);
+    cursor: pointer;
+    list-style: none; /* pas de triangle */
+    font-family: var(--font-body);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: var(--transition-control);
+  }
+  .menu > summary::-webkit-details-marker { display: none; }
+  .menu > summary:hover,
+  .menu > summary:focus-visible {
+    background: var(--hover-invert-bg);
+    color: var(--hover-invert-fg);
+  }
+  /* Le glyphe dit l'état : barres fermé, croix ouvert. (Le sélecteur porte sur
+     une enveloppe locale, pas sur `Icon` : les styles de ce composant ne
+     descendent pas dans le gabarit d'un autre.) */
+  .glyph { display: flex; }
+  .menu:not([open]) .i-close,
+  .menu[open] .i-open { display: none; }
+
+  /* Le tiroir se pose PAR-DESSUS la page, il ne la pousse pas. Il tient dans
+     la même boîte que la barre : les filets de marge en font les deux bords. */
+  .drawer {
+    position: absolute;
+    top: 100%;
+    left: var(--page-margin);
+    right: var(--page-margin);
+    background: var(--surface-page);
+    border-bottom: var(--divider);
+  }
+  .drawer a {
+    display: flex;
+    align-items: center;
+    min-height: var(--tap-min);
+    padding: var(--space-4) var(--gutter);
+    border-top: var(--divider);
+    font-family: var(--font-body);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text-muted);
+    transition: var(--transition-control);
+  }
+  .drawer a:hover,
+  .drawer a:focus-visible {
+    background: var(--hover-invert-bg);
+    color: var(--hover-invert-fg);
+  }
+
+  /* Les quatre intitulés cessent de tenir sur une ligne à côté du mot-symbole :
+     c'est un vrai changement de mode, pas une marche — il garde donc le point
+     de rupture unique. */
   @media (--lap) {
-    .bar { grid-template-columns: 1fr; }
-    .wordmark { padding-left: var(--content-inset); }
-    nav { flex-wrap: wrap; border-top: var(--divider); }
-    nav a { min-width: 0; flex: 1 1 auto; min-height: 64px; }
+    .bar { grid-template-columns: 1fr auto; }
+    .cells { display: none; }
+    .menu { display: flex; }
   }
 </style>
+
+<script>
+  /* Le menu fonctionne SANS JavaScript : `<details>` s'en charge. Le script
+     n'ajoute que deux conforts — refermer après un lien d'ancre (la page ne
+     recharge pas), et refermer sur Échap. */
+  const menus = document.querySelectorAll<HTMLDetailsElement>('[data-menu]');
+  menus.forEach((menu) => {
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) menu.open = false;
+    });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') menus.forEach((menu) => (menu.open = false));
+  });
+</script>

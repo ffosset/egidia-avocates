@@ -47,9 +47,10 @@ export const LIENS_ACCUEIL = [
   ],
 ];
 
+// L'ordre suit celui des sections de l'accueil.
 export const NAV = [
   { href: '/#matieres', label: 'Services' },
-  { href: '/#honoraires', label: 'Honoraires' },
   { href: '/#equipe', label: 'Équipe' },
+  { href: '/#honoraires', label: 'Honoraires' },
   { href: '/#contact', label: 'Contact' },
 ];

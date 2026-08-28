@@ -50,16 +50,29 @@ const tpl = minW
     grid-template-columns: var(--cols);
     border-top: var(--divider);
     border-left: var(--divider);
-    background: var(--surface-card);
+    /* La section décide de la couleur ; le registre la reprend, pour que son
+       intérieur et la gouttière ne puissent pas diverger. Sans section
+       colorée, le registre garde le blanc-papier d'avant. */
+    background: var(--section-surface, var(--surface-card));
   }
   .no-left { border-left: none; }
   .no-top { border-top: none; }
 
   /* Seul le mode composé a besoin d'une rupture : ses cellules sont placées à
-     la main et ne savent pas se replier. Le mode intrinsèque n'a AUCUN @media. */
+     la main et ne savent pas se replier. Le mode intrinsèque n'a AUCUN @media.
+
+     Une fois la composition abandonnée, la grille ne retombe pas forcément sur
+     une colonne : elle redevient intrinsèque, pilotée par --lap-min (largeur
+     minimale d'une cellule) et --lap-max (plafond de colonnes). Sans ces deux
+     variables le calcul se réduit à `minmax(100%, 1fr)`, soit une colonne. */
   @media (--lap) {
-    .composed { grid-template-columns: 1fr; }
-    /* Un enfant explicitement placé retrouve le flux normal. */
-    .composed > :global(*) { grid-column: auto !important; grid-row: auto !important; }
+    .composed {
+      grid-template-columns:
+        repeat(auto-fit, minmax(max(var(--lap-min, 100%), 100% / var(--lap-max, 1)), 1fr));
+    }
+    /* Un enfant explicitement placé retrouve le flux normal… */
+    .composed > :global(*:not(.lap-span)) { grid-column: auto !important; grid-row: auto !important; }
+    /* …sauf celui qui doit fermer le registre sur toute sa largeur. */
+    .composed > :global(.lap-span) { grid-column: 1 / -1 !important; grid-row: auto !important; }
   }
 </style>

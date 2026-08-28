@@ -141,12 +141,54 @@ Sous `--page-max` (1680px) le `max()` vaut 0 et le calcul se réduit à
 et les filets se centrent avec lui : l'écart filet → texte reste `--gutter` à
 toutes les largeurs, y compris sur un écran de 3440px.
 
+### L'en-tête est une boîte, et la couture la traverse
+
+L'en-tête n'est pas une bande pleine largeur : ses filets horizontaux traversent
+toute la page, mais ses **cellules s'arrêtent sur les deux filets de marge** —
+la dernière (« Contact ») ferme la boîte sur le filet de droite. La boîte flotte
+d'une gouttière sous le haut de la page ; la bande claire au-dessus est la page
+elle-même, traversée par les filets.
+
+Pour que les filets ne s'interrompent pas dans l'en-tête, celui-ci passe **sous**
+`PageRules` (`z-index: 4` contre 5) : les deux filets de marge dessinent
+eux-mêmes les bords verticaux de la boîte. Il reste au-dessus du panneau du
+héros (2), pour que le menu ouvert le recouvre.
+
+Une seule verticale gouverne le haut du site — `--hero-split`, **la couture** :
+
+| Qui s'en sert | Pour quoi |
+| --- | --- |
+| `ArcPanel` du héros | sa largeur : le bord où le papier cède la place à la photo |
+| `.hero-photo` | son bord gauche, à 76 % de la couture |
+| `SiteHeader` | le filet entre le mot-symbole et « Services » |
+
+Le premier filet de la navigation et le bord de la photographie sont donc **le
+même trait**, l'un au-dessus de l'autre. La valeur vit dans
+`src/styles/tokens.css` et se mesure en `vw`, non en `%` : l'en-tête (retenu par
+`--page-max`) et le héros (pleine largeur) n'ont pas le même bloc conteneur, et
+seule une mesure prise sur la fenêtre leur donne la même valeur. Le même fichier
+définit `--frame-inset`, la position exacte du filet de marge depuis le bord de
+la fenêtre, dont l'en-tête a besoin pour poser sa couture dans le repère de la
+fenêtre tout en s'arrêtant sur les filets.
+
+L'alignement est un idéal, pas un dogme : la colonne du mot-symbole **plafonne**
+à la couture (`minmax(0, …)`) et cède d'elle-même si les quatre intitulés ne
+tiennent plus — aucun mot n'est jamais coupé.
+
+### Le menu de la barre étroite n'a pas besoin de JavaScript
+
+Sous `--lap`, la barre disparaît dans un menu bâti sur `<details>`/`<summary>` :
+il s'ouvre et se ferme sans script, au clavier comme à la souris, et le tiroir se
+pose **par-dessus** la page au lieu de la pousser. Le script de `SiteHeader`
+n'ajoute que deux conforts — refermer après un lien d'ancre, refermer sur Échap —
+et le menu reste utilisable s'il ne s'exécute pas.
+
 ### `RuledGrid` : deux modes
 
 | Mode | Déclencheur | Comportement |
 | --- | --- | --- |
 | **Intrinsèque** | `min` (+ `maxCols`) | `auto-fit` : la grille descend 4 → 3 → 2 → 1 là où le **contenu** cesse de tenir. Aucun `@media`. |
-| **Composé** | `columns` | Gabarit explicite, cellules placées à la main. Se replie sur une colonne à `--lap`. |
+| **Composé** | `columns` | Gabarit explicite, cellules placées à la main. À `--lap` il abandonne la composition et redevient intrinsèque, piloté par `--lap-min` / `--lap-max` (une colonne par défaut). |
 
 Le registre n'a pas de gouttière — les filets sont des bordures portées par les
 cellules — donc `100% / maxCols` est exact, rien à soustraire :
@@ -164,6 +206,20 @@ Ce qui donne, pour les sept portraits de l'équipe (`min={240} maxCols={4}`) :
 Restent composés — et gardent donc `--lap` — le **registre des matières**
 (placement en zigzag, photo sur trois rangées) et le **héros**. La carte d'accès
 est intrinsèque : son `grid-column: span 2` reste juste à 3, 2 et 1 colonnes.
+
+Le registre des matières ne retombe pas d'un coup sur une colonne. Il a trois
+états, et la photographie décide du premier :
+
+| | ≥1000px | ~620–1000px | <620px |
+| --- | --- | --- | --- |
+| services | 2 colonnes | 2 colonnes | 1 colonne |
+| photo d'ambiance | 3e piste, à côté | pleine largeur, en bas | pleine largeur, en bas |
+
+Le passage sous `--lap` ne fait donc que déplacer la photo ; les services gardent
+leurs deux colonnes jusqu'à ce qu'une cellule ne tienne plus dans 300px
+(`--lap-min: 300px`, `--lap-max: 2` sur `.matieres`). L'enfant qui doit fermer le
+registre sur toute sa largeur porte la classe `lap-span` — c'est la seule
+exception à la remise à plat des placements explicites.
 
 ### Les colonnes proportionnelles se replient sur le texte
 
@@ -293,11 +349,33 @@ un besoin semble en réclamer un, la réponse est un lien `mailto:` ou `tel:`.
    (`--page-margin` + `--gutter`). Aucun composant n'écrit son propre `calc()`
    contre `--page-margin` ; si vous en trouvez un, c'est un bug.
 3. **Seule la photographie franchit un filet.** Ni bande, ni carte, ni bouton.
-4. **Trois pas verticaux et pas un de plus** : `--stack-tight` (titre → chapô),
-   `--stack` (chapô → contenu), `--stack-loose` (bloc → bloc). 8px est toléré
-   pour une paire label/valeur dans une cellule. Rien d'autre : ni 14, ni 20,
-   ni 28. Si un espace semble faux, c'est la taille du texte qui l'est.
-5. Sections séparées par `--section-y`, `--section-y-sm` pour un héros ou une
+4. **Quatre relations verticales, et pas une de plus.** L'espace dit le LIEN
+   entre deux textes, jamais leur position dans la page : `--stack-bind` (8px —
+   un label et son titre, des lignes d'adresse : c'est un seul objet),
+   `--stack-tight` (16px — un titre et son chapô), `--stack` (32px — deux
+   paragraphes), `--stack-loose` (48px — deux blocs, et l'air AU-DESSUS d'un
+   titre). Rien d'autre : ni 12, ni 14, ni 20, ni 28. Si un espace semble faux,
+   c'est la taille du texte qui l'est.
+5. **Un titre a toujours plus d'air au-dessus de lui qu'en dessous.** C'est la
+   règle qui rend une page scannable : elle fait lire « ce titre et ce
+   paragraphe sont une seule chose » plutôt que « ce titre appartient à ce qui
+   le précède ». Quand elle est inversée, l'œil regroupe vers le haut et le
+   paragraphe se retrouve orphelin.
+6. **L'espace est porté par la PILE, jamais par l'enfant.** Un enfant ne sait
+   pas ce qui le précède ; la pile, si. On pose la classe `pile` sur le
+   conteneur — `src/styles/pile.css` fait le reste — et on n'écrit AUCUN
+   `margin-top` dans un composant.
+
+   Corollaire : **plus de `gap` sur une pile de textes.** Un gap est aveugle, il
+   donne la même valeur à toutes les paires, et il s'AJOUTE aux marges des
+   enfants (les marges d'un enfant flex ne fusionnent pas). C'est cette addition
+   silencieuse qui donnait 48px là où le code écrivait `--stack`.
+
+   Trois échappatoires nommées, et rien d'autre : `eg-title` (un `<p>` qui tient
+   le rôle d'un titre sans en avoir le sens), `pile-block` (un bloc qui s'ouvre :
+   bouton, liste), `pile-foot` (posé au bas d'une cellule). Piège : `margin: 0
+   auto` sur un enfant de pile écrase le pas vertical — écrire `margin-inline`.
+7. Sections séparées par `--section-y`, `--section-y-sm` pour un héros ou une
    bande compressée.
 
 Le cadre est **fluide** : `src/styles/tokens.css` fait glisser `--page-margin`

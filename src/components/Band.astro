@@ -10,7 +10,7 @@ const { tone = 'sage', watermark = true, align = 'center', id } = Astro.props;
 ---
 <section id={id} class:list={['band', `t-${tone}`]} style={`text-align:${align}`}>
   {watermark && <span class="watermark" aria-hidden="true"></span>}
-  <div class="inner"><slot /></div>
+  <div class="inner pile"><slot /></div>
 </section>
 
 <style>

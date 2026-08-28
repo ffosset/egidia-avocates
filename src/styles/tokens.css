@@ -41,10 +41,57 @@
   --section-y-sm: clamp(48px, 5vw,   64px);
 }
 
+/* ---- La couture ----
+   UNE seule verticale gouverne le haut du site : le bord de fuite du panneau
+   du héros — donc le bord visible de la photographie — et le premier filet de
+   la navigation. Le héros s'en sert pour couper papier et photo, l'en-tête
+   pour poser sa première cellule. Les deux ne peuvent plus dériver.
+
+   Mesurée en `vw` et non en `%` : l'en-tête et le héros n'ont pas le même bloc
+   conteneur (l'en-tête est retenu par --page-max, le héros non), et seule une
+   mesure prise sur la fenêtre leur donne la même valeur. Le plancher de 480px
+   empêche le panneau d'écraser le titre entre 1000 et 1200px.
+
+   ---- Le bord intérieur du cadre ----
+   La position exacte du filet de marge, mesurée depuis le bord de la fenêtre.
+   Même calcul que `PageRules` : au-delà de --page-max le contenu se centre, et
+   le filet se centre avec lui. Sert à l'en-tête, qui doit poser sa couture
+   dans le repère de la fenêtre tout en s'arrêtant sur les filets. */
+:root {
+  --hero-split:  clamp(480px, 50vw, 820px);
+  --frame-inset: calc(max(0px, (100vw - var(--page-max)) / 2) + var(--page-margin));
+}
+
+/* ---- Le quatrième pas de la pile ----
+   La loi nommait trois pas et tolérait 8px « pour une paire label/valeur ».
+   Cette tolérance était en fait la relation la plus serrée de la page — un
+   label et son titre — et elle n'avait pas de nom, donc personne ne s'en
+   servait. Elle en a un. Voir `pile.css` pour les quatre relations.
+   (Les pas eux-mêmes restent sur l'échelle fixe de 8px : le cadre respire,
+   la rythmique non.) */
+:root {
+  --stack-bind: var(--space-2);   /* label → titre */
+}
+
 /* ---- Filets de marge ----
    Le cabinet veut des filets extérieurs plus présents que le gris translucide
    du design system (`rgba(122,107,90,.38)`). Surcharge locale : les tokens à la
    racine restent le miroir exact du projet claude.ai/design. */
 :root {
   --line-page-rule: #B2A497;
+}
+
+/* ---- Une section, une couleur ----
+   Chaque section de l'accueil porte sa propre surface, GOUTTIÈRE COMPRISE : la
+   valeur est posée une seule fois sur la section, et le registre comme les
+   cellules-portraits la reprennent via `--section-surface`. L'intérieur du
+   registre et la bande de marge ne peuvent donc plus diverger.
+   Ces cinq valeurs sont propres au site : elles ne viennent pas du design
+   system, d'où leur place ici et non dans `tokens/colors.css`. */
+:root {
+  --surface-services:   #FAF7F5;
+  --surface-equipe:     #FFFFFF;
+  --surface-honoraires: #D9D1C4;
+  --surface-liens:      #FFFFFF;
+  --surface-contact:    #FAF7F5;
 }

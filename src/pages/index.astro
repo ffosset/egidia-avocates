@@ -41,13 +41,13 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
           horizontal est réduit — la courbe file du haut vers le bas sans
           amputer l'image. Écart assumé par rapport au défaut. */}
       <ArcPanel width="var(--hero-split)" sweep="15% 100%">
-        <div class="hero-inner">
+        <div class="hero-inner pile">
           <h1>Chaque personne a droit à être écoutée, conseillée et défendue</h1>
           <p>
             Egidia est un cabinet bruxellois en droit des étrangers, de la famille, de l'aide
             sociale et de la jeunesse. Une relation fondée sur l'écoute et la transparence.
           </p>
-          <div class="cta"><Button href="#matieres" variant="shadow">Voir nos domaines</Button></div>
+          <div class="cta pile-block"><Button href="#matieres" variant="shadow">Voir nos domaines</Button></div>
         </div>
       </ArcPanel>
     </section>
@@ -55,7 +55,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     {/* 2 — VALEURS */}
     <Band tone="sage" id="valeurs">
       <h2 class="band-title">Une justice claire et humaine</h2>
-      <div class="band-copy">
+      <div class="band-copy pile">
         <p>
           Derrière chaque dossier, il y a une personne et une histoire. Nous prenons le temps de
           comprendre la vôtre avant de vous conseiller. Nous expliquons chaque étape pour vous
@@ -87,56 +87,19 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
               href={`/matieres/${m.id}`}
               style={`grid-column:${col};grid-row:${Math.floor(n / 2) + 1}`}
             >
-              <span class="count eg-accent">
+              <span class="count eg-accent pile-foot">
                 <span>{m.nb} avocates</span><Icon name="arrow-right" size={18} />
               </span>
             </RuledCell>
           );
         })}
-        <div class="matiere-photo">
+        <div class="matiere-photo lap-span">
           <ArcImage src={PHOTOS.ambiance} alt={ALT.ambiance} corner="none" />
         </div>
       </RuledGrid>
     </section>
 
-    {/* 4 — HONORAIRES : deux cellules du registre, l'aide juridique sur voile sauge */}
-    <section id="honoraires" class="ruled-section">
-      <RuledGrid min={380} noTop>
-        <RuledCell minHeight={360}>
-          <Eyebrow>Honoraires</Eyebrow>
-          <h2 class="cell-title">Des prix transparents</h2>
-          <p class="body">
-            Nos honoraires varient selon la nature de l'affaire, sa complexité et votre situation.
-            Nous les fixons avec modération, et nous vous les expliquons clairement.
-          </p>
-          <p class="muted">
-            Pour comprendre comment se calculent les honoraires d'un avocat en Belgique :
-            <a href="https://avocats.be/fr/tout-savoir/combien-ca-coute" rel="noopener">combien coûte un avocat ?</a>
-          </p>
-        </RuledCell>
-        <RuledCell minHeight={360} style="background: var(--surface-accent-soft)">
-          <Eyebrow>Aide juridique</Eyebrow>
-          <p class="tight">
-            L'aide juridique permet d'être défendu par un avocat lorsque vos ressources ne vous
-            permettent pas d'en payer un. Selon vos revenus, elle est entièrement ou partiellement
-            gratuite.
-          </p>
-          <p class="claim">Ce n'est pas une faveur : c'est un droit.</p>
-          <p class="muted">
-            Toutes les avocates du cabinet travaillent dans le cadre de l'aide juridique. Nous
-            vérifions avec vous si vous remplissez les conditions et nous vous aidons à constituer
-            votre demande.
-          </p>
-          <div class="cell-foot">
-            <Button href="/aide-juridique" size="md" icon="file-text" iconPosition="left">
-              Liste des documents à produire
-            </Button>
-          </div>
-        </RuledCell>
-      </RuledGrid>
-    </section>
-
-    {/* 5 — ÉQUIPE */}
+    {/* 4 — ÉQUIPE */}
     <section id="equipe" class="ruled-section">
       <RuledGrid min={380} noTop>
         <RuledCell align="center" minHeight={280}>
@@ -144,7 +107,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
           <h2 class="big">Nos avocates</h2>
         </RuledCell>
         <RuledCell align="center" minHeight={280}>
-          <p class="statement">Sept avocates. Cinq matières. Une seule interlocutrice pour votre dossier.</p>
+          <p class="statement eg-title">Sept avocates. Cinq matières. Une seule interlocutrice pour votre dossier.</p>
           <p class="sub">
             Celle que vous rencontrez est celle qui plaide. Cliquez sur un nom pour lire son
             parcours, ses publications, et la contacter directement.
@@ -164,7 +127,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
         ))}
         {/* La rangée ne tombe pas juste : on comble avec une vraie phrase, jamais un vide. */}
         <RuledCell align="center" minHeight={200}>
-          <p class="filler">Toutes travaillent dans le cadre de l'aide juridique.</p>
+          <p class="filler eg-title">Toutes travaillent dans le cadre de l'aide juridique.</p>
           <a href="/aide-juridique" class="filler-link eg-accent">
             Documents à apporter <Icon name="arrow-right" size={20} />
           </a>
@@ -172,17 +135,56 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
       </RuledGrid>
     </section>
 
+    {/* 5 — HONORAIRES : deux cellules du registre, sur la seule couleur de la section */}
+    <section id="honoraires" class="ruled-section">
+      <RuledGrid min={380} noTop>
+        <RuledCell minHeight={360}>
+          <Eyebrow>Honoraires</Eyebrow>
+          <h2 class="cell-title">Des prix transparents</h2>
+          <p class="body">
+            Nos honoraires varient selon la nature de l'affaire, sa complexité et votre situation.
+            Nous les fixons avec modération, et nous vous les expliquons clairement.
+          </p>
+          <p class="muted">
+            Pour comprendre comment se calculent les honoraires d'un avocat en Belgique :
+            <a href="https://avocats.be/fr/tout-savoir/combien-ca-coute" rel="noopener">combien coûte un avocat ?</a>
+          </p>
+        </RuledCell>
+        <RuledCell minHeight={360}>
+          <Eyebrow>Aide juridique</Eyebrow>
+          <h2 class="cell-title">Ce n'est pas une faveur : c'est un droit</h2>
+          <p class="body">
+            L'aide juridique permet d'être défendu par un avocat lorsque vos ressources ne vous
+            permettent pas d'en payer un. Selon vos revenus, elle est entièrement ou partiellement
+            gratuite.
+          </p>
+          <p class="muted">
+            Toutes les avocates du cabinet travaillent dans le cadre de l'aide juridique. Nous
+            vérifions avec vous si vous remplissez les conditions et nous vous aidons à constituer
+            votre demande.
+          </p>
+          <div class="pile-foot">
+            <Button href="/aide-juridique" size="md" icon="file-text" iconPosition="left">
+              Liste des documents à produire
+            </Button>
+          </div>
+        </RuledCell>
+      </RuledGrid>
+    </section>
+
     {/* 6 — LIENS UTILES */}
     <section id="liens" class="liens">
       <Page>
-        <SectionHead eyebrow="Liens utiles" title="Ressources externes" />
-        <div class="link-cols">
-          {LIENS_ACCUEIL.map(([titre, liens]) => (
-            <div>
-              <h3>{titre}</h3>
-              <LinkList items={liens} />
-            </div>
-          ))}
+        <div class="pile">
+          <SectionHead eyebrow="Liens utiles" title="Ressources externes" />
+          <div class="link-cols pile-block">
+            {LIENS_ACCUEIL.map(([titre, liens]) => (
+              <div class="pile">
+                <h3>{titre}</h3>
+                <LinkList items={liens} />
+              </div>
+            ))}
+          </div>
         </div>
       </Page>
     </section>
@@ -203,7 +205,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
             <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
             <span class="muted-line">Ligne directe de chaque avocate : voir sa fiche.</span>
           </div>
-          <div class="cell-foot">
+          <div class="pile-foot">
             <RuleLink href={`mailto:${CONTACT.email}`}>Envoyer un message</RuleLink>
           </div>
         </RuledCell>
@@ -222,7 +224,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
             <span>{CONTACT.metro}</span>
             <span>{CONTACT.tram}</span>
           </div>
-          <div class="cell-foot">
+          <div class="pile-foot">
             <RuleLink href={itineraire}>Itinéraire</RuleLink>
           </div>
         </RuledCell>
@@ -240,11 +242,10 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   /* Pas de filet sous le héros : la bande sauge enchaîne directement.
      (Le design system en pose un — écart assumé.) */
   .hero {
-    /* UNE seule source pour la coupe : le panneau prend --hero-split, la photo
-       commence à 76 % de cette valeur (le rapport 38/50 d'avant). Les deux ne
-       peuvent plus dériver l'une par rapport à l'autre. Le plancher de 480px
-       empêche le panneau d'écraser le titre entre 1000 et 1200px. */
-    --hero-split: clamp(480px, 50%, 820px);
+    /* UNE seule source pour la coupe : --hero-split, la couture, définie dans
+       `styles/tokens.css`. Le panneau la prend pour largeur, la photo commence
+       à 76 % de cette valeur (le rapport 38/50 d'avant), et l'en-tête y pose le
+       premier filet de sa navigation. Les trois ne peuvent plus dériver. */
     position: relative;
     min-height: clamp(520px, 62vh, 720px);
     overflow: hidden;
@@ -285,14 +286,12 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     max-width: 18ch;
   }
   .hero p {
-    margin-top: var(--stack);
-    margin-bottom: 0;
     font-size: var(--fs-body);
     line-height: 1.6;
     color: var(--brun-moyen);
     max-width: 40ch;
   }
-  .cta { margin-top: var(--stack-loose); }
+  /* .cta porte `pile-block` : l'écart est nommé par la pile, pas écrit ici. */
 
   /* ---- 2. VALEURS ---- */
   .band-title {
@@ -302,24 +301,43 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     line-height: 1.2;
     color: var(--text-on-accent);
   }
-  .band-copy { max-width: 48ch; margin: 0 auto; }
+  /* `margin-inline` et non `margin` : le pas vertical appartient à la pile. */
+  .band-copy { max-width: 48ch; margin-inline: auto; }
   .band-copy p {
-    margin-top: var(--space-6);
     font-size: var(--fs-body);
     line-height: 1.7;
     color: rgba(255, 255, 255, 0.92);
   }
-  .band-copy p:last-child { margin-bottom: 0; }
 
   /* ---- Sections en registre : le filet du registre tombe sur le filet de marge ---- */
   /* Composition dessinée à la main (placement en zigzag + photo sur trois
      rangées) : elle garde le point de rupture unique. Seule la piste photo
      devient fluide, pour qu'elle ne mange plus la moitié d'un portable. */
-  .matieres { --photo-track: clamp(300px, 26vw, 420px); padding-left: var(--page-margin); }
+  .matieres {
+    --photo-track: clamp(300px, 26vw, 420px);
+    /* Sous --lap la photo passe en bas, et les matières gardent DEUX colonnes
+       tant qu'une cellule tient dans 300px — puis une seule. Le registre ne
+       tombe donc jamais de trois pistes à une seule d'un coup. */
+    --lap-min: 300px;
+    --lap-max: 2;
+    padding-left: var(--page-margin);
+  }
   .ruled-section { padding: 0 var(--page-margin); border-top: var(--divider); container: registre / inline-size; }
 
+  /* ---- Une section, une couleur ----
+     La section est pleine largeur : lui poser un fond peint AUSSI la gouttière,
+     de part et d'autre du registre. Le registre, lui, reprend la même valeur par
+     `--section-surface` (voir RuledGrid). Une seule valeur par section, donc
+     aucune dérive possible entre l'intérieur du registre et la bande de marge. */
+  .matieres, .ruled-section, .liens { background: var(--section-surface); }
+
+  #matieres   { --section-surface: var(--surface-services); }
+  #equipe     { --section-surface: var(--surface-equipe); }
+  #honoraires { --section-surface: var(--surface-honoraires); }
+  #liens      { --section-surface: var(--surface-liens); }
+  #contact    { --section-surface: var(--surface-contact); }
+
   .grid-title {
-    margin: 0;
     font-family: var(--font-display);
     font-size: clamp(28px, 2.6vw, 40px);
     font-weight: var(--fw-bold);
@@ -327,7 +345,6 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     max-width: 12ch;
   }
   .count {
-    margin-top: auto;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -339,41 +356,29 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
 
   /* ---- 4. HONORAIRES ---- */
   .cell-title {
-    margin: 0;
-    margin-top: var(--stack-tight);
     font-family: var(--font-display);
     font-size: clamp(28px, 2.6vw, 40px);
     font-weight: var(--fw-bold);
     line-height: 1.2;
+    max-width: 16ch;
   }
-  .body { margin: var(--stack) 0 0; font-size: var(--fs-body); line-height: 1.6; max-width: 44ch; }
-  .muted { margin: var(--stack) 0 0; font-size: var(--fs-body-sm); line-height: 1.6; color: var(--text-muted); max-width: 46ch; }
-  .tight { margin: var(--stack-tight) 0 0; font-size: var(--fs-body-sm); line-height: 1.6; max-width: 46ch; }
-  .claim {
-    margin: var(--stack) 0 0;
-    font-family: var(--font-display);
-    font-size: clamp(24px, 2vw, 30px);
-    font-weight: var(--fw-bold);
-    line-height: 1.3;
-    color: var(--brun-profond);
-    max-width: 20ch;
-  }
-  .cell-foot { margin-top: auto; padding-top: var(--stack-loose); }
+  .body { font-size: var(--fs-body); line-height: 1.6; max-width: 44ch; }
+  .muted { font-size: var(--fs-body-sm); line-height: 1.6; color: var(--text-muted); max-width: 46ch; }
 
   /* ---- 5. ÉQUIPE ---- */
   .big {
-    margin: 0;
     font-family: var(--font-display);
     font-size: clamp(40px, 5vw, 84px);
     font-weight: var(--fw-bold);
     line-height: 1.02;
     letter-spacing: -0.02em;
   }
-  .statement { margin: 0; font-family: var(--font-display); font-size: clamp(24px, 2.2vw, 32px); font-weight: var(--fw-bold); line-height: 1.25; max-width: 22ch; }
-  .sub { margin: var(--stack) 0 0; font-size: var(--fs-body-sm); line-height: 1.6; color: var(--text-muted); max-width: 46ch; }
-  .filler { margin: 0; font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); line-height: 1.3; max-width: 16ch; }
+  /* `.statement` et `.filler` sont des <p> qui tiennent le rôle d'un titre :
+     `eg-title` leur donne l'œil du display ET le pas qui va avec (voir pile.css).
+     Il ne reste ici que ce qui leur est propre — la taille et la mesure. */
+  .statement { font-size: clamp(24px, 2.2vw, 32px); line-height: 1.25; max-width: 22ch; }
+  .filler { font-size: 26px; line-height: 1.3; max-width: 16ch; }
   .filler-link {
-    margin-top: var(--stack);
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
@@ -384,28 +389,26 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   }
 
   /* ---- 6. LIENS UTILES ---- */
-  .liens { background: var(--surface-inset); padding: var(--section-y) 0; border-top: var(--divider); }
+  .liens { padding: var(--section-y) 0; border-top: var(--divider); }
   .link-cols {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
     gap: var(--space-9);
-    margin-top: var(--space-7);
   }
-  .link-cols h3 { font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); margin-bottom: 8px; }
+  .link-cols h3 { font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); }
 
   /* ---- 7. CONTACT ---- */
   .cell-lead {
-    margin: 0;
     font-family: var(--font-display);
     font-size: clamp(28px, 2.6vw, 40px);
     font-weight: var(--fw-bold);
     line-height: 1.18;
     max-width: 16ch;
   }
-  .cell-h3 { margin: 0; font-family: var(--font-display); font-size: 30px; font-weight: var(--fw-bold); }
+  .cell-h3 { font-family: var(--font-display); font-size: 30px; font-weight: var(--fw-bold); }
   .cell-h3.with-icon { display: flex; align-items: center; gap: var(--space-4); }
   .cell-h3.narrow { max-width: 14ch; }
-  .lines { margin-top: var(--stack); display: grid; gap: var(--space-3); font-size: var(--fs-body-sm); line-height: 1.5; }
+  .lines { display: grid; gap: var(--stack-bind); font-size: var(--fs-body-sm); line-height: 1.5; }
   .muted-line { color: var(--text-muted); }
   .map-cell { grid-column: span 2; border-bottom: var(--divider); }
   /* À une seule colonne, `span 2` fabriquerait une colonne implicite et

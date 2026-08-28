@@ -1,0 +1,47 @@
+/* ---- LA PILE VERTICALE ----
+   L'espace dit le LIEN entre deux textes, jamais leur position dans la page.
+
+   Une seule règle à retenir : UN TITRE A TOUJOURS PLUS D'AIR AU-DESSUS DE LUI
+   QU'EN DESSOUS. C'est elle qui fait lire « ce titre et ce paragraphe sont une
+   seule chose » plutôt que « ce titre appartient à ce qui le précède ». Quand
+   elle est inversée — et elle l'était partout sauf dans le registre des
+   matières — l'œil regroupe vers le haut et le paragraphe se retrouve orphelin.
+
+   Quatre relations, quatre pas, et rien d'autre :
+
+     --stack-bind   8px   un label et son titre : c'est un seul objet
+     --stack-tight  16px  un titre et son chapô
+     --stack        32px  deux paragraphes
+     --stack-loose  48px  deux blocs, et l'air AU-DESSUS d'un titre
+
+   L'espace est porté par la PILE, jamais par l'enfant. Un enfant ne sait pas ce
+   qui le précède ; la pile, si. C'est pourquoi plus aucune cellule ne pose de
+   `gap` : un gap est aveugle, il donne la même valeur à toutes les paires, et
+   il s'AJOUTE aux marges des enfants (les marges d'un enfant flex ne fusionnent
+   pas). C'est cette addition silencieuse qui donnait 48px là où on avait écrit
+   --stack, et 32px là où on avait écrit --stack-tight.
+
+   Les quatre règles ont la même spécificité, sauf la première qui est plus
+   faible. C'est donc l'ORDRE qui tranche, et il est délibéré : la dernière
+   gagne, ce qui donne bien 8px entre un label et le titre qui le suit — et non
+   les 48px de la règle « au-dessus d'un titre ». NE PAS LES RÉORDONNER. */
+
+.pile > *     { margin-bottom: 0; }
+.pile > * + * { margin-top: var(--stack); }
+.pile > :is(h1, h2, h3, h4, .eg-title) + * { margin-top: var(--stack-tight); }
+.pile > * + :is(h1, h2, h3, h4, .eg-title) { margin-top: var(--stack-loose); }
+.pile > .eg-label + *                      { margin-top: var(--stack-bind); }
+
+/* Un titre qui n'est pas un titre : une phrase qui tient le rôle d'un <h*> dans
+   la pile sans en avoir le sens dans le document (une déclaration, une
+   accroche). Elle prend l'air d'un titre, et le pas qui va avec. */
+.eg-title { font-family: var(--font-display); font-weight: var(--fw-bold); color: var(--text-heading); }
+
+/* Un bloc qui s'ouvre : un bouton, une liste, un encadré qui suit du texte.
+   Même pas que l'air au-dessus d'un titre — c'est la même relation, et la pile
+   ne peut pas la deviner d'un nom de balise. */
+.pile > .pile-block { margin-top: var(--stack-loose); }
+
+/* Un pied de pile n'est pas espacé, il est POSÉ au bas : `auto` mange toute la
+   place libre, et le padding garantit l'écart quand il n'en reste plus. */
+.pile > .pile-foot { margin-top: auto; padding-top: var(--stack-loose); }
