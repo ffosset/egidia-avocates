@@ -30,6 +30,9 @@ export default defineConfig({
   site: 'https://www.egidia-avocates.be', // TODO: confirmer le domaine définitif
   publicDir: './assets',
   build: { format: 'directory' },
+  // Astro ne lit pas PORT de lui-même : sans cette ligne, deux sessions de
+  // développement se disputent le 4321. Le port reste 4321 par défaut.
+  server: { port: Number(process.env.PORT) || 4321 },
   vite: {
     css: { postcss: { plugins: [injectBreakpoints, postcssCustomMedia()] } },
   },
