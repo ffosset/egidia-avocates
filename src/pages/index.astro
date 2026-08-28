@@ -33,7 +33,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
           src={PHOTOS.equipe}
           alt={ALT.equipe}
           corner="none"
-          objectPosition="52% 42%"
+          objectPosition="50% 58%"
           loading="eager"
         />
       </div>
@@ -48,7 +48,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
             Egidia est un cabinet bruxellois en droit des étrangers, de la famille, de l'aide
             sociale et de la jeunesse. Une relation fondée sur l'écoute et la transparence.
           </p>
-          <div class="cta pile-block"><Button href="#matieres" variant="shadow">Voir nos domaines</Button></div>
+          <div class="cta pile-block"><Button href="#matieres" variant="secondary">Voir nos domaines</Button></div>
         </div>
       </ArcPanel>
     </section>
@@ -248,9 +248,17 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
        à 76 % de cette valeur (le rapport 38/50 d'avant), et l'en-tête y pose le
        premier filet de sa navigation. Les trois ne peuvent plus dériver. */
     position: relative;
+    /* Le panneau revient dans le FLUX (voir plus bas) : c'est lui qui donne sa
+       hauteur au héros, donc le padding du texte respire vraiment au lieu
+       d'être avalé par une hauteur fixe. Le clamp n'est plus qu'un plancher. */
+    display: grid;
     min-height: clamp(520px, 62vh, 720px);
     overflow: hidden;
   }
+  /* Écart assumé au composant : `ArcPanel` se pose en absolu par défaut. Ici il
+     est la seule chose en flux — la photo, elle, reste absolue et remplit le
+     cadre — pour que la hauteur du héros suive son contenu. */
+  .hero :global(.arc-panel) { position: relative; }
   /* Fond brun + fusion « overlay » : la photographie se réchauffe et se pose
      dans les tons du cabinet au lieu de trancher avec le papier.
      `isolation` garde la fusion à l'intérieur du cadre. */
@@ -265,17 +273,25 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   }
   .hero-photo :global(img) {
     mix-blend-mode: overlay;
-    /* Un peu d'exposition, puis un zoom ancré au coin supérieur droit :
-       le groupe se recentre dans le cadre et gagne en présence. */
+    /* Un peu d'exposition, puis un zoom ancré au bord GAUCHE À MI-HAUTEUR :
+       le groupe se pose au centre du cadre — le panneau lui mangeait sa moitié
+       gauche et laissait un mur vide à droite quand l'ancre était en haut à
+       droite. Le mur part à la coupe, la grande roue reste. */
     filter: brightness(1.09);
     transform: scale(1.18);
-    transform-origin: 100% 0;
+    transform-origin: 5% 90%;
   }
   .hero-inner {
-    padding-left: var(--content-inset);
-    padding-right: var(--space-10);
-    padding-top: var(--section-y-sm);
-    padding-bottom: var(--section-y-sm);
+    /* UNE mesure pour les deux blocs de texte : le titre et le chapô partagent
+       exactement la même colonne. En `ch`, ils ne l'auraient pas — le `ch` du
+       titre d'affichage et celui du texte courant n'ont pas la même valeur. */
+    --hero-measure: clamp(320px, 36vw, 520px);
+    /* Le texte se décolle du filet de marge : un cran de plus que
+       --content-inset, et le pas de section (et non le petit) en vertical. */
+    padding-left: calc(var(--content-inset) + var(--cell-pad));
+    padding-right: var(--space-8);
+    padding-top: var(--section-y);
+    padding-bottom: var(--section-y);
   }
   .hero h1 {
     font-family: var(--font-display);
@@ -284,13 +300,13 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     line-height: 1.08;
     letter-spacing: -0.01em;
     color: var(--text-heading);
-    max-width: 18ch;
+    max-width: var(--hero-measure);
   }
   .hero p {
     font-size: var(--fs-body);
     line-height: 1.6;
     color: var(--brun-moyen);
-    max-width: 40ch;
+    max-width: var(--hero-measure);
   }
   /* .cta porte `pile-block` : l'écart est nommé par la pile, pas écrit ici. */
 
@@ -427,6 +443,9 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   @media (--lap) {
     .hero { min-height: 0; }
     .hero-photo { position: static; height: 380px; left: auto; }
+    /* Pleine largeur, plus de panneau par-dessus : le recadrage du héros
+       large n'a plus lieu d'être, la photo se suffit. */
+    .hero-photo :global(img) { transform: none; }
     .hero-inner { padding: var(--section-y-sm) var(--content-inset); }
     /* La photo d'ambiance ne disparaît plus : elle ferme le registre en pleine
        largeur. C'est la seule chose qui a le droit de franchir un filet. */
