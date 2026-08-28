@@ -1,6 +1,6 @@
 ---
 interface Props {
-  tone?: 'paper' | 'inset' | 'sage' | 'framed' | 'ink';
+  tone?: 'paper' | 'inset' | 'warm' | 'sage' | 'framed' | 'ink';
   accentEdge?: boolean;
   padding?: string;
   href?: string;
@@ -31,6 +31,11 @@ const clickable = !!href && tone !== 'ink';
 
   .t-paper { background: var(--surface-card); border: var(--border-card); }
   .t-inset { background: var(--surface-inset); border: 1px solid transparent; }
+  /* `warm` est propre au site : le design system n'offre que `sage`, et le
+     vert clair ne sert plus de fond nulle part ici. `sage` reste déclarée pour
+     ne pas diverger du contrat du composant — elle n'est simplement plus
+     utilisée. */
+  .t-warm  { background: var(--surface-warm-soft); border: 1px solid transparent; }
   .t-sage  { background: var(--surface-accent-soft); border: 1px solid transparent; }
   .t-framed{ background: var(--surface-card); border: var(--border-frame-strong); }
   .t-ink   { background: var(--surface-ink); border: 1px solid var(--surface-ink); color: var(--text-on-dark); }

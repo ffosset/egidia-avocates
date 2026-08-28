@@ -23,9 +23,16 @@ import { CONTACT } from '../data/site.js';
 <style>
   .contact-band {
     container: band / inline-size;
-    background: var(--surface-accent-soft);
+    /* Voile de CARAMEL, et non de sauge : la sauge est désormais la couleur
+       des aplats pleins (la bande des valeurs, le pied de page), et le vert
+       clair ne sert plus de fond nulle part sur le site. */
+    background: var(--surface-warm-soft);
     padding: var(--space-9) 0;
     margin-top: var(--space-10);
+    /* L'étiquette du design system (#7A6B5A) ne tient que 4,4:1 sur ce voile —
+       15px semi-gras est du texte courant, il en faut 4,5. Le brun moyen, lui,
+       monte à 6,2:1 et reste dans la palette. */
+    --text-label: var(--brun-moyen);
   }
   /* Deux colonnes égales tant qu'elles tiennent, puis empilées — le point de
      bascule est donné par la mesure du texte (en ch), pas par un pixel deviné. */

@@ -73,7 +73,8 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     <section id="matieres" class="matieres">
       <RuledGrid columns="minmax(0, 1fr) minmax(0, 1fr) var(--photo-track)" noTop>
         <RuledCell align="center">
-          <h2 class="grid-title">Services offerts par le cabinet</h2>
+          <Eyebrow>Services</Eyebrow>
+          <h2 class="grid-title">Nos matières préférentielles</h2>
         </RuledCell>
         {MATIERES.map((m, i) => {
           const n = i + 1;
@@ -105,10 +106,10 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
           <h2 class="big">Nos avocates</h2>
         </RuledCell>
         <RuledCell align="center" minHeight={280}>
-          <p class="statement eg-title">Sept avocates. Cinq services. Une seule interlocutrice pour votre dossier.</p>
+          <p class="statement eg-title">Une seule interlocutrice pour votre dossier.</p>
           <p class="sub">
-            Celle que vous rencontrez est celle qui plaide. Cliquez sur un nom pour lire son
-            parcours, ses publications, et la contacter directement.
+            L'avocate que vous rencontrez est celle qui plaide. Cliquez sur un nom pour lire
+            son parcours et la contacter directement.
           </p>
         </RuledCell>
       </RuledGrid>
@@ -127,7 +128,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
         <RuledCell align="center" minHeight={200}>
           <p class="filler eg-title">Toutes travaillent dans le cadre de l'aide juridique.</p>
           <a href={withBase("/aide-juridique")} class="filler-link eg-accent">
-            Documents à apporter <Icon name="arrow-right" size={20} />
+            Faire la demande <Icon name="arrow-right" size={20} />
           </a>
         </RuledCell>
       </RuledGrid>
@@ -149,7 +150,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
             </p>
             <p class="body hono-note">
               Pour comprendre comment se calculent les honoraires d'un avocat en Belgique :
-              <a href="https://avocats.be/fr/tout-savoir/combien-ca-coute" rel="noopener">combien coûte un avocat ?</a>
+              <a href="https://avocats.be/fr/tout-savoir/combien-ca-coute" target="_blank" rel="noopener">combien coûte un avocat ?</a>
             </p>
           </div>
           {/* Le panneau porte sa propre couleur : c'est le seul aplat sombre de
@@ -192,7 +193,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
       </Page>
     </section>
 
-    {/* 7 — CONTACT ET ACCÈS : registre à trois colonnes, la carte occupe deux */}
+    {/* 7 — CONTACT : registre à trois colonnes, la carte occupe deux */}
     <section id="contact" class="ruled-section">
       {/* La carte occupe deux colonnes : à 3 colonnes elle ferme la rangée,
           à 2 elle en fait une pleine, à 1 elle se réduit — aucune case vide. */}
@@ -204,7 +205,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
           tant qu'un lien était posé au pied de la cellule. */}
       <RuledGrid min={320} maxCols={3} noTop>
         <RuledCell minHeight={320}>
-          <Eyebrow>Contact et accès</Eyebrow>
+          <Eyebrow>Contact</Eyebrow>
           <h2 class="cell-lead">Les consultations ont lieu uniquement sur rendez-vous</h2>
         </RuledCell>
 
@@ -279,25 +280,20 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
      est la seule chose en flux — la photo, elle, reste absolue et remplit le
      cadre — pour que la hauteur du héros suive son contenu. */
   .hero :global(.arc-panel) { position: relative; }
-  /* Fond brun + fusion « overlay » : la photographie se réchauffe et se pose
-     dans les tons du cabinet au lieu de trancher avec le papier.
-     `isolation` garde la fusion à l'intérieur du cadre. */
+  /* La photographie est livrée étalonnée dans les tons du cabinet : elle se
+     pose telle quelle, sans fond brun ni fusion pour la réchauffer. */
   .hero-photo {
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
     left: calc(var(--hero-split) * 0.76);
-    background-color: #6b5238;
-    isolation: isolate;
   }
   .hero-photo :global(img) {
-    mix-blend-mode: overlay;
-    /* Un peu d'exposition, puis un zoom ancré au bord GAUCHE À MI-HAUTEUR :
-       le groupe se pose au centre du cadre — le panneau lui mangeait sa moitié
-       gauche et laissait un mur vide à droite quand l'ancre était en haut à
-       droite. Le mur part à la coupe, la grande roue reste. */
-    filter: brightness(1.09);
+    /* Zoom ancré au bord GAUCHE À MI-HAUTEUR : le groupe se pose au centre du
+       cadre — le panneau lui mangeait sa moitié gauche et laissait un mur vide
+       à droite quand l'ancre était en haut à droite. Le mur part à la coupe,
+       la grande roue reste. */
     transform: scale(1.18);
     transform-origin: 5% 90%;
   }
@@ -396,7 +392,9 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     font-size: clamp(28px, 2.6vw, 40px);
     font-weight: var(--fw-bold);
     line-height: 1.15;
-    max-width: 12ch;
+    /* La mesure appartient à la cellule (rem) : le label et le titre cassent
+       sur la même verticale, et non sur deux `ch` de corps différents. */
+    max-width: var(--cell-measure);
   }
   .count {
     display: inline-flex;
@@ -478,8 +476,13 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
      `eg-title` leur donne l'œil du display ET le pas qui va avec (voir pile.css).
      Il ne reste ici que ce qui leur est propre — la taille et la mesure. */
   /* Dans une cellule du registre, la mesure appartient à la cellule : la
-     déclaration et le texte qui la suit cassent sur la même verticale. */
-  .statement, .sub { max-width: var(--cell-measure); }
+     déclaration et le texte qui la suit cassent sur la même verticale. Ici
+     cette verticale est le bord de la cellule lui-même : les deux paragraphes
+     courent sur toute la largeur, jusqu'au `--cell-pad`. Il faut le dire deux
+     fois — abandonner `--cell-measure`, ET lever le `--measure-prose` que
+     `tokens/base.css` pose sur tout <p> (66ch, qui reprendrait la main avant
+     le bord dès que la cellule dépasse ~650px). Écart assumé. */
+  .statement, .sub { max-width: none; }
   .statement { font-size: clamp(24px, 2.2vw, 32px); line-height: 1.25; }
   .filler { font-size: 26px; line-height: 1.3; max-width: 16ch; }
   .filler-link {

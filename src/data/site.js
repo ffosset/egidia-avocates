@@ -14,7 +14,7 @@ export const CONTACT = {
 };
 
 export const PHOTOS = {
-  equipe: '/photos/equipe.jpg',
+  equipe: '/photos/hero-egidia.jpg',
   equipeAlt: '/photos/equipe.jpg', // equipe-2.jpg jamais fourni — repli sur la principale
   ambiance: '/photos/ambiance-terrasse.jpg',
 };

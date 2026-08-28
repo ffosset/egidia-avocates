@@ -16,17 +16,17 @@ import { withBase } from '../lib/base.js';
         </div>
       </div>
       <div class="col">
-        <Eyebrow class="pale">Services</Eyebrow>
+        <Eyebrow>Services</Eyebrow>
         {MATIERES.map((m) => <a href={withBase(`/matieres/${m.id}`)}>{m.titre}</a>)}
       </div>
       <div class="col">
-        <Eyebrow class="pale">Le cabinet</Eyebrow>
+        <Eyebrow>Le cabinet</Eyebrow>
         <a href={withBase("/#equipe")}>Nos avocates</a>
         <a href={withBase("/aide-juridique")}>Documents pour l'aide juridique</a>
         <a href={withBase("/#honoraires")}>Honoraires</a>
       </div>
       <div class="col">
-        <Eyebrow class="pale">Contact</Eyebrow>
+        <Eyebrow>Contact</Eyebrow>
         <span class="plain">{CONTACT.adresse}</span>
         <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
         <span class="small">{CONTACT.metro} · {CONTACT.tram}</span>
@@ -39,7 +39,7 @@ import { withBase } from '../lib/base.js';
   <div class="legal-band">
     <Page>
       <div class="legal">
-        <span>© 2026 Egidia · <a class="signature" href="https://fosset.co" rel="noopener">Made with care by fosset.co</a></span>
+        <span>© 2026 Egidia · <a class="signature" href="https://fosset.co" target="_blank" rel="noopener">Made with care by fosset.co</a></span>
         <span class="legal-links">
           <a href={withBase("/mentions-legales")}>Mentions légales</a>
           <a href={withBase("/vie-privee")}>Vie privée</a>
@@ -50,11 +50,35 @@ import { withBase } from '../lib/base.js';
 </footer>
 
 <style>
+  /* ---- Le pied de page est SAUGE OBSCUR ----
+     Il ferme le site sur la même couleur que la bande des valeurs qui l'ouvre.
+     Le vert est plus clair que le brun profond d'avant (luminance 0,111 contre
+     0,034), donc tous les tons portés dessus ont été refaits : sur cette base,
+     le sable du design system tombe à 4,3:1 et le vert clair des liens à 2,7:1
+     — les deux passaient sur brun, aucun des deux ne passe ici.
+
+         crème        #FAF7F4   6,1:1   titre et texte par défaut
+         sable clair  #EFEAE1   5,4:1   texte courant, adresse, mentions
+         voile caramel#F4EBDD   5,5:1   liens et étiquettes
+
+     Les trois franchissent 4,5:1 (AA, texte courant). La hiérarchie ne repose
+     donc plus sur le contraste — les trois valeurs sont proches — mais sur la
+     TEINTE : le neutre pour ce qui se lit, le chaud pour ce qui se clique.
+     C'est exactement la répartition d'avant, où le sable disait le texte et le
+     vert clair les liens ; seule la famille de l'accent change, puisque le vert
+     est passé du côté du fond. */
   footer {
-    background: var(--surface-ink);
+    background: var(--sauge-obscur);
     color: var(--text-on-dark);
     padding-top: var(--space-8);
     padding-bottom: var(--space-7);
+    /* Les étiquettes de colonne sont des `Eyebrow`, et `.eg-label` lit
+       `--text-label` : c'est le TOKEN qu'on retourne, pas la classe. Une règle
+       écrite ici ne les atteindrait pas — la portée d'Astro ne franchit pas la
+       racine d'un composant enfant, et c'est précisément pour cette raison que
+       l'ancienne classe `.pale` ne peignait rien : le brun #7A6B5A restait, à
+       1,3:1 sur la sauge. Une variable, elle, descend par la cascade. */
+    --text-label: var(--caramel-voile);
   }
   /* `auto-fit` ne peut pas créer plus de colonnes qu'il n'y a de blocs : le
      plafond de 4 est donné par le contenu, pas par un @media. Le garde
@@ -66,26 +90,25 @@ import { withBase } from '../lib/base.js';
   }
   .col { display: grid; gap: var(--space-3); align-content: start; }
 
+  /* La puce crème n'a pas de rayon : le système n'en pose nulle part. */
   .chip {
     display: inline-block;
     background: var(--creme);
-    border-radius: 4px;
     padding: var(--space-3) var(--space-4);
     width: fit-content;
   }
   .chip img { height: 72px; width: auto; display: block; }
 
-  .blurb { font-size: var(--fs-body-sm); color: var(--sable); max-width: 300px; line-height: 1.6; }
-  .col a { color: var(--sauge-clair); font-size: var(--fs-body-sm); text-decoration: none; }
+  .blurb { font-size: var(--fs-body-sm); color: var(--sable-clair); max-width: 300px; line-height: 1.6; }
+  .col a { color: var(--caramel-voile); font-size: var(--fs-body-sm); text-decoration: none; }
   .col a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
-  .plain { font-size: var(--fs-body-sm); color: var(--sable); line-height: 1.6; }
-  .small { font-size: 16px; color: var(--sable); }
-  .pale { color: var(--sauge-clair); }
+  .plain { font-size: var(--fs-body-sm); color: var(--sable-clair); line-height: 1.6; }
+  .small { font-size: 16px; color: var(--sable-clair); }
 
   .legal-band {
     margin-top: var(--space-8);
     padding-top: var(--space-5);
-    border-top: 1px solid rgba(250, 247, 244, 0.18);
+    border-top: 1px solid rgba(250, 247, 244, 0.26);
   }
   .legal {
     display: flex;
@@ -93,11 +116,11 @@ import { withBase } from '../lib/base.js';
     flex-wrap: wrap;
     gap: 16px;
     font-size: 16px;
-    color: var(--sable);
+    color: var(--sable-clair);
   }
-  .signature { color: var(--sauge-clair); text-decoration: none; }
+  .signature { color: var(--caramel-voile); text-decoration: none; }
   .signature:hover { text-decoration: underline; text-decoration-thickness: 2px; }
   .legal-links { display: flex; gap: 24px; }
-  .legal-links a { color: var(--sauge-clair); text-decoration: none; }
+  .legal-links a { color: var(--caramel-voile); text-decoration: none; }
 
 </style>

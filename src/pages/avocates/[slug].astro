@@ -45,7 +45,7 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
                 <a href={telHref} class="line ruled"><Icon name="phone" size={22} />{a.tel}</a>
               )}
               {a.linkedin && (
-                <a href={a.linkedin} class="line ruled" rel="noopener"><Icon name="linkedin" size={22} />Profil LinkedIn</a>
+                <a href={a.linkedin} class="line ruled" target="_blank" rel="noopener"><Icon name="linkedin" size={22} />Profil LinkedIn</a>
               )}
             </div>
           </Card>

@@ -128,9 +128,9 @@
 /* ---- Le survol ----
    La signature interactive du site change de couleur ET de geste. L'aplat brun
    profond devient CARAMEL, et il ne s'allume plus d'un bloc : il pousse depuis
-   le bord gauche de la cellule, arrondi, et se cale d'équerre en arrivant à
-   droite. L'arrondi n'existe donc que PENDANT le mouvement — au repos comme à
-   l'arrivée, le site garde ses angles droits (voir `tokens/borders.css`).
+   le bord gauche de la cellule jusqu'au bord droit. Le front est D'ÉQUERRE d'un
+   bout à l'autre — la loi des angles droits vaut aussi pendant le mouvement, et
+   pas seulement au repos et à l'arrivée (voir `tokens/borders.css`).
 
    L'encre passe au brun profond et non au crème : sur le caramel, le crème ne
    tient que 2,8:1 là où le brun profond monte à 4,3:1 — le maximum que la
@@ -143,23 +143,21 @@
   --hover-invert-line: rgba(59, 46, 30, .28);
 
   /* ---- La forme du front ----
-     Le caramel ne grandit pas depuis un point : il TRAVERSE. Un front de forme
-     constante part du bord gauche de la cellule et va jusqu'au bord droit —
-     bord d'attaque arrondi, bord de fuite plaqué d'équerre contre le bord
-     gauche de la cellule. Rien ne se déforme en route ; c'est ce qui fait lire
-     un déplacement plutôt qu'un gonflement.
+     Le caramel ne grandit pas depuis un point : il TRAVERSE. Un front DROIT part
+     du bord gauche de la cellule et va jusqu'au bord droit. Rien ne se déforme
+     en route ; c'est ce qui fait lire un déplacement plutôt qu'un gonflement.
 
-     Il dépasse à l'arrivée de la valeur exacte de son rayon : l'arrondi sort
-     ainsi de la cellule au lieu d'y rester, et le survol se cale d'équerre —
-     le site garde ses angles droits (voir `tokens/borders.css`).
+     Le bord d'attaque était arrondi ; il ne l'est plus. Le système ne pose
+     AUCUN rayon — ni sur les cadres, ni sur les filets, ni sur les boutons
+     (`tokens/borders.css`) — et un nez arrondi qui balayait la cellule était le
+     seul endroit du site où cette loi cédait, fût-ce pour 180 ms. La verticale
+     dit la même chose que le reste : angles droits.
 
-     Le rayon est une longueur FIXE et non une pastille : le front doit avoir la
-     même allure dans une cellule de 44px de haut et dans une de 285px. Sur les
-     plus basses il se referme de lui-même en demi-cercle (un rayon se borne à
-     la moitié du côté), ce qui est exactement ce qu'on veut. */
-  --survol-rayon: 24px;
-  --survol-ferme:  inset(0 100% 0 0 round 0 var(--survol-rayon) var(--survol-rayon) 0);
-  --survol-ouvert: inset(0 calc(-1 * var(--survol-rayon)) 0 0 round 0 var(--survol-rayon) var(--survol-rayon) 0);
+     UNE seule valeur bouge entre les deux états, l'écart de droite. Les
+     `inset()` gardent la même forme des deux côtés — c'est la condition pour
+     que le navigateur interpole le `clip-path` au lieu de le remplacer. */
+  --survol-ferme:  inset(0 100% 0 0);
+  --survol-ouvert: inset(0 0 0 0);
   /* « Vite » : le pas le plus court de l'échelle qui laisse encore voir un
      geste. Le même que celui des changements de couleur du système. */
   --survol-duree: var(--dur-fast);

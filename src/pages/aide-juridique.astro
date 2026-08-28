@@ -5,7 +5,6 @@ import Breadcrumb from '../components/Breadcrumb.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import Card from '../components/Card.astro';
 import Callout from '../components/Callout.astro';
-import Icon from '../components/Icon.astro';
 import RuledList from '../components/RuledList.astro';
 import LinkList from '../components/LinkList.astro';
 import ContactBand from '../components/ContactBand.astro';
@@ -23,7 +22,7 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
           { label: 'Honoraires', href: '/#honoraires' },
           { label: "Documents pour l'aide juridique" },
         ]} />
-        <h1>Documents à apporter pour l'aide juridique</h1>
+        <h1>Faire une demande d'aide juridique</h1>
         <p class="lead">
           Apportez les documents généraux, puis ceux qui correspondent à votre situation.
           Si un document manque, venez quand même : nous verrons ensemble comment l'obtenir.
@@ -34,7 +33,7 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
     <Page>
       <div class="split">
         <div>
-          <div class="step"><span class="letter">A</span><h2>Dans tous les cas</h2></div>
+          <h2 class="step">Documents généraux</h2>
           <div class="prose"><RuledList items={GENERAUX} /></div>
           <div class="prose spaced">
             <Callout tone="urgent" title="Ce n'est pas la proposition de déclaration simplifiée">
@@ -43,26 +42,21 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
             </Callout>
           </div>
 
-          <div class="step far"><span class="letter">B</span><h2>Preuves de revenus, selon votre situation</h2></div>
+          <h2 class="step far">Preuves de revenus, selon votre situation</h2>
           <div class="situations">
-            {REVENUS.map(([titre, docs], i) => (
+            {REVENUS.map(([titre, docs]) => (
               <Card padding="var(--space-5) var(--space-6)">
-                <div class="sit">
-                  <span class="num">{String(i + 1).padStart(2, '0')}</span>
-                  <div>
-                    <div class="sit-title">{titre}</div>
-                    <ul>
-                      {docs.map((d) => (
-                        <li><span class="check"><Icon name="check" size={20} /></span>{d}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
+                <div class="sit-title">{titre}</div>
+                <ul>
+                  {docs.map((d) => (
+                    <li><span class="dash" aria-hidden="true"></span><span>{d}</span></li>
+                  ))}
+                </ul>
               </Card>
             ))}
           </div>
 
-          <div class="step far"><span class="letter">C</span><h2>Si vous vivez avec d'autres personnes majeures</h2></div>
+          <h2 class="step far">Si vous vivez avec d'autres personnes majeures</h2>
           <p class="after">
             Chaque adulte mentionné sur votre composition de ménage doit fournir ses preuves de
             revenus et son AER — sauf s'il s'agit de votre conjoint et que vous demandez un divorce
@@ -71,7 +65,7 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
         </div>
 
         <aside>
-          <Card tone="sage" padding="var(--space-6)">
+          <Card tone="warm" padding="var(--space-6)">
             <Eyebrow>L'aide juridique</Eyebrow>
             <p class="claim">Ce n'est pas une faveur : c'est un droit.</p>
             <p class="note">
@@ -130,31 +124,40 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
   }
   .split > div   { flex: 8 1 40ch; }
   .split > aside { flex: 4 1 24ch; }
-  .step { display: flex; align-items: baseline; gap: var(--space-4); }
+  .step { font-family: var(--font-display); font-size: var(--fs-h3); font-weight: var(--fw-bold); }
   .step.far { margin-top: var(--space-10); }
-  .letter { font-family: var(--font-display); font-size: 40px; font-weight: var(--fw-bold); color: var(--caramel); }
-  .step h2 { font-family: var(--font-display); font-size: var(--fs-h3); font-weight: var(--fw-bold); }
 
   .prose { margin-top: var(--space-5); max-width: var(--measure-prose); }
   .prose.spaced { margin-top: var(--space-6); }
   .situations { margin-top: var(--space-5); display: grid; gap: var(--space-4); }
-  .sit { display: grid; grid-template-columns: 48px 1fr; gap: var(--space-5); }
-  .num { font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); color: var(--sauge-obscur); }
   .sit-title {
     font-family: var(--type-subtitle-family);
     font-size: var(--type-subtitle-size);
     font-weight: var(--type-subtitle-weight);
     color: var(--type-subtitle-color);
   }
-  .sit ul { margin: 10px 0 0; padding-left: 0; list-style: none; display: grid; gap: 8px; }
-  .sit li {
+  /* La même liste que les documents généraux (voir RuledList) : un filet en
+     tête de ligne et un tiret caramel, jamais de coche. Seule la taille change
+     — celle de la carte, secondaire par rapport à son titre. Pas de `gap` : ce
+     sont les filets qui séparent, et un gap ferait deux séparations. */
+  .situations ul { margin: var(--space-4) 0 0; padding-left: 0; list-style: none; }
+  .situations li {
     display: flex;
-    gap: var(--space-3);
+    gap: var(--space-4);
+    align-items: baseline;
+    padding: var(--space-4) 0;
+    border-top: var(--divider);
     font-size: var(--fs-body-sm);
     line-height: 1.5;
     color: var(--text-muted);
   }
-  .check { color: var(--sauge-obscur); flex: 0 0 auto; margin-top: 2px; }
+  .situations .dash {
+    width: 14px;
+    height: 1px;
+    background: var(--caramel);
+    flex: 0 0 auto;
+    transform: translateY(-6px);
+  }
   .after { margin-top: var(--stack-tight); font-size: var(--fs-body); line-height: 1.6; max-width: var(--measure-prose); }
 
   aside { display: grid; gap: var(--space-5); align-content: start; position: sticky; top: 24px; }

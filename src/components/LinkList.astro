@@ -4,8 +4,11 @@ interface Props { items: Array<[string, string]> }
 const { items } = Astro.props;
 ---
 <div class="links">
+  {/* Tous ces liens sortent du site : ils s'ouvrent dans un nouvel onglet,
+      comme partout ailleurs. La flèche oblique et l'adresse écrite en clair
+      l'annoncent déjà au lecteur — il n'y a rien à ajouter au libellé. */}
   {items.map(([label, url]) => (
-    <a href={`https://${url}`} class="eg-invert" rel="noopener">
+    <a href={`https://${url}`} class="eg-invert" target="_blank" rel="noopener">
       <span class="eg-accent glyph"><Icon name="arrow-up-right" size={20} /></span>
       <span>{label}<span class="url">{url}</span></span>
     </a>
