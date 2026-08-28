@@ -95,3 +95,32 @@
   --surface-liens:      #FFFFFF;
   --surface-contact:    #FAF7F5;
 }
+
+/* ---- Le sous-titre ----
+   Le niveau des NOMS : une matière, une avocate, un point de contact. Il n'est
+   pas un titre de section plus petit — c'est l'étiquette de la chose qui est
+   dans la cellule, et c'est le seul niveau de titre du site qui ne soit PAS en
+   display. Le sans-serif tient mieux un nom court qu'un Playfair réduit, et le
+   brun moyen le pose sans le faire concurrencer le titre de section au-dessus.
+
+   Une seule définition pour tous les endroits qui portent ce rôle : le registre
+   des matières (`RuledCell`), les cellules-portraits (`PersonCell`), les
+   colonnes de liens et les cellules de contact de l'accueil, les situations de
+   l'aide juridique. La taille est FIXE : ces titres sont courts et vivent dans
+   des cellules qui, elles, sont déjà fluides.
+
+   28px est écrit en clair : la valeur tombe ENTRE deux pas de l'échelle
+   (--fs-h4 à 26px, --fs-h3 à 32px). Nommer l'un des deux mentirait sur ce qui
+   est réellement dessiné ; ce demi-pas n'appartient qu'à ce rôle. */
+:root {
+  --type-subtitle-family: var(--font-body);
+  --type-subtitle-size:   28px;
+  --type-subtitle-weight: var(--fw-semibold);
+  --type-subtitle-color:  var(--brun-moyen);
+  /* Le carré qui ouvre le sous-titre. Mesuré en `em` : il est à l'échelle du
+     texte qu'il annonce, et suivra la taille si elle bouge encore. Il n'a pas
+     de couleur à lui — il prend `currentColor`, donc le brun du sous-titre, et
+     il bascule AVEC lui quand une cellule cliquable s'inverse au survol. */
+  --type-subtitle-mark:     0.27em;
+  --type-subtitle-mark-gap: 0.5em;
+}

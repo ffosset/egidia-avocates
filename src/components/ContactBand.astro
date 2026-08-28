@@ -41,14 +41,15 @@ import { CONTACT } from '../data/site.js';
     font-family: var(--font-display);
     font-size: var(--fs-h3);
     font-weight: var(--fw-bold);
-    max-width: 24ch;
   }
   p {
     margin-top: var(--stack-tight);
     font-size: var(--fs-body-sm);
     color: var(--brun-moyen);
-    max-width: 48ch;
   }
+  /* Le titre et sa ligne d'explication tombent sur la même verticale : une
+     seule mesure, écrite une seule fois, en rem (voir RuledCell). */
+  h2, p { max-width: 26rem; }
   /* Alignées à droite face au texte, recalées à gauche une fois empilées.
      Une requête de CONTENEUR, pas de fenêtre : la bascule dépend de la place
      dont dispose la bande, pas de la taille de l'écran. Aucun point de rupture

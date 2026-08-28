@@ -10,7 +10,9 @@ const { eyebrow, title, lead, align = 'left' } = Astro.props;
 </div>
 
 <style>
-  .head { max-width: 780px; }
+  /* Le titre et son chapô se cassent sur la MÊME verticale : la mesure est
+     portée par le bloc, une seule fois, et aucun enfant ne la redéfinit. */
+  .head { max-width: 40rem; }
   /* `margin-inline` et non `margin` : le pas vertical appartient à la pile. */
   .a-center { margin-inline: auto; text-align: center; }
   h2 {
@@ -24,6 +26,5 @@ const { eyebrow, title, lead, align = 'left' } = Astro.props;
     font-size: var(--fs-lead);
     line-height: 1.5;
     color: var(--text-muted);
-    max-width: 640px;
   }
 </style>

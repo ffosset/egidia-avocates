@@ -102,15 +102,15 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
     font-size: var(--fs-h1);
     font-weight: var(--fw-bold);
     line-height: 1.12;
-    max-width: 24ch;
   }
   .lead {
     margin-top: var(--space-5);
     font-size: var(--fs-lead);
     line-height: 1.5;
     color: var(--brun-moyen);
-    max-width: 50ch;
   }
+  /* Le titre et son chapô cassent sur la même verticale (voir RuledCell). */
+  h1, .lead { max-width: 35rem; }
   /* Deux colonnes proportionnelles tant qu'elles tiennent, puis empilées.
      `flex-wrap` fait deux choses qu'une grille à points de rupture ne fait pas :
      l'asymétrie se DÉTEND vers l'égalité à mesure que la place manque, puis le
@@ -140,7 +140,12 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
   .situations { margin-top: var(--space-5); display: grid; gap: var(--space-4); }
   .sit { display: grid; grid-template-columns: 48px 1fr; gap: var(--space-5); }
   .num { font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); color: var(--sauge-obscur); }
-  .sit-title { font-family: var(--font-display); font-size: 26px; font-weight: var(--fw-bold); }
+  .sit-title {
+    font-family: var(--type-subtitle-family);
+    font-size: var(--type-subtitle-size);
+    font-weight: var(--type-subtitle-weight);
+    color: var(--type-subtitle-color);
+  }
   .sit ul { margin: 10px 0 0; padding-left: 0; list-style: none; display: grid; gap: 8px; }
   .sit li {
     display: flex;

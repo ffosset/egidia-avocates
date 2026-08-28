@@ -48,6 +48,19 @@ const mh = typeof minHeight === 'number' ? `${minHeight}px` : minHeight;
   /* Pas de `gap` : c'est la pile qui espace, paire par paire (voir pile.css).
      Un gap donnerait la même valeur au label et à son titre qu'à deux blocs. */
   .cell {
+    /* ---- LA MESURE DE LA CELLULE ----
+       Le nom et son résumé se cassent sur la MÊME verticale : une seule valeur,
+       portée par la cellule, lue par les deux.
+
+       Elle est en `rem`, et c'est le fond du problème qu'elle corrige. Un `ch`
+       posé ici ne serait pas résolu ici : une custom property est substituée
+       telle quelle puis calculée dans le contexte de l'ENFANT qui la lit, et
+       `ch` suit la taille de police de cet enfant. Les deux mesures d'avant
+       étaient donc écrites dans deux unités différentes sans le dire — 18ch de
+       32px pour le nom (~290px), 34ch de 18px pour le résumé (~306px) — d'où
+       deux bords de droite qui ne tombaient jamais ensemble.
+       `rem` est relatif à la racine : la même longueur pour les deux. */
+    --cell-measure: 20rem;
     display: flex;
     flex-direction: column;
     padding: var(--cell-pad);
@@ -64,18 +77,32 @@ const mh = typeof minHeight === 'number' ? `${minHeight}px` : minHeight;
   .e-left,  .e-both { padding-left: var(--content-inset); }
   .e-right, .e-both { padding-right: var(--content-inset); }
 
+  /* Le nom de la chose : rôle « sous-titre », défini une fois dans
+     `styles/tokens.css`. Ne restent ici que la conduite et la mesure. */
   .cell h3 {
-    font-family: var(--font-display);
-    font-size: clamp(24px, 2vw, 30px);
-    font-weight: var(--fw-bold);
+    font-family: var(--type-subtitle-family);
+    font-size: var(--type-subtitle-size);
+    font-weight: var(--type-subtitle-weight);
     line-height: 1.2;
-    color: var(--text-heading);
-    max-width: 18ch;
+    color: var(--type-subtitle-color);
+    max-width: var(--cell-measure);
+  }
+  /* Le carré est POSÉ SUR LA LIGNE DE BASE (`vertical-align` par défaut d'un
+     inline-block) : il s'aligne sur le pied des lettres, pas sur un milieu
+     optique qui flotterait. Il reste sur la première ligne d'un titre qui en
+     prend deux — c'est une puce, pas une colonne. */
+  .cell h3::before {
+    content: '';
+    display: inline-block;
+    width: var(--type-subtitle-mark);
+    height: var(--type-subtitle-mark);
+    margin-right: var(--type-subtitle-mark-gap);
+    background: currentColor;
   }
   .cell p {
     font-size: var(--fs-body-sm);
     line-height: 1.55;
     color: var(--text-muted);
-    max-width: 34ch;
+    max-width: var(--cell-measure);
   }
 </style>
