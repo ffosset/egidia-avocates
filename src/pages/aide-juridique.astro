@@ -4,7 +4,6 @@ import Page from '../components/Page.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import Card from '../components/Card.astro';
-import Callout from '../components/Callout.astro';
 import Icon from '../components/Icon.astro';
 import LinkList from '../components/LinkList.astro';
 import ContactBand from '../components/ContactBand.astro';
@@ -36,16 +35,17 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
           </p>
 
           <div class="block">
-            <Eyebrow>Documents généraux</Eyebrow>
+            <h2>Documents généraux</h2>
             <ul class="generaux">
               {GENERAUX.map((g) => (
                 <li>
-                  <span class="dash" aria-hidden="true"></span>
+                  <span class="coche" aria-hidden="true"><Icon name="check" size={20} /></span>
                   <div>
                     <span>{g.doc}</span>
                     {g.garde && (
                       <div class="garde">
-                        <Callout tone="urgent" title={g.garde.titre}>{g.garde.texte}</Callout>
+                        <p class="garde-titre">{g.garde.titre}</p>
+                        <p class="garde-texte">{g.garde.texte}</p>
                       </div>
                     )}
                   </div>
@@ -55,12 +55,7 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
           </div>
 
           <div class="block far">
-            <Eyebrow>Preuves de revenus</Eyebrow>
-            <h2>Choisissez votre situation</h2>
-            <p class="consigne">
-              Une seule situation à la fois. Ouvrez la vôtre : elle donne les documents
-              à joindre aux deux ci-dessus.
-            </p>
+            <h2>Preuves de revenus</h2>
 
             {/* ---- LE SÉLECTEUR ----
                 Neuf situations, une seule ouverte. C'est un `<details name>` :
@@ -72,17 +67,18 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
 
                 Pas de champ, pas de bouton radio : le cabinet ne collecte
                 aucune donnée, et rien ici ne doit ressembler à un formulaire. */}
+            <Eyebrow class="etiquette">Choisissez votre situation</Eyebrow>
             <div class="choix">
               {REVENUS.map((s) => (
                 <details class="situation" name="situation">
                   <summary class="eg-inverse">
-                    <span class="sit-titre">{s.titre}</span>
-                    <span class="chev" aria-hidden="true"><Icon name="chevron-down" size={26} /></span>
+                    <span>{s.titre}</span>
+                    <span class="chev" aria-hidden="true"><Icon name="chevron-down" size={24} /></span>
                   </summary>
                   <div class="reponse" id={s.id}>
                     <ul>
                       {s.docs.map((d) => (
-                        <li><span class="dash" aria-hidden="true"></span><span>{d}</span></li>
+                        <li><span class="coche" aria-hidden="true"><Icon name="check" size={20} /></span><span>{d}</span></li>
                       ))}
                     </ul>
                   </div>
@@ -90,19 +86,20 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
               ))}
             </div>
           </div>
+
+          <div class="block far">
+            <h2>Autres personnes du ménage</h2>
+            <p class="apres">
+              Chaque adulte mentionné sur votre composition de ménage doit fournir ses preuves de
+              revenus et son AER — sauf s'il s'agit de votre conjoint et que vous demandez un divorce
+              ou une séparation.
+            </p>
+          </div>
         </div>
 
         <aside>
           <div class="aplat" aria-hidden="true"></div>
           <Card padding="var(--space-6)">
-            <Eyebrow>Autres personnes du ménage</Eyebrow>
-            <p class="note">
-              Chaque adulte mentionné sur votre composition de ménage doit fournir ses preuves de
-              revenus et son AER — sauf s'il s'agit de votre conjoint et que vous demandez un divorce
-              ou une séparation.
-            </p>
-          </Card>
-          <Card tone="inset" padding="var(--space-6)">
             <Eyebrow>Liens utiles</Eyebrow>
             <div class="tight"><LinkList items={LIENS_PRODEO} /></div>
           </Card>
@@ -203,48 +200,90 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
   .block { margin-top: var(--stack-loose); }
   .far { margin-top: var(--space-9); }
   .tight { margin-top: var(--stack-tight); }
-  .note { margin: var(--stack-tight) 0 0; font-size: var(--fs-body-sm); color: var(--text-muted); line-height: 1.6; }
 
-  /* ---- LES DOCUMENTS GÉNÉRAUX ----
-     La liste éditoriale de `RuledList` — filet en tête de ligne, tiret caramel,
-     jamais de coche — écrite ici parce qu'un document peut porter sa mise en
-     garde SOUS lui : l'avertissement sur l'AER appartient à l'AER, et posé à la
-     suite de la liste il se lisait comme valant pour les deux. */
-  .generaux { list-style: none; margin: var(--space-5) 0 0; padding: 0; max-width: var(--measure-prose); }
-  .generaux > li {
-    display: flex;
-    gap: var(--space-4);
-    align-items: baseline;
-    padding: var(--space-4) 0;
-    border-top: var(--divider);
-    font-size: var(--fs-body);
-    line-height: 1.5;
-  }
-  .garde { margin-top: var(--space-4); }
-
-  /* ---- LE SÉLECTEUR DE SITUATION ----
-     Il ne doit pas se lire comme une liste de plus : le cadre fort, la consigne
-     et les chevrons disent qu'il y a un CHOIX à faire. Les lignes sont hautes
-     (72px, la mesure du composant Accordion du design system), largement au-delà
-     de la cible tactile. */
+  /* Les trois sections du corps portent le MÊME titre — grand, en display —
+     parce qu'elles sont trois étapes de la même démarche. L'étiquette en
+     capitales est descendue d'un cran : elle ne coiffe plus la section, elle
+     nomme l'objet qui la suit (voir `.etiquette`). */
   h2 {
-    margin-top: var(--stack-bind);
     font-family: var(--font-display);
     font-size: var(--fs-h3);
     font-weight: var(--fw-bold);
     line-height: 1.2;
   }
-  .consigne {
+  .apres {
     margin-top: var(--stack-tight);
     font-size: var(--fs-body);
     line-height: 1.6;
-    color: var(--text-muted);
     max-width: var(--measure-prose);
   }
+
+  /* ---- LES DOCUMENTS GÉNÉRAUX ----
+     Le filet en tête de ligne de `RuledList`, mais écrit ici pour deux raisons :
+     un document peut porter sa mise en garde SOUS lui (l'avertissement sur
+     l'AER appartient à l'AER, et posé à la suite de la liste il se lisait comme
+     valant pour les deux), et la puce est une coche, pas le tiret éditorial —
+     voir `.coche`. */
+  .generaux { list-style: none; margin: var(--stack-tight) 0 0; padding: 0; max-width: var(--measure-prose); }
+  .generaux > li {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+    padding: var(--space-4) 0;
+    border-top: var(--divider);
+    font-size: var(--fs-body);
+    line-height: 1.5;
+  }
+  /* ---- LA MISE EN GARDE ----
+     Ce n'était pas un `Callout` à sa place : l'encadré rose pleine largeur,
+     son filet de 3px et son triangle de 26px pesaient plus que le document
+     qu'ils commentent — la page s'ouvrait sur une alerte alors qu'elle ouvre
+     sur une liste de papiers. Il ne reste que ce qui porte le sens : un filet
+     fin dans l'encre d'alerte, et l'intitulé dans la même encre. Pas d'aplat,
+     pas de glyphe (une icône ne porte jamais le sens seule, de toute façon).
+     Le texte descend d'un cran vers le brun moyen : c'est une note sur un
+     document, pas une deuxième voix dans la page. */
+  .garde {
+    margin-top: var(--space-4);
+    padding-left: var(--space-4);
+    border-left: var(--border-frame) solid var(--status-urgent-fg);
+    max-width: var(--measure-prose);
+  }
+  .garde-titre {
+    margin: 0;
+    font-size: var(--fs-body-sm);
+    font-weight: var(--fw-semibold);
+    line-height: 1.5;
+    color: var(--status-urgent-fg);
+  }
+  .garde-texte {
+    margin: var(--stack-bind) 0 0;
+    font-size: var(--fs-body-sm);
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+
+  /* ---- LE SÉLECTEUR DE SITUATION ----
+     Il ne doit pas se lire comme une liste de plus : ce ne sont ni le poids ni
+     la taille du texte qui le disent — les intitulés sont du corps ordinaire —
+     mais le cadre fort, l'étiquette posée dessus et les chevrons. Les lignes
+     sont hautes (72px, la mesure du composant Accordion du design system),
+     largement au-delà de la cible tactile. */
+  /* L'étiquette du sélecteur : elle ne coiffe pas la section, elle NOMME la
+     boîte qui la suit — d'où le pas le plus serré de la pile entre les deux.
+     Elle suit directement le titre de section, donc l'air d'un titre à son
+     chapô. */
+  .etiquette { margin-top: var(--stack-tight); }
+
+  /* ---- LE CADRE ----
+     Il ne porte AUCUN padding : les filets qui séparent les situations sont
+     posés par les lignes, et une ligne rentrée aurait fait des filets plus
+     courts que la boîte — un trait qui s'arrête avant son cadre se lit comme
+     une erreur d'alignement. Ce sont donc les lignes qui portent le pas
+     intérieur, et le filet comme le lit du survol vont d'un bord à l'autre. */
   .choix {
-    margin-top: var(--stack-loose);
+    margin-top: var(--stack-bind);
     border: var(--border-frame-strong);
-    padding: 0 var(--space-6);
   }
   /* Le premier filet est celui du cadre : une bordure de plus ferait un trait
      double en haut de la boîte. */
@@ -256,20 +295,32 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
     justify-content: space-between;
     gap: var(--space-5);
     min-height: 72px;
-    /* Le lit du survol court d'un bord à l'autre du cadre, la ligne reste
-       alignée sur le texte de la page : le padding du cadre est rendu à la
-       ligne, qui le reprend à son compte. */
-    margin: 0 calc(-1 * var(--space-6));
-    padding: var(--space-4) var(--space-6);
+    /* Le pas intérieur du cadre est porté par la ligne, pas par la boîte :
+       c'est ce qui laisse les filets aller d'un bord à l'autre. */
+    padding: var(--space-4) var(--cell-pad);
     cursor: pointer;
     list-style: none;
-    font-family: var(--type-subtitle-family);
-    font-size: var(--type-subtitle-size);
-    font-weight: var(--type-subtitle-weight);
-    line-height: 1.2;
-    color: var(--type-subtitle-color);
+    /* Du texte de corps, pas un sous-titre : ces neuf intitulés sont des
+       RÉPONSES à une question, pas les noms de neuf objets. En 28px demi-gras
+       ils pesaient autant que les titres de section, et le cadre se lisait
+       comme une quatrième liste de titres plutôt que comme un choix à faire. */
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-body);
+    color: var(--text-body);
   }
   .situation > summary::-webkit-details-marker { display: none; }
+
+  /* ---- LA SITUATION CHOISIE ----
+     Le lit du survol, mais POSÉ : il ne dit plus « celle-ci est cliquable », il
+     dit « celle-ci est la vôtre ». L'intitulé et sa réponse le partagent, donc
+     les deux se lisent comme un seul bloc dans la liste — c'est ce qui rend le
+     choix visible sans avoir à relire les neuf lignes. Le survol reste au-dessus
+     et ne se voit pas ici : c'est le même voile. */
+  .situation[open] > summary,
+  .situation[open] > .reponse { background: var(--survol-aplat); }
+  .situation[open] > summary { color: var(--text-heading); }
 
   /* Le chevron ne suit PAS le décalage de trois pixels : il porte déjà une
      transformation à lui, celle qui dit ouvert/fermé, et `transform` est une
@@ -286,12 +337,12 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
   /* La réponse : la même liste que les documents généraux, un cran plus bas —
      c'est le contenu d'une situation, pas le titre de la page. Pas de `gap` :
      ce sont les filets qui séparent. */
-  .reponse { padding: 0 0 var(--space-6); max-width: var(--measure-prose); }
+  .reponse { padding: 0 var(--cell-pad) var(--space-6); }
   .reponse ul { list-style: none; margin: 0; padding: 0; }
   .reponse li {
     display: flex;
     gap: var(--space-4);
-    align-items: baseline;
+    align-items: flex-start;
     padding: var(--space-4) 0;
     border-top: var(--divider);
     font-size: var(--fs-body-sm);
@@ -299,11 +350,20 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
     color: var(--text-muted);
   }
 
-  .dash {
-    width: 14px;
-    height: 1px;
-    background: var(--caramel);
+  /* ---- LA COCHE ----
+     Le tiret caramel de `RuledList` est l'énumération éditoriale du site. Ces
+     deux listes-ci ne sont pas une énumération : ce sont des papiers à mettre
+     dans une pochette, et on les coche. C'est le seul endroit du site où la
+     liste a ce sens, et le seul où le tiret cède.
+
+     Elle est centrée sur la PREMIÈRE LIGNE, pas sur l'élément : un document qui
+     court sur deux lignes garde sa coche en tête. `1.5em` est l'interligne des
+     deux listes, et `em` suit la taille de chacune — un seul calcul pour les
+     deux. */
+  .coche {
+    display: inline-flex;
     flex: 0 0 auto;
-    transform: translateY(-6px);
+    margin-top: calc((1.5em - 20px) / 2);
+    color: var(--caramel);
   }
 </style>
