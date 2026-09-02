@@ -34,13 +34,28 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
           loading="eager"
         />
       </div>
-      {/* Un quart de CERCLE, pas un quart d'ellipse : --hero-arc est une
-          longueur, et elle sert aux deux rayons. C'est ce qui donne à l'arc du
-          héros la courbure constante de celui des portraits (voir la note sur
-          « L'arc de la couture » dans `styles/tokens.css`). Écart assumé par
-          rapport au défaut du design system (« 40% 100% »), qui étire l'arc sur
-          toute la hauteur et n'énonce donc jamais la verticale de la couture. */}
-      <ArcPanel width="var(--hero-split)" sweep="var(--hero-arc) var(--hero-arc)">
+      {/* LE FLANC DU BOUCLIER, d'un seul côté. Le bouclier du système garde
+          ses flancs DROITS sur le haut et ne tourne qu'en bas (`.c-shield`
+          dans `ArcImage` : « 0 0 46% 46% / 0 0 34% 34% »). Le panneau n'en
+          reprend qu'un flanc, celui de fuite, et la même loi.
+
+          Deux rayons, deux rôles :
+
+          - 50 % en vertical — le bord tient la verticale de la couture sur
+            toute la moitié HAUTE, à hauteur du regard, là où l'alignement sur
+            le premier filet de la navigation se lit ; il ne s'en écarte que
+            dans la moitié basse. C'est tout ce que le « 100% » d'avant (et le
+            « 40% 100% » du design system) manquaient : un arc étiré sur toute
+            la hauteur part de biais dès le premier pixel et n'énonce jamais le
+            filet sur lequel il s'aligne.
+          - 13 % en horizontal — la fuite reste ÉTROITE. Ce rapport de 1 à 4
+            fait un long fléchissement, pas un quart de rond : le coin ne doit
+            pas s'arrondir, il doit s'incliner. Il retombe à 87 % de la
+            couture, bien en deçà du bord gauche de la photographie (76 %) —
+            le cadrage du groupe n'a donc pas à bouger d'un pixel.
+
+          Écart assumé par rapport au défaut du composant. */}
+      <ArcPanel width="var(--hero-split)" sweep="13% 50%">
         <div class="hero-inner pile">
           <h1>Chaque personne a droit à être écoutée, conseillée et défendue</h1>
           <p>
@@ -267,8 +282,8 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     /* UNE seule source pour la coupe : --hero-split, la couture, définie dans
        `styles/tokens.css`. Le panneau la prend pour largeur, l'en-tête y pose le
        premier filet de sa navigation, et la photo commence là où l'arc du
-       panneau vient se poser — --hero-arc en deçà de la couture. Les trois ne
-       peuvent plus dériver. */
+       panneau vient se poser, à 76 % de la couture. Les trois ne peuvent plus
+       dériver. */
     position: relative;
     /* Le panneau revient dans le FLUX (voir plus bas) : c'est lui qui donne sa
        hauteur au héros, donc le padding du texte respire vraiment au lieu
@@ -283,18 +298,16 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   .hero :global(.arc-panel) { position: relative; }
   /* La photographie est livrée étalonnée dans les tons du cabinet : elle se
      pose telle quelle, sans fond brun ni fusion pour la réchauffer. */
-  /* La photo commence UNE GOUTTIÈRE avant le point où l'arc retombe sur le
-     bas du panneau. Le 0,76 d'avant était un rapport hérité, sans raison ;
-     celui-ci en a une, et c'est la seule qui tienne : creuser l'arc sans
-     déplacer la photo découvrirait un coin de page crème sous la courbe. La
-     gouttière n'est qu'un recouvrement de sûreté — le panneau la cache, elle
-     ne coûte donc rien qu'un peu de photo derrière le papier. */
+  /* La photo commence à 76 % de la couture : c'est ce qui cadre le groupe, et
+     ce cadrage est juste — il ne bouge pas. C'est aussi la borne de l'arc du
+     panneau : la courbe ne peut pas retomber à gauche de cette verticale sans
+     découvrir un coin de page sous elle. Elle retombe à 87 %. */
   .hero-photo {
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
-    left: calc(var(--hero-split) - var(--hero-arc) - var(--gutter));
+    left: calc(var(--hero-split) * 0.76);
   }
   .hero-photo :global(img) {
     /* Le groupe est bas dans la photographie livrée et le ciel occupe le tiers

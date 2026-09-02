@@ -52,28 +52,6 @@
    mesure prise sur la fenêtre leur donne la même valeur. Le plancher de 480px
    empêche le panneau d'écraser le titre entre 1000 et 1200px.
 
-   ---- L'arc de la couture ----
-   Le rayon de l'arc que le panneau du héros ouvre sur la photographie. C'est
-   une LONGUEUR, et elle sert deux fois — rayon horizontal ET vertical — pour
-   que le quart d'ellipse soit un quart de CERCLE.
-
-   C'est là tout le sujet. `border-radius` prend deux rayons, et ce qui se voit
-   n'est pas leur écriture mais leur rapport en pixels. Le portrait des fiches
-   d'avocate porte « 78% 58% » : dans sa boîte de 487×702 cela fait 380×407 px,
-   soit 0,93 — un cercle. Sa courbure est constante, et c'est pour cela qu'elle
-   se lit comme naturelle. Les mêmes pourcentages dans la boîte du héros, qui
-   est large et non haute, donneraient une ellipse aplatie : les pourcentages
-   ne se transportent pas d'une boîte à l'autre, une longueur si.
-
-   Le rayon vaut environ 56 % de la hauteur du panneau : le bord droit tient
-   donc la verticale de la couture sur les 44 % du haut avant de tourner —
-   la même proportion que le portrait (42 %). Sans ce segment droit, le
-   panneau n'énoncerait l'alignement sur le premier filet de la navigation
-   qu'en un point, pour l'abandonner aussitôt.
-
-   Si le panneau devenait plus court que le rayon, le navigateur réduit les
-   deux rayons dans le même rapport : l'arc rapetisse, il reste un cercle.
-
    ---- Le bord intérieur du cadre ----
    La position exacte du filet de marge, mesurée depuis le bord de la fenêtre.
    Même calcul que `PageRules` : au-delà de --page-max le contenu se centre, et
@@ -81,7 +59,6 @@
    dans le repère de la fenêtre tout en s'arrêtant sur les filets. */
 :root {
   --hero-split:  clamp(480px, 50vw, 820px);
-  --hero-arc:    clamp(240px, 24vw, 380px);
   --frame-inset: calc(max(0px, (100vw - var(--page-max)) / 2) + var(--page-margin));
 }
 
