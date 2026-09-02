@@ -5,7 +5,6 @@ import Page from '../../components/Page.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
 import Card from '../../components/Card.astro';
-import Callout from '../../components/Callout.astro';
 import Icon from '../../components/Icon.astro';
 import RuledGrid from '../../components/RuledGrid.astro';
 import RuledList from '../../components/RuledList.astro';
@@ -70,12 +69,7 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
 
         <aside>
           <div class="aplat" aria-hidden="true"></div>
-          {m.id === 'etrangers' && (
-            <Callout tone="attention" title="Les délais de recours sont très courts">
-              Un délai manqué se rattrape difficilement. Consultez-nous dès la réception d'une décision.
-            </Callout>
-          )}
-          <Card tone="inset" padding="var(--space-6)">
+          <Card padding="var(--space-6)">
             <Eyebrow>Liens utiles</Eyebrow>
             <div class="tight">
               {m.liens.length > 0 ? (
@@ -136,7 +130,11 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
     left: calc(-1 * var(--gutter));
     right: calc(-1 * var(--gutter));
     height: min(clamp(440px, 78vh, 820px), calc(100% + var(--debord)));
-    background: var(--brun-moyen);
+    /* Le sauge obscur, pas le brun : c'est la couleur que le site donne à ses
+       grandes surfaces pleines — le pied de page en est une. En brun, l'aplat
+       reprenait l'encre du texte agrandie à la taille d'une colonne, et les
+       cartes posées dessus se lisaient comme un trou dans un paragraphe. */
+    background: var(--sauge-obscur);
     border-bottom-left-radius: 78% 58%;
   }
   /* Une fois les colonnes empilées, l'aplat n'est plus une colonne debout : il
@@ -181,9 +179,15 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
     gap: var(--space-9);
     padding: 0 0 var(--section-y);
   }
-  /* L'aplat touche l'en-tête ; seul le TEXTE descend. */
-  .split > .corps { flex: 7 1 34ch; padding-top: var(--section-y); }
-  .split > aside  { flex: 5 1 26ch; }
+  /* L'aplat touche l'en-tête ; seul le TEXTE descend.
+
+     La colonne de droite ne porte que des cartes de liens : rien qui demande de
+     la largeur, et la colonne de texte en manquait. Les bases en `ch` montent
+     avec la découpe — c'est leur SOMME qui décide du moment où le bloc passe
+     dessous, et la relever fait empiler une centaine de pixels plus tôt : une
+     colonne de 30ch de liens qu'on écrase n'a plus d'intérêt à rester debout. */
+  .split > .corps { flex: 8 1 38ch; padding-top: var(--section-y); }
+  .split > aside  { flex: 4 1 30ch; }
   @media (--lap) {
     .split > .corps { padding-top: var(--section-y-sm); }
   }

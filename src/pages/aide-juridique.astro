@@ -115,7 +115,7 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
 
 <style>
   /* ---- L'APLAT ----
-     Le même dispositif que la page de matière (`services/[id].astro`), et pour
+     Le même dispositif que la page de service (`services/[id].astro`), et pour
      la même raison : il ouvre la colonne de DROITE, donc l'arc du bouclier
      tombe en bas à gauche. Ce n'est pas une photographie mais une couleur
      pleine, et la loi des marges ne laisse franchir les filets qu'à la
@@ -139,7 +139,11 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
     left: calc(-1 * var(--gutter));
     right: calc(-1 * var(--gutter));
     height: min(clamp(440px, 78vh, 820px), calc(100% + var(--debord)));
-    background: var(--brun-moyen);
+    /* Le sauge obscur, pas le brun : c'est la couleur que le site donne à ses
+       grandes surfaces pleines — le pied de page en est une. En brun, l'aplat
+       reprenait l'encre du texte agrandie à la taille d'une colonne, et les
+       cartes posées dessus se lisaient comme un trou dans un paragraphe. */
+    background: var(--sauge-obscur);
     border-bottom-left-radius: 78% 58%;
   }
   @media (--lap) {
@@ -181,9 +185,16 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
     gap: var(--space-9);
     padding: 0 0 var(--section-y);
   }
-  /* L'aplat touche l'en-tête ; seul le TEXTE descend. */
-  .split > .corps { flex: 7 1 34ch; padding-top: var(--section-y); }
-  .split > aside  { flex: 5 1 26ch; }
+  /* L'aplat touche l'en-tête ; seul le TEXTE descend.
+
+     La découpe est plus franche que sur une page de service (7/5) : ici la
+     colonne de droite ne porte qu'une carte de liens, et rien qui demande de
+     la largeur. Les bases en `ch` montent avec elle — c'est la SOMME des deux
+     bases qui décide du moment où le bloc passe dessous, et la relever fait
+     empiler une centaine de pixels plus tôt : une colonne de 30ch de liens
+     qu'on écrase n'a plus d'intérêt à rester debout. */
+  .split > .corps { flex: 8 1 38ch; padding-top: var(--section-y); }
+  .split > aside  { flex: 4 1 30ch; }
   @media (--lap) {
     .split > .corps { padding-top: var(--section-y-sm); }
   }
