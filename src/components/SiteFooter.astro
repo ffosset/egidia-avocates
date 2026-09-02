@@ -17,19 +17,30 @@ import { withBase } from '../lib/base.js';
       </div>
       <div class="col">
         <Eyebrow>Services</Eyebrow>
-        {MATIERES.map((m) => <a href={withBase(`/services/${m.id}`)}>{m.titre}</a>)}
+        <div class="liste">
+          {MATIERES.map((m) => <a href={withBase(`/services/${m.id}`)}>{m.titre}</a>)}
+        </div>
       </div>
       <div class="col">
         <Eyebrow>Le cabinet</Eyebrow>
-        <a href={withBase("/#equipe")}>Nos avocates</a>
-        <a href={withBase("/aide-juridique")}>Documents pour l'aide juridique</a>
-        <a href={withBase("/#honoraires")}>Honoraires</a>
+        <div class="liste">
+          <a href={withBase("/#equipe")}>Nos avocates</a>
+          <a href={withBase("/aide-juridique")}>Documents pour l'aide juridique</a>
+          <a href={withBase("/#honoraires")}>Honoraires</a>
+        </div>
       </div>
       <div class="col">
         <Eyebrow>Contact</Eyebrow>
-        <span class="plain">{CONTACT.adresse}</span>
-        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
-        <span class="small">{CONTACT.metro} · {CONTACT.tram}</span>
+        <!-- Le courriel d'abord : c'est par lui qu'on écrit au cabinet. L'adresse
+             et son arrêt viennent ensuite, et ces deux-là se lisent ensemble —
+             elles se serrent donc l'une contre l'autre. -->
+        <div class="liste">
+          <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+          <div class="lieu">
+            <span class="plain">{CONTACT.adresse}</span>
+            <span class="plain">{CONTACT.metro} · {CONTACT.tram}</span>
+          </div>
+        </div>
       </div>
     </div>
   </Page>
@@ -80,15 +91,42 @@ import { withBase } from '../lib/base.js';
        1,3:1 sur la sauge. Une variable, elle, descend par la cascade. */
     --text-label: var(--caramel-voile);
   }
-  /* `auto-fit` ne peut pas créer plus de colonnes qu'il n'y a de blocs : le
-     plafond de 4 est donné par le contenu, pas par un @media. Le garde
-     `min(100%, 220px)` empêche le débordement sous 260px de large. */
+  /* Quatre colonnes, mais pas quatre parts égales : la première porte un blason
+     et une phrase, les trois autres des intitulés courts. Elle prend donc un
+     cinquième de plus, et les listes se partagent le reste à égalité — c'est ce
+     rapport, et non la largeur du plus long lien, qui tient la composition. Le
+     cinquième est calé sur la mesure du chapô (360px) : au-delà, la colonne
+     dépasserait son texte et rouvrirait un blanc plus large que la gouttière. */
   .cols {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    grid-template-columns: 1.2fr 1fr 1fr 1fr;
     gap: var(--space-7);
   }
-  .col { display: grid; gap: var(--space-3); align-content: start; }
+  /* Sous la rupture, la mise en page redevient intrinsèque — mais PAS libre :
+     `auto-fit` seul rendait trois colonnes, et le quatrième bloc partait seul
+     à la ligne, laissant un trou des deux tiers de la largeur. Le plancher
+     `50% - gouttière/2` interdit une troisième colonne : quatre blocs se
+     rangent alors en deux fois deux, et c'est carré. Le `max(220px, …)` replie
+     sur une seule colonne quand la moitié devient trop étroite pour un
+     intitulé, et le `min(100%, …)` empêche le débordement sous 260px. */
+  @media (--lap) {
+    .cols {
+      grid-template-columns: repeat(
+        auto-fit,
+        minmax(min(100%, max(220px, calc(50% - var(--space-7) / 2))), 1fr)
+      );
+    }
+  }
+  /* L'étiquette se détache de sa liste (--space-4), les lignes d'une même liste
+     se suivent de près (--space-2) : deux pas, pour qu'on voie d'un coup d'œil
+     où un bloc commence et où il continue. */
+  .col { display: grid; gap: var(--space-4); align-content: start; }
+  .liste { display: grid; gap: var(--space-2); align-content: start; }
+  /* L'adresse et son arrêt disent une seule chose — où l'on vient. Quatre pixels
+     les séparent, seize les séparent du courriel : le rapport de un à quatre se
+     voit, là où deux écarts voisins ne se verraient pas. */
+  .lieu { display: grid; gap: var(--space-1); margin-top: var(--space-2); }
+  .lieu .plain { line-height: 1.45; }
 
   /* La puce crème n'a pas de rayon : le système n'en pose nulle part. */
   .chip {
@@ -99,15 +137,17 @@ import { withBase } from '../lib/base.js';
   }
   .chip img { height: 72px; width: auto; display: block; }
 
-  .blurb { font-size: var(--fs-body-sm); color: var(--sable-clair); max-width: 300px; line-height: 1.6; }
+  .blurb { font-size: var(--fs-body-sm); color: var(--sable-clair); max-width: 360px; line-height: 1.6; }
   .col a { color: var(--caramel-voile); font-size: var(--fs-body-sm); text-decoration: none; }
   /* Le survol ne s'écrit que là où un pointeur survole : au doigt, `:hover`
      reste allumé après l'appui (voir `styles/survol.css`). */
   @media (hover: hover) {
     .col a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
   }
+  /* Adresse et arrêts sont du texte, pas des liens : la teinte neutre les dit.
+     Ils se lisent dans le même corps que le courriel — une seule taille dans la
+     colonne, la hiérarchie tient à l'ordre et aux écarts. */
   .plain { font-size: var(--fs-body-sm); color: var(--sable-clair); line-height: 1.6; }
-  .small { font-size: 16px; color: var(--sable-clair); }
 
   .legal-band {
     margin-top: var(--space-8);
