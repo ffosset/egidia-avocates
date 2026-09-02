@@ -21,8 +21,18 @@ const { items } = Astro.props;
     display: grid;
     grid-template-columns: 24px 1fr;
     gap: var(--space-4);
-    padding: var(--space-4);
-    margin: 0 calc(-1 * var(--space-4));
+    /* ---- LE DÉBORD ----
+       Le filet d'une ligne doit traverser TOUT ce qui la contient, sinon il
+       commence et s'arrête en l'air. Le débord vaut donc le padding du
+       contenant, et c'est le contenant qui le donne : un cran par défaut —
+       la valeur qu'il faut dans une carte — `--cell-pad` dans une cellule
+       filetée (voir la section « Liens utiles » de l'accueil).
+
+       Le padding horizontal reprend exactement la même valeur : le texte
+       revient ainsi PILE là où il serait sans le débord, aligné sur le titre
+       qui ouvre le bloc. */
+    padding: var(--space-4) var(--links-bleed, var(--space-4));
+    margin-inline: calc(-1 * var(--links-bleed, var(--space-4)));
     border-top: var(--divider);
     text-decoration: none;
     color: var(--text-body);

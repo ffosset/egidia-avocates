@@ -47,21 +47,25 @@ export const ALT = {
 
 export const LIENS_ACCUEIL = [
   [
-    'Trouver un avocat et comprendre ses droits',
+    'Comprendre ses droits',
     [
       ['Avocats.be — combien coûte un avocat', 'avocats.be/fr/tout-savoir/combien-ca-coute'],
       [
         "Bureau d'aide juridique de Bruxelles — conditions de l'aide juridique",
         'www.aidejuridiquebruxelles.be',
       ],
+      ["Droits Quotidiens — l'information juridique en langage clair", 'droitsquotidiens.be'],
     ],
   ],
   [
-    'Aide et orientation',
+    'Soutien additionnel',
     [
-      ["Droits Quotidiens — l'information juridique en langage clair", 'droitsquotidiens.be'],
       ['Bruxelles Social — annuaire des services sociaux bruxellois', 'social.brussels'],
       ['CPAS de votre commune', 'cpasbxl.brussels'],
+      // Le cabinet a donné l'adresse, pas la glose : le nom seul, comme
+      // « CPAS de votre commune ». À compléter par le cabinet s'il veut dire
+      // en une ligne ce qu'on y trouve.
+      ['Atelier des droits sociaux', 'www.atelierdroitssociaux.be'],
     ],
   ],
 ];

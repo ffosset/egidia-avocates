@@ -3,7 +3,6 @@ import { withBase } from '../lib/base.js';
 import Base from '../layouts/Base.astro';
 import Page from '../components/Page.astro';
 import Eyebrow from '../components/Eyebrow.astro';
-import SectionHead from '../components/SectionHead.astro';
 import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
 import Band from '../components/Band.astro';
@@ -191,21 +190,43 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
       </Page>
     </section>
 
-    {/* 6 — LIENS UTILES */}
-    <section id="liens" class="liens">
-      <Page>
-        <div class="pile">
-          <SectionHead eyebrow="Liens utiles" title="Ressources externes" />
-          <div class="link-cols pile-block">
-            {LIENS_ACCUEIL.map(([titre, liens]) => (
-              <div class="pile">
-                <h3>{titre}</h3>
-                <LinkList items={liens} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </Page>
+    {/* 6 — LIENS UTILES : la boîte ne prend que ce qui se lit comme une
+        table. Le nom de la section et le nom de chaque groupe restent sur le
+        papier, au-dessus du registre ; seules les LIGNES de liens sont mises
+        en cellules — c'est là qu'un filet sert à quelque chose, puisqu'il
+        sépare deux entrées.
+
+        Le tout tient dans UN SEUL registre à deux colonnes, et c'est le point :
+        les noms de groupes forment la première rangée, les listes la seconde,
+        et les deux tombent donc forcément sur les mêmes verticales. Deux
+        grilles côte à côte auraient dérivé d'un pixel — celui du filet gauche
+        du registre.
+
+        La rangée des noms ne porte aucun filet : ni au-dessus (`noTop`), ni
+        entre les deux colonnes (voir `.groupe-nom`). Le premier trait de la
+        table est celui de la première ligne de liens.
+
+        Un groupe écrit donc ses DEUX enfants à la suite — son nom, puis sa
+        liste — et les place à la main dans le registre. C'est ce que le repli
+        exige : sous --lap le mode composé rend les cellules au flux, et
+        l'ordre du DOM est alors le seul à décider. Écrits rangée par rangée,
+        les deux noms se seraient retrouvés collés l'un à l'autre, loin des
+        listes qu'ils ouvrent. */}
+    <section id="liens" class="liens pile">
+      <div class="liens-head pile">
+        <Eyebrow>Liens utiles</Eyebrow>
+        <h2 class="big">Ressources externes</h2>
+      </div>
+      <RuledGrid columns="repeat(2, minmax(0, 1fr))" noTop class="pile-block">
+        {LIENS_ACCUEIL.map(([titre, liens], i) => (
+          <>
+            <h3 class="cell-h3 groupe-nom" style={`grid-column:${i + 1};grid-row:1`}>{titre}</h3>
+            <div class="groupe-liens" style={`grid-column:${i + 1};grid-row:2`}>
+              <LinkList items={liens} />
+            </div>
+          </>
+        ))}
+      </RuledGrid>
     </section>
 
     {/* 7 — CONTACT : registre à trois colonnes, la carte occupe deux */}
@@ -576,17 +597,38 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   .filler { font-size: 26px; line-height: 1.3; max-width: 16ch; }
 
   /* ---- 6. LIENS UTILES ---- */
-  .liens { padding: var(--section-y) 0; border-top: var(--divider); }
-  .link-cols {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-    gap: var(--space-9);
-  }
-  .link-cols h3 {
-    font-family: var(--type-subtitle-family);
-    font-size: var(--type-subtitle-size);
-    font-weight: var(--type-subtitle-weight);
-    color: var(--type-subtitle-color);
+  /* La section garde son air : le registre ne la remplit pas, il est POSÉ
+     dedans. C'est la seule de l'accueil dans ce cas — les trois autres sont un
+     registre de bord à bord. */
+  .liens { padding: var(--section-y) var(--page-margin); border-top: var(--divider); }
+
+  /* UNE seule verticale gouverne la section, et c'est celle du texte de la
+     première colonne : le nom de la section, le nom du groupe et l'intitulé
+     d'un lien commencent tous à `--cell-pad` du filet de marge. C'est plus que
+     le `--content-inset` que la loi exige — donc la loi tient — et c'est
+     surtout la SEULE valeur qui aligne le titre sur ce qu'il annonce. */
+  .liens-head { padding-left: var(--cell-pad); }
+  /* Le nom de la section prend l'oeil de « Nos avocates » (voir `.big`) : ces
+     deux-là ouvrent une section entière, pas une cellule. */
+
+  /* La rangée des noms de groupes : dans le registre pour en prendre les
+     colonnes, hors de la boîte pour tout le reste. Aucun filet — c'est la
+     ligne de liens qui pose le premier trait — et le pas d'un titre à ce qu'il
+     ouvre en guise de fond de cellule. */
+  .groupe-nom { padding: 0 var(--cell-pad) var(--stack-tight); max-width: none; }
+
+  /* La cellule d'une liste n'a AUCUN padding vertical : le filet du haut est
+     celui de la première ligne, celui du bas est le sien. Une liste plus
+     courte que sa voisine ne ferme donc pas plus haut — les deux colonnes
+     tombent sur le même trait. */
+  .groupe-liens {
+    /* Le débord d'une ligne vaut le padding de ce qui la contient : son filet
+       traverse alors toute la cellule, d'un filet vertical à l'autre, au lieu
+       de commencer et de s'arrêter en l'air (voir `LinkList`). */
+    --links-bleed: var(--cell-pad);
+    padding: 0 var(--cell-pad);
+    border-right: var(--divider);
+    border-bottom: var(--divider);
   }
 
   /* ---- 7. CONTACT ---- */
@@ -605,7 +647,10 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   }
   /* Même carré que sur les noms de matières — il remplace l'icône enveloppe
      qui ouvrait « Nous joindre » : les trois cellules du registre s'ouvrent
-     maintenant du même geste, et non deux d'un côté et une de l'autre. */
+     maintenant du même geste, et non deux d'un côté et une de l'autre.
+     Les groupes de liens de la section 6 portent le même nom de rôle, donc le
+     même carré : sur l'accueil, tout ce qui ouvre une cellule filetée s'ouvre
+     de ce geste-là. */
   .cell-h3::before {
     content: '';
     display: inline-block;
@@ -675,5 +720,10 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     .matiere-photo { margin-left: calc(-1 * var(--page-margin)); }
     .matiere-photo :global(.arc) { height: auto; aspect-ratio: 16 / 9; }
     .map-cell { min-height: 320px; }
+    /* Le registre des liens est sur une colonne : un nom de groupe ne coiffe
+       plus une colonne, il SUIT la liste précédente. Il lui faut donc l'air
+       qu'un titre a toujours au-dessus de lui — celui que la rangée du haut
+       lui donnait gratuitement. */
+    .groupe-liens + .groupe-nom { padding-top: var(--stack-loose); }
   }
 </style>
