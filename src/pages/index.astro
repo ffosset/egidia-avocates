@@ -30,7 +30,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
           src={PHOTOS.equipe}
           alt={ALT.equipe}
           corner="none"
-          objectPosition="50% 58%"
+          objectPosition="50% 100%"
           loading="eager"
         />
       </div>
@@ -290,12 +290,15 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     left: calc(var(--hero-split) * 0.76);
   }
   .hero-photo :global(img) {
-    /* Zoom ancré au bord GAUCHE À MI-HAUTEUR : le groupe se pose au centre du
-       cadre — le panneau lui mangeait sa moitié gauche et laissait un mur vide
-       à droite quand l'ancre était en haut à droite. Le mur part à la coupe,
-       la grande roue reste. */
-    transform: scale(1.18);
-    transform-origin: 5% 90%;
+    /* Le groupe est bas et à peine à gauche dans la photographie livrée, et le
+       ciel occupe le tiers haut. Le zoom est donc ancré EN BAS (l'ancre haute
+       ferait remonter le sol et couperait les pieds) et à 29 % de la largeur —
+       la part du cadre que le panneau recouvre. Les sept avocates se posent
+       alors au centre de ce qui reste visible, marges égales des quatre côtés :
+       ~65 px au-dessus des têtes, ~50 px sous les chaussures, ~125 px de chaque
+       côté à 1440 px. */
+    transform: scale(1.32);
+    transform-origin: 29% 100%;
   }
   .hero-inner {
     /* UNE mesure pour les deux blocs de texte : le titre et le chapô partagent
@@ -562,7 +565,12 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
      photographie a le droit de les franchir). */
   @media (--lap) {
     .hero { min-height: 0; }
-    .hero-photo { position: static; height: 380px; left: auto; }
+    /* Un rapport, pas une hauteur fixe : à 380 px la photo devenait un bandeau
+       de plus en plus écrasé à mesure que la largeur montait vers 1000 px, et
+       la coupe mangeait les têtes puis les pieds. Le 2/1 garde le groupe entier
+       à toutes ces largeurs ; le plancher l'empêche de n'être qu'un filet sur
+       un téléphone. */
+    .hero-photo { position: static; height: auto; aspect-ratio: 2 / 1; min-height: 320px; left: auto; }
     /* Pleine largeur, plus de panneau par-dessus : le recadrage du héros
        large n'a plus lieu d'être, la photo se suffit. */
     .hero-photo :global(img) { transform: none; }
