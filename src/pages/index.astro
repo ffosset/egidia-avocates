@@ -292,13 +292,13 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   .hero-photo :global(img) {
     /* Le groupe est bas et à peine à gauche dans la photographie livrée, et le
        ciel occupe le tiers haut. Le zoom est donc ancré EN BAS (l'ancre haute
-       ferait remonter le sol et couperait les pieds) et à 29 % de la largeur —
+       ferait remonter le sol et couperait les pieds) et à 33 % de la largeur —
        la part du cadre que le panneau recouvre. Les sept avocates se posent
        alors au centre de ce qui reste visible, marges égales des quatre côtés :
-       ~65 px au-dessus des têtes, ~50 px sous les chaussures, ~125 px de chaque
-       côté à 1440 px. */
+       ~90 px de part et d'autre du groupe à 1440 px, et le regard tombe à
+       mi-hauteur du cadre. */
     transform: scale(1.32);
-    transform-origin: 29% 100%;
+    transform-origin: 33% 100%;
   }
   .hero-inner {
     /* UNE mesure pour les deux blocs de texte : le titre et le chapô partagent
