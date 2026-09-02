@@ -561,7 +561,10 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     color: var(--text-on-dark);
     padding: var(--cell-pad);
     --btn-secondary-fg: var(--creme);
-    --btn-secondary-border: var(--creme);
+    /* Même rapport qu'ailleurs : le cadre se tient d'un cran en retrait de
+       l'encre. Sur un fond sombre, ce cran ne peut pas être plus clair que le
+       crème — c'est le crème lui-même, un peu voilé. */
+    --btn-secondary-border: rgba(250, 247, 244, .62);
     --survol-aplat: var(--creme);
     --survol-encre: var(--sauge-obscur);
   }

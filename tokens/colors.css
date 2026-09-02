@@ -59,7 +59,9 @@
 --btn-primary-fg:var(--creme);
 --btn-secondary-bg:transparent;
 --btn-secondary-fg:var(--brun-profond);
---btn-secondary-border:var(--brun-profond);
+/* Le cadre se tient un cran en dessous de l'encre : le filet fort du
+   système, jamais le brun du texte. Le mot reste ce qu'on lit d'abord. */
+--btn-secondary-border:var(--line-strong);
 --btn-accent-bg:var(--sauge-obscur);
 --btn-accent-bg-hover:#375139;
 --btn-accent-fg:#FFFFFF;
