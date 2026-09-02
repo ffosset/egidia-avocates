@@ -1,6 +1,8 @@
 // Contact, photographies et liens transverses.
 // Source de vérité : brand/contenu-site-web.txt.
 
+import { MATIERES } from './matieres.js';
+
 export const CONTACT = {
   adresse: 'Rue de Livourne 13, 1060 Bruxelles (1er étage)',
   acces: 'Accessible aux personnes à mobilité réduite',
@@ -48,8 +50,16 @@ export const LIENS_ACCUEIL = [
 ];
 
 // L'ordre suit celui des sections de l'accueil.
+// « Services » porte en plus la liste de ses matières : l'intitulé reste un
+// lien vers la section de l'accueil — le déroulant n'est qu'un raccourci vers
+// chaque matière, jamais le seul chemin. La liste se déduit de `matieres.js`,
+// pour qu'une matière ajoutée là apparaisse ici sans qu'on y pense.
 export const NAV = [
-  { href: '/#matieres', label: 'Services' },
+  {
+    href: '/#matieres',
+    label: 'Services',
+    enfants: MATIERES.map((m) => ({ href: `/matieres/${m.id}`, label: m.titre })),
+  },
   { href: '/#equipe', label: 'Équipe' },
   { href: '/#honoraires', label: 'Honoraires' },
   { href: '/#contact', label: 'Contact' },

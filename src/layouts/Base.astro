@@ -59,10 +59,21 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
   img { max-width: 100%; }
 
+  /* ---- Les ancres de la navigation glissent, elles ne sautent pas ----
+     « Services », « Équipe », « Honoraires », « Contact » mènent à des sections
+     de l'accueil. Sans ce glissement, le clic remplace l'écran d'un coup et se
+     lit comme un changement de page — alors qu'on n'a pas quitté la page.
+     Une marge de défilement laisse le filet haut de la section respirer sous
+     le bord de la fenêtre. (Le geste est un confort : `prefers-reduced-motion`
+     le retire ci-dessous.) */
+  html { scroll-behavior: smooth; }
+  [id] { scroll-margin-top: var(--gutter); }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;
     }
+    html { scroll-behavior: auto; }
   }
 </style>
