@@ -1,6 +1,6 @@
 ---
 import { withBase } from '../lib/base.js';
-/** Cellule-portrait : photo pleine cellule, nom dans un bandeau caramel au pied. */
+/** Cellule-portrait : photo pleine cellule, nom et langues au pied, sans fond. */
 import ArcImage from './ArcImage.astro';
 
 interface Props {
@@ -47,13 +47,18 @@ const Tag = href ? 'a' : 'div';
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-end;
-    gap: var(--space-3);
-    padding: var(--space-5);
+    /* Le nom et ses langues montent contre la photographie : peu d'air au-dessus
+       du nom, davantage sous les langues. Le groupe appartient ainsi au portrait
+       qu'il nomme, et non au bord inférieur de la cellule. `flex-start` fait
+       tomber vers le BAS le reste de la hauteur plancher, au lieu de le pousser
+       en haut comme le faisait `flex-end`. */
+    justify-content: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-5) var(--space-6);
     min-height: 108px;
-    /* Voile de caramel : la même famille chaude que le brun du nom, plutôt
-       qu'un vert qui n'appartient à rien d'autre dans la cellule. */
-    background: var(--surface-warm-soft);
+    /* Pas de fond : le bandeau repose sur la surface de la cellule. Le nom tient
+       au portrait par la seule proximité, et le caramel reste ce qu'il est
+       ailleurs — un événement du survol, pas un décor au repos. */
     /* La couleur du sous-titre est posée ICI, sur le bandeau, et non sur
        `.name` : c'est elle que la règle de survol remplace. Écrite sur le nom,
        elle survivrait à l'inversion et laisserait un brun moyen sur brun
@@ -88,10 +93,10 @@ const Tag = href ? 'a' : 'div';
      fois — c'est la seule surface du site où le lit prend deux formes, parce
      qu'elle est la seule à être faite de deux matières.
 
-     LE BANDEAU monte d'un cran sur la même rampe. Il repose déjà dans le voile
-     de caramel ; il passe au caramel plein. Ailleurs le lit va de rien au
-     voile, ici du voile à l'aplat : dans les deux cas la surface avance d'UN
-     PAS, et c'est ce pas qu'on lit, jamais la valeur d'arrivée.
+     LE BANDEAU s'allume en caramel plein. Il est nu au repos, comme toute
+     surface du site avant qu'on la touche ; sous le doigt il devient le point
+     chaud du geste — la même marque que la teinte posée sur la photographie
+     juste au-dessus, pour que les deux matières ne s'allument qu'une fois.
 
      LA PHOTOGRAPHIE reçoit le même caramel en `multiply` — elle n'a pas de
      fond à repeindre, elle EST le fond. `multiply` teinte au lieu de couvrir :

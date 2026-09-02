@@ -13,7 +13,7 @@ import LinkList from '../../components/LinkList.astro';
 import PersonCell from '../../components/PersonCell.astro';
 import ContactBand from '../../components/ContactBand.astro';
 import { MATIERES } from '../../data/matieres.js';
-import { parNom } from '../../data/avocates.js';
+import { codesLangues, parNom } from '../../data/avocates.js';
 
 export function getStaticPaths() {
   return MATIERES.map((m) => ({ params: { id: m.id }, props: { matiere: m } }));
@@ -57,6 +57,7 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
                     <PersonCell
                       name={nom}
                       photo={a?.photo}
+                      langues={codesLangues(a?.langues)}
                       ratio="1 / 1"
                       href={a ? `/avocates/${a.slug}` : undefined}
                     />
@@ -190,7 +191,11 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
   aside { display: grid; gap: var(--space-5); align-content: start; }
   .block { margin-top: var(--stack-loose); }
   .spaced { margin-top: var(--space-5); }
-  .far { margin-top: var(--space-9); }
+  /* Le registre des avocates n'ouvre pas une section colorée : il est posé au
+     milieu d'une colonne de texte, sur la page. Sans cette valeur il retomberait
+     sur son blanc-papier par défaut et poserait un bloc clair derrière les
+     portraits, là où seuls les filets doivent se voir. */
+  .far { margin-top: var(--space-9); --section-surface: var(--surface-page); }
   .tight { margin-top: var(--stack-tight); }
   .empty { margin: 0; font-size: 16px; color: var(--text-label); }
 
