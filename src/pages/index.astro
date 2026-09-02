@@ -367,15 +367,22 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
      une phrase cassée en deux cesse d'être lue d'un trait. `nowrap` scelle la
      ligne ; la taille garantit qu'elle rentre, donc rien ne déborde.
 
-     La ligne mesure 13,3em en Playfair — mais 15em en Georgia, l'empattement
-     de secours le plus large de la pile, qui s'affiche pendant le `swap` de la
-     webfont. On divise donc par 15 : tant que la fenêtre offre cette largeur
-     entre ses filets, le titre garde ses 40px ; en dessous il rétrécit avec
-     elle au lieu de casser. Le plancher de 28px disparaît — une phrase de
-     29 signes ne tient pas à 28px sur un téléphone, il fallait choisir. */
+     La ligne mesure 11,0em en Fira Extra Condensed — mais 13,8em en Arial, le
+     repli le plus large que la pile puisse encore servir, et qui s'affiche
+     pendant le `swap` de la webfont. (Arial Narrow, le repli nommé avant lui,
+     ne fait que 11,3em et suit donc Fira de près ; c'est Arial, la chute des
+     machines qui n'ont pas de condensée, qui fixe la borne.) On divise donc
+     par 14 : tant que la fenêtre offre cette largeur entre ses filets, le
+     titre garde ses 40px ; en dessous il rétrécit avec elle au lieu de casser.
+     Le plancher de 28px disparaît — une phrase de 29 signes ne tient pas à
+     28px sur un téléphone, il fallait choisir.
+
+     Le diviseur était 15 du temps de Playfair, dont le repli le plus large
+     était Georgia à 15,0em. Il se remesure à chaque changement de famille
+     d'affichage : c'est une largeur de texte, pas une constante. */
   .band-title {
     font-family: var(--font-display);
-    font-size: min(40px, (100vw - 2 * var(--content-inset)) / 15);
+    font-size: min(40px, (100vw - 2 * var(--content-inset)) / 14);
     white-space: nowrap;
     font-weight: var(--fw-bold);
     line-height: 1.2;

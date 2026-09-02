@@ -1,7 +1,11 @@
 /* Point d'entrée unique des tokens Egidia.
    Les fichiers sources vivent à la racine et restent le miroir exact du
    projet claude.ai/design — ne pas les éditer ici, les resynchroniser. */
-@import '../../tokens/fonts.css';
+/* Les polices sont servies par le site, pas par Google : `styles/fonts.css`
+   remplace `tokens/fonts.css`, qui les importait depuis fonts.googleapis.com.
+   Le miroir reste à la racine, intact — il n'est simplement plus importé.
+   Écart assumé, voir ARCHITECTURE (« Aucune fuite »). */
+@import './fonts.css';
 @import '../../tokens/colors.css';
 @import '../../tokens/typography.css';
 @import '../../tokens/spacing.css';
@@ -9,6 +13,33 @@
 @import '../../tokens/elevation.css';
 @import '../../tokens/motion.css';
 @import '../../tokens/base.css';
+
+/* ---- La famille d'affichage ----
+   Les titres sont en Fira Sans Extra Condensed, pas en Playfair Display.
+   Surcharge locale de `--font-display` : les tokens à la racine restent le
+   miroir exact du projet claude.ai/design, on ne les édite pas là-bas.
+
+   La pile de repli est CONDENSÉE elle aussi. C'est tout l'enjeu du remplacement
+   d'une famille par une autre de largeur très différente : pendant le `swap`,
+   une ligne de titre composée en Georgia occupait presque une fois et demie la
+   place que Fira lui donnera, et tout ce que le site calcule sur la largeur
+   d'un titre (voir `.band-title` dans l'accueil) se règle sur le repli le plus
+   large de la pile. Arial Narrow tient ce rôle sur macOS et Windows ; ailleurs
+   la chute vers Arial reste large, mais elle ne dure que le temps du swap.
+
+   Deux graisses seulement sont servies (voir `fonts.css`) : 700 pour les titres,
+   500 pour les sous-titres. Ne rien demander d'autre à cette famille.
+
+   ---- Le mot-symbole ----
+   EGIDIA garde Playfair, et c'est le SEUL endroit du site où l'empattement
+   subsiste. Une signature n'est pas un niveau de titre : elle ne suit pas la
+   famille d'affichage quand celle-ci change, sans quoi le cabinet changerait de
+   nom dessiné à chaque révision typographique. D'où un token à lui — un
+   `--font-display` posé sur le mot-symbole l'aurait emporté avec les titres. */
+:root {
+  --font-display:  "Fira Sans Extra Condensed", "Fira Sans Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-wordmark: "Playfair Display", Georgia, "Times New Roman", serif;
+}
 
 /* ---- Le cadre est fluide, la rythmique ne l'est pas ----
    La loi des marges ne change pas : les filets restent à --page-margin, le
@@ -108,23 +139,33 @@
 /* ---- Le sous-titre ----
    Le niveau des NOMS : une matière, une avocate, un point de contact. Il n'est
    pas un titre de section plus petit — c'est l'étiquette de la chose qui est
-   dans la cellule, et c'est le seul niveau de titre du site qui ne soit PAS en
-   display. Le sans-serif tient mieux un nom court qu'un Playfair réduit, et le
-   brun moyen le pose sans le faire concurrencer le titre de section au-dessus.
+   dans la cellule.
+
+   Il porte la MÊME famille que les titres, et c'est la GRAISSE qui le sépare
+   d'eux : 500 là où un titre est à 700. Du temps de Playfair, c'était l'inverse
+   — le sous-titre passait au sans-serif du texte courant, parce qu'une
+   empattement d'affichage réduite tenait mal un nom court. Fira Extra Condensed
+   n'a pas ce défaut : la même condensée, d'un cran plus légère, dit « ceci est
+   le nom de la chose » sans jamais concurrencer le titre de section au-dessus.
+   Le brun moyen achève de l'y poser.
 
    Une seule définition pour tous les endroits qui portent ce rôle : le registre
-   des matières (`RuledCell`), les cellules-portraits (`PersonCell`), les
-   colonnes de liens et les cellules de contact de l'accueil, les situations de
-   l'aide juridique. La taille est FIXE : ces titres sont courts et vivent dans
-   des cellules qui, elles, sont déjà fluides.
+   des services (`RuledCell`), les cellules-portraits (`PersonCell`), les
+   colonnes de liens et les cellules de contact de l'accueil. La taille est
+   FIXE : ces titres sont courts et vivent dans des cellules qui, elles, sont
+   déjà fluides.
+
+   Les situations de l'aide juridique le portaient et ne le portent plus : ce
+   ne sont pas les NOMS de neuf objets, ce sont neuf réponses à une question, et
+   elles s'écrivent en corps ordinaire dans leur cadre.
 
    28px est écrit en clair : la valeur tombe ENTRE deux pas de l'échelle
    (--fs-h4 à 26px, --fs-h3 à 32px). Nommer l'un des deux mentirait sur ce qui
    est réellement dessiné ; ce demi-pas n'appartient qu'à ce rôle. */
 :root {
-  --type-subtitle-family: var(--font-body);
+  --type-subtitle-family: var(--font-display);
   --type-subtitle-size:   28px;
-  --type-subtitle-weight: var(--fw-semibold);
+  --type-subtitle-weight: var(--fw-medium);
   --type-subtitle-color:  var(--brun-moyen);
   /* Le carré qui ouvre le sous-titre. Mesuré en `em` : il est à l'échelle du
      texte qu'il annonce, et suivra la taille si elle bouge encore.

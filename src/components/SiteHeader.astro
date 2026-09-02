@@ -106,7 +106,9 @@ import Icon from './Icon.astro';
     /* Une gouttière après le filet : le texte commence à --content-inset. */
     padding-inline: var(--gutter) var(--space-5);
     text-decoration: none;
-    font-family: var(--font-display);
+    /* Playfair, et non la famille d'affichage : le mot-symbole est la signature
+       du cabinet, pas un titre. Voir `--font-wordmark` dans `styles/tokens.css`. */
+    font-family: var(--font-wordmark);
     font-size: 26px;
     font-weight: var(--fw-regular);
     letter-spacing: 0.22em;
