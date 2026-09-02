@@ -13,7 +13,22 @@
    découpé — il s'écrit dans le fond de l'élément, et il fond.
 
    ---- LES TROIS GESTES ----
-   1. LE LIT. `--survol-aplat` dans `background-color`. C'est tout.
+   1. LE LIT. `--survol-aplat` dans `background-color`.
+
+      Le `!important` n'est pas une précaution, c'est une nécessité, et elle se
+      mesure : une classe scopée par Astro s'écrit `.cell[data-astro-cid-…]`,
+      soit DEUX classes de spécificité — exactement autant que `.eg-inverse:hover`.
+      À égalité, c'est l'ordre qui tranche, et les feuilles de composant sont
+      écrites après la feuille globale. Les composants qui déclarent leur propre
+      fond — `.cell` et `.tag` en `transparent`, `.v-secondary` de même — le
+      gardaient donc au survol, et le voile ne se posait jamais.
+
+      Le symptôme n'était pas seulement une cellule qui reste blanche : les
+      composants, eux, appliquaient bien leur ENCRE de survol, celle qu'ils
+      avaient dessinée pour un fond rempli. Sur le panneau des honoraires, le
+      bouton secondaire passait au sauge obscur sur un fond resté sauge obscur —
+      son intitulé disparaissait. Le fond et l'encre doivent basculer ensemble ou
+      pas du tout ; c'est le `!important` qui le garantit.
 
    2. L'ENCRE, d'un cran. L'étiquette rejoint le brun moyen, le nom le brun
       profond, le résumé ne bouge pas — il est déjà au brun moyen, et sur un
@@ -80,7 +95,7 @@
    Il ouvre le geste partout : c'est la seule façon de voir où l'on est. La
    souris, elle, ne l'ouvre que là où il y en a une — voir plus bas. */
 .eg-inverse:focus-visible,
-.eg-survol:focus-visible { background-color: var(--survol-aplat); }
+.eg-survol:focus-visible { background-color: var(--survol-aplat) !important; }
 
 .eg-inverse:focus-visible {
   --type-subtitle-mark-color: var(--survol-carre);
@@ -108,7 +123,7 @@
    le seul repère de qui navigue au clavier branché. */
 @media (hover: hover) {
   .eg-inverse:hover,
-  .eg-survol:hover { background-color: var(--survol-aplat); }
+  .eg-survol:hover { background-color: var(--survol-aplat) !important; }
 
   .eg-inverse:hover {
     --type-subtitle-mark-color: var(--survol-carre);

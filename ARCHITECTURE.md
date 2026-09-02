@@ -35,11 +35,20 @@ le lit et l'encre au survol — vit dans `src/styles/survol.css`, sous
 `useState` ; en `.astro` c'est `:hover`.
 
 Le design system a la même idée sous le nom `.eg-invert` (`tokens/base.css`),
-mais il l'écrit en `!important` : rien ne pouvait plus la faire taire, et il
-FAUT pouvoir la faire taire — un écran tactile n'a pas de survol, il a un appui
-que le navigateur laisse allumé. Le site a donc repris la classe à son compte.
-Tout ce qui s'allume au pointeur est enfermé dans `@media (hover: hover)` ;
-le focus clavier, lui, vaut sur tous les écrans et reste hors du garde.
+mais il la pose SANS garde : rien ne pouvait plus la faire taire, et il FAUT
+pouvoir la faire taire — un écran tactile n'a pas de survol, il a un appui que
+le navigateur laisse allumé. Le site a donc repris la classe à son compte. Tout
+ce qui s'allume au pointeur est enfermé dans `@media (hover: hover)` ; le focus
+clavier, lui, vaut sur tous les écrans et reste hors du garde.
+
+Le lit s'écrit bien en `!important`, lui aussi, mais ce n'est pas ce qui le
+rendait indomptable : c'est le `@media` qui l'éteint, pas la spécificité. Le
+`!important` répond à un tout autre problème — une classe scopée par Astro pèse
+deux classes, autant que `.eg-inverse:hover`, et les feuilles de composant
+passent après la feuille globale. Sans lui, un composant qui déclare son propre
+fond gardait ce fond au survol tout en appliquant son encre de survol : sur les
+honoraires, le bouton secondaire écrivait sauge obscur sur sauge obscur. Le
+détail du calcul est en tête de `survol.css`.
 
 **Trois des quatre gabarits ne livrent aucun script.** Seul l'accueil en charge,
 et uniquement pour le voile de la carte d'accès :
