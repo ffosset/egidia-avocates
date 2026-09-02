@@ -86,9 +86,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
               href={`/matieres/${m.id}`}
               style={`grid-column:${col};grid-row:${Math.floor(n / 2) + 1}`}
             >
-              <span class="count eg-accent pile-foot">
-                <span>{m.nb} avocates</span><Icon name="arrow-right" size={18} />
-              </span>
+              <span class="count eg-accent pile-foot">{m.nb} avocates</span>
             </RuledCell>
           );
         })}
@@ -127,9 +125,9 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
         {/* La rangée ne tombe pas juste : on comble avec une vraie phrase, jamais un vide. */}
         <RuledCell align="center" minHeight={200}>
           <p class="filler eg-title">Toutes travaillent dans le cadre de l'aide juridique.</p>
-          <a href={withBase("/aide-juridique")} class="filler-link eg-accent">
-            Faire la demande <Icon name="arrow-right" size={20} />
-          </a>
+          <div class="pile-block">
+            <Button href="/aide-juridique" variant="secondary">Faire la demande</Button>
+          </div>
         </RuledCell>
       </RuledGrid>
     </section>
@@ -169,7 +167,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
               constituer votre demande.
             </p>
             <div class="pile-block">
-              <Button href="/aide-juridique" variant="secondary" size="md">Faire la demande</Button>
+              <Button href="/aide-juridique" variant="secondary">Faire la demande</Button>
             </div>
           </aside>
         </div>
@@ -290,15 +288,15 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     left: calc(var(--hero-split) * 0.76);
   }
   .hero-photo :global(img) {
-    /* Le groupe est bas et à peine à gauche dans la photographie livrée, et le
-       ciel occupe le tiers haut. Le zoom est donc ancré EN BAS (l'ancre haute
-       ferait remonter le sol et couperait les pieds) et à 33 % de la largeur —
-       la part du cadre que le panneau recouvre. Les sept avocates se posent
-       alors au centre de ce qui reste visible, marges égales des quatre côtés :
-       ~90 px de part et d'autre du groupe à 1440 px, et le regard tombe à
-       mi-hauteur du cadre. */
-    transform: scale(1.32);
-    transform-origin: 33% 100%;
+    /* Le groupe est bas dans la photographie livrée et le ciel occupe le tiers
+       haut : le zoom est ancré EN BAS (une ancre haute ferait remonter le sol et
+       couperait les pieds) et au bord GAUCHE, la part du cadre que le panneau
+       recouvre. Les sept avocates se posent alors au milieu de ce qui reste
+       visible. Le grossissement reste léger — à deux colonnes, la photographie
+       doit garder le Palais et la grande roue autour du groupe, pas seulement
+       le groupe. */
+    transform: scale(1.12);
+    transform-origin: 0 100%;
   }
   .hero-inner {
     /* UNE mesure pour les deux blocs de texte : le titre et le chapô partagent
@@ -400,9 +398,6 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     max-width: var(--cell-measure);
   }
   .count {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
     font-size: 16px;
     font-weight: var(--fw-semibold);
     color: var(--sauge-obscur);
@@ -445,8 +440,13 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   .hono-note a:hover { color: var(--text-link); }
 
   /* Le panneau : le seul aplat sombre de la section. Le bouton secondaire s'y
-     retourne par les tokens qu'il lit déjà (cadre crème, inversion en crème
-     pleine) — aucune règle ne va chercher l'intérieur du composant. */
+     retourne par les tokens qu'il lit déjà — aucune règle ne va chercher
+     l'intérieur du composant.
+
+     Le lit du survol est repris ici, et c'est le seul endroit du site qui ait à
+     le faire : le voile de caramel est un PREMIER CRAN posé sur du clair, et il
+     n'existe pas sur du sauge obscur — il y ferait une tache, pas un cran. Sur
+     un fond sombre, le premier cran est le crème. */
   .hono-panneau {
     background: var(--sauge-obscur);
     color: var(--text-on-dark);
@@ -455,6 +455,8 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     --btn-secondary-border: var(--creme);
     --hover-invert-bg: var(--creme);
     --hover-invert-fg: var(--sauge-obscur);
+    --survol-aplat: var(--creme);
+    --survol-encre: var(--sauge-obscur);
   }
   .panneau-titre {
     font-family: var(--type-subtitle-family);
@@ -488,15 +490,6 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   .statement, .sub { max-width: none; }
   .statement { font-size: clamp(24px, 2.2vw, 32px); line-height: 1.25; }
   .filler { font-size: 26px; line-height: 1.3; max-width: 16ch; }
-  .filler-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--fs-body-sm);
-    font-weight: var(--fw-semibold);
-    color: var(--sauge-obscur);
-    text-decoration: none;
-  }
 
   /* ---- 6. LIENS UTILES ---- */
   .liens { padding: var(--section-y) 0; border-top: var(--divider); }
@@ -535,7 +528,9 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     width: var(--type-subtitle-mark);
     height: var(--type-subtitle-mark);
     margin-right: var(--type-subtitle-mark-gap);
-    background: currentColor;
+    /* Pas `currentColor` : au survol le carré s'allume en caramel pendant que
+       le titre fonce (voir `styles/tokens.css`). */
+    background: var(--type-subtitle-mark-color);
   }
   /* Même règle que dans le registre des matières : le nom de la cellule et les
      lignes qui le suivent partagent la mesure de la cellule. */
@@ -567,10 +562,13 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     .hero { min-height: 0; }
     /* Un rapport, pas une hauteur fixe : à 380 px la photo devenait un bandeau
        de plus en plus écrasé à mesure que la largeur montait vers 1000 px, et
-       la coupe mangeait les têtes puis les pieds. Le 2/1 garde le groupe entier
-       à toutes ces largeurs ; le plancher l'empêche de n'être qu'un filet sur
-       un téléphone. */
-    .hero-photo { position: static; height: auto; aspect-ratio: 2 / 1; min-height: 320px; left: auto; }
+       la coupe mangeait les têtes puis les pieds. Le 5/3 rejoue EXACTEMENT le
+       cadrage de la version à deux colonnes — même part de ciel coupée, mêmes
+       marges autour du groupe — à ceci près que le panneau ne recouvre plus
+       rien : une seule photographie, deux mises en page.
+       `width` est posée explicitement : avec `aspect-ratio`, une largeur `auto`
+       se déduirait de la hauteur et déborderait du téléphone. */
+    .hero-photo { position: static; left: auto; width: 100%; height: auto; aspect-ratio: 5 / 3; }
     /* Pleine largeur, plus de panneau par-dessus : le recadrage du héros
        large n'a plus lieu d'être, la photo se suffit. */
     .hero-photo :global(img) { transform: none; }

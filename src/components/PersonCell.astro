@@ -1,7 +1,6 @@
 ---
 import { withBase } from '../lib/base.js';
 /** Cellule-portrait : photo pleine cellule, nom dans un bandeau caramel au pied. */
-import Icon from './Icon.astro';
 import ArcImage from './ArcImage.astro';
 
 interface Props {
@@ -24,7 +23,6 @@ const Tag = href ? 'a' : 'div';
   </span>
   <span class="band">
     <span class="name">{prenom}<br />{nom}</span>
-    {href && <span class="arrow"><Icon name="arrow-right" size={24} /></span>}
   </span>
 </Tag>
 
@@ -61,8 +59,6 @@ const Tag = href ? 'a' : 'div';
   .band {
     display: flex;
     align-items: flex-end;
-    justify-content: space-between;
-    gap: var(--space-4);
     padding: var(--space-5);
     min-height: 108px;
     /* Voile de caramel : la même famille chaude que le brun du nom, plutôt
@@ -71,7 +67,7 @@ const Tag = href ? 'a' : 'div';
     /* La couleur du sous-titre est posée ICI, sur le bandeau, et non sur
        `.name` : c'est elle que la règle de survol remplace. Écrite sur le nom,
        elle survivrait à l'inversion et laisserait un brun moyen sur brun
-       profond. La flèche suit, par `currentColor`. */
+       profond. */
     color: var(--type-subtitle-color);
     transition: var(--transition-control);
   }
@@ -84,49 +80,79 @@ const Tag = href ? 'a' : 'div';
     font-weight: var(--type-subtitle-weight);
     line-height: 1.18;
   }
-  .arrow { flex: 0 0 auto; padding-bottom: 2px; }
+  /* ---- LE LIT, SUR UN PORTRAIT ----
+     La cellule-portrait ne peut pas recevoir le voile comme les autres : son
+     fond n'est jamais visible, couvert en haut par la photographie et en bas
+     par le bandeau. Le geste s'écrit donc là où il se voit, et il s'écrit deux
+     fois — c'est la seule surface du site où le lit prend deux formes, parce
+     qu'elle est la seule à être faite de deux matières.
 
-  /* ---- LE FRONT, D'UN SEUL TENANT ----
-     UN calque pour la photographie ET le bandeau. Ils en avaient un chacun, et
-     deux fronts empilés — chacun dans sa boîte, chacun partant de son propre
-     bord — se lisaient comme deux formes qui avancent côte à côte, jamais comme
-     le seul balayage qui traverse le reste du site. Le calque est donc porté par
-     la CELLULE : un seul front, une seule traversée, du portrait jusqu'au nom.
+     LE BANDEAU monte d'un cran sur la même rampe. Il repose déjà dans le voile
+     de caramel ; il passe au caramel plein. Ailleurs le lit va de rien au
+     voile, ici du voile à l'aplat : dans les deux cas la surface avance d'UN
+     PAS, et c'est ce pas qu'on lit, jamais la valeur d'arrivée.
 
-     Il ne couvre pas, il TEINTE : `multiply` garde les valeurs de la
-     photographie sous la couleur, là où un aplat les aurait effacées. Le
-     portrait reste lisible, en caramel ; le bandeau, qui est déjà un crème
-     chaud, vire au caramel avec lui. Le nom passe dessous, et le mélange le
-     fonce encore — il tient à 4,8:1 sur le bandeau teinté, mieux que s'il
-     flottait au-dessus.
+     LA PHOTOGRAPHIE reçoit le même caramel en `multiply` — elle n'a pas de
+     fond à repeindre, elle EST le fond. `multiply` teinte au lieu de couvrir :
+     les valeurs du portrait passent sous la couleur au lieu d'être effacées, et
+     le visage reste un visage. À .3, la teinte se voit sans que la
+     photographie cesse d'être une photographie ; c'est ce qui restait de mieux
+     dans le balayage d'avant, et la seule chose qu'il valait la peine d'en
+     garder.
 
-     `isolation` enferme ce mélange dans la cellule : sans elle, `multiply`
+     `isolation` enferme le mélange dans la cellule : sans elle, `multiply`
      irait chercher le fond de la section derrière. */
   .clickable { isolation: isolate; }
-  .clickable::after {
+  .clickable .media::after {
     content: '';
     position: absolute;
     inset: 0;
-    /* AU-DESSUS de la photographie, qui est un enfant en flux : le z-index
-       négatif du calque commun (`survol.css`) passerait derrière elle. */
+    /* AU-DESSUS de la photographie, qui est un enfant en flux. */
     z-index: 1;
-    background: var(--hover-invert-bg);
+    background: var(--survol-marque);
     mix-blend-mode: multiply;
-    clip-path: var(--survol-ferme);
-    transition: clip-path var(--survol-duree) var(--ease-out);
+    opacity: 0;
     pointer-events: none;
+    transition: opacity var(--survol-duree-geste) var(--ease-out);
   }
-  .clickable:hover::after,
-  .clickable:focus-visible::after { clip-path: var(--survol-ouvert); }
 
-  /* Le nom et la flèche foncent au passage du front. La couleur est posée sur
-     le BANDEAU et non sur `.name` : écrite sur le nom, elle lui survivrait et
-     laisserait un brun moyen sous le caramel. */
-  .clickable:hover .band,
-  .clickable:focus-visible .band { color: var(--hover-invert-fg); }
+  /* Le nom et la flèche avancent du même pas que le contenu des autres
+     cellules. Le bandeau, lui, ne bouge pas : il porte le filet du registre. */
+  .clickable .name,
+  .clickable .arrow {
+    transition: transform var(--survol-duree-geste) var(--ease-standard);
+  }
 
-  /* Comme partout : qui refuse le mouvement reçoit la teinte d'un coup. */
+  /* L'encre du bandeau est posée sur le BANDEAU et non sur `.name` : écrite sur
+     le nom, elle lui survivrait et laisserait un brun moyen sur le caramel. La
+     flèche suit, par `currentColor`. */
+  .clickable:focus-visible .band {
+    background: var(--survol-marque);
+    color: var(--survol-encre);
+  }
+  .clickable:focus-visible .media::after { opacity: .3; }
+  .clickable:focus-visible .name,
+  .clickable:focus-visible .arrow { transform: translateX(var(--survol-decalage)); }
+
+  /* Le geste ne s'écrit que là où un pointeur survole : au doigt, `:hover` est
+     posé par l'appui et laissé allumé, et le portrait serait resté teinté après
+     qu'on l'a touché (voir `styles/survol.css`). */
+  @media (hover: hover) {
+    .clickable:hover .band {
+      background: var(--survol-marque);
+      color: var(--survol-encre);
+    }
+    .clickable:hover .media::after { opacity: .3; }
+    .clickable:hover .name,
+    .clickable:hover .arrow { transform: translateX(var(--survol-decalage)); }
+  }
+
+  /* Comme partout : la teinte et l'encre restent, le déplacement se retire. */
   @media (prefers-reduced-motion: reduce) {
-    .clickable::after { transition-duration: 0s; }
+    .clickable .media::after { transition-duration: 0s; }
+    .clickable:hover .name,
+    .clickable:hover .arrow,
+    .clickable:focus-visible .name,
+    .clickable:focus-visible .arrow { transform: none; }
   }
 </style>

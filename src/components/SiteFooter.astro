@@ -101,7 +101,11 @@ import { withBase } from '../lib/base.js';
 
   .blurb { font-size: var(--fs-body-sm); color: var(--sable-clair); max-width: 300px; line-height: 1.6; }
   .col a { color: var(--caramel-voile); font-size: var(--fs-body-sm); text-decoration: none; }
-  .col a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+  /* Le survol ne s'écrit que là où un pointeur survole : au doigt, `:hover`
+     reste allumé après l'appui (voir `styles/survol.css`). */
+  @media (hover: hover) {
+    .col a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+  }
   .plain { font-size: var(--fs-body-sm); color: var(--sable-clair); line-height: 1.6; }
   .small { font-size: 16px; color: var(--sable-clair); }
 
@@ -119,7 +123,9 @@ import { withBase } from '../lib/base.js';
     color: var(--sable-clair);
   }
   .signature { color: var(--caramel-voile); text-decoration: none; }
-  .signature:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+  @media (hover: hover) {
+    .signature:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+  }
   .legal-links { display: flex; gap: 24px; }
   .legal-links a { color: var(--caramel-voile); text-decoration: none; }
 

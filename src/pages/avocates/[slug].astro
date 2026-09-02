@@ -1,12 +1,10 @@
 ---
-import { withBase } from '../../lib/base.js';
 import Base from '../../layouts/Base.astro';
 import Page from '../../components/Page.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
 import Card from '../../components/Card.astro';
 import Tag from '../../components/Tag.astro';
-import Button from '../../components/Button.astro';
 import Icon from '../../components/Icon.astro';
 import ArcImage from '../../components/ArcImage.astro';
 import LinkList from '../../components/LinkList.astro';
@@ -37,26 +35,28 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
           <div class="portrait">
             <ArcImage src={a.photo} alt={a.nom} corner="bottom-right" sweep="78% 58%" loading="eager" />
           </div>
-          <Card padding="var(--space-6)">
-            <Eyebrow>Contact</Eyebrow>
-            <div class="contact">
-              <a href={`mailto:${a.email}`} class="line break"><Icon name="mail" size={22} />{a.email}</a>
-              {telHref && (
-                <a href={telHref} class="line ruled"><Icon name="phone" size={22} />{a.tel}</a>
-              )}
-              {a.linkedin && (
-                <a href={a.linkedin} class="line ruled" target="_blank" rel="noopener"><Icon name="linkedin" size={22} />Profil LinkedIn</a>
-              )}
-            </div>
-          </Card>
-          <Card tone="inset" padding="var(--space-6)">
-            <Eyebrow>En bref</Eyebrow>
-            <div class="rows">
-              {a.depuis && <div class="row"><span class="k">Au barreau depuis</span><span class="v">{a.depuis}</span></div>}
-              {a.cabinets.passe && <div class="row"><span class="k">Auparavant</span><span class="v">{a.cabinets.passe}</span></div>}
-              <div class="row"><span class="k">TVA</span><span class="v mono">{a.tva}</span></div>
-            </div>
-          </Card>
+          <div class="fiches">
+            <Card padding="var(--space-6)">
+              <Eyebrow>Contact</Eyebrow>
+              <div class="contact">
+                <a href={`mailto:${a.email}`} class="line break"><Icon name="mail" size={18} />{a.email}</a>
+                {telHref && (
+                  <a href={telHref} class="line ruled"><Icon name="phone" size={18} />{a.tel}</a>
+                )}
+                {a.linkedin && (
+                  <a href={a.linkedin} class="line ruled" target="_blank" rel="noopener"><Icon name="linkedin" size={18} />Profil LinkedIn</a>
+                )}
+              </div>
+            </Card>
+            <Card tone="inset" padding="var(--space-6)">
+              <Eyebrow>En bref</Eyebrow>
+              <div class="rows">
+                {a.depuis && <div class="row"><span class="k">Au barreau depuis</span><span class="v">{a.depuis}</span></div>}
+                {a.cabinets.passe && <div class="row"><span class="k">Auparavant</span><span class="v">{a.cabinets.passe}</span></div>}
+                <div class="row"><span class="k">TVA</span><span class="v mono">{a.tva}</span></div>
+              </div>
+            </Card>
+          </div>
         </div>
 
         <div>
@@ -74,9 +74,7 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
             <div class="chips">
               {a.motsCles.map((t) => {
                 const m = MATIERES.find((x) => x.titre.toLowerCase() === t.toLowerCase());
-                return m
-                  ? <Button href={`/matieres/${m.id}`} variant="secondary" size="md" icon="arrow-right">{t}</Button>
-                  : <Tag>{t}</Tag>;
+                return <Tag href={m ? `/matieres/${m.id}` : undefined}>{t}</Tag>;
               })}
             </div>
           </div>
@@ -117,7 +115,7 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
             <Eyebrow>Les autres avocates</Eyebrow>
             <div class="chips">
               {autres.map((x) => (
-                <a href={withBase(`/avocates/${x.slug}`)} class="peer eg-invert">{x.nom}</a>
+                <Tag href={`/avocates/${x.slug}`}>{x.nom}</Tag>
               ))}
             </div>
           </div>
@@ -144,9 +142,18 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
     height: clamp(440px, 78vh, 820px);
   }
   /* Une fois les colonnes empilées, le portrait n'est plus une colonne debout
-     mais un bandeau : il reprend la hauteur des photos de bas de page. */
+     mais un bandeau : il traverse alors la fenêtre D'UN BORD À L'AUTRE, et non
+     plus du seul bord gauche. Le débord de droite n'a pas besoin du calcul du
+     haut : sous le point de rupture, --page-max (1680px) n'est jamais atteint,
+     donc le terme de centrage vaut zéro et le débord se réduit à --content-inset.
+     Écrit ainsi, il n'y a plus un seul `100vw` dans la règle — donc plus rien
+     qui compte la barre de défilement et pousse la page d'un demi-pouce. */
   @media (--lap) {
-    .portrait { height: 380px; }
+    .portrait {
+      height: 380px;
+      margin-inline: calc(-1 * var(--content-inset));
+      width: auto;
+    }
   }
   /* Le fil d'Ariane n'est pas l'étiquette du titre (ce serait --stack-bind) :
      c'est un bloc distinct qui le précède. */
@@ -172,10 +179,40 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
   .split > .side          { flex: 4 1 22ch; }
   /* Le portrait touche l'en-tête ; seul le TEXTE descend. */
   .split > div:not(.side) { flex: 8 1 40ch; padding-top: var(--section-y); }
+  .side   { display: grid; gap: var(--space-5); }
+  .fiches { display: grid; gap: var(--space-5); }
+
+  /* ---- L'ORDRE, UNE FOIS LES COLONNES EMPILÉES ----
+     Côte à côte, les deux fiches suivent le portrait : elles sont la colonne
+     de gauche. Empilées, elles s'intercalaient entre la photographie et le nom
+     de l'avocate — on tombait sur un numéro de TVA avant de savoir qui on
+     lisait. La lecture demande : la photographie, le fil, le nom, PUIS les
+     fiches, puis le parcours.
+
+     Les deux colonnes s'effacent (`display: contents`) : leurs enfants
+     deviennent les éléments de la pile, et `order` les remet dans l'ordre de
+     lecture. C'est la seule façon d'intercaler deux blocs qui ne sont pas
+     frères dans le DOM sans dupliquer le balisage — et le DOM, lui, ne bouge
+     pas : l'ordre du clavier et celui du lecteur d'écran restent celui de la
+     source, où les fiches suivent déjà le portrait.
+
+     `display: contents` efface aussi le padding et l'écart des colonnes : la
+     pile ne se règle donc plus qu'à la marge, bloc par bloc. */
   @media (--lap) {
-    .split > div:not(.side) { padding-top: var(--section-y-sm); }
+    /* `align-items: flex-start` était la loi des deux COLONNES : chacune y
+       prenait sa hauteur propre. Empilées, les blocs doivent au contraire
+       occuper toute la largeur — sans quoi le portrait, seul, refuserait de
+       s'étendre jusqu'aux deux bords. */
+    .split { flex-direction: column; align-items: stretch; gap: 0; }
+    .split > .side,
+    .split > div:not(.side) { display: contents; }
+
+    .portrait { order: 1; }
+    .fil      { order: 2; margin-top: var(--section-y-sm); }
+    h1        { order: 3; }
+    .fiches   { order: 4; margin-top: var(--stack-loose); }
+    .block    { order: 5; }
   }
-  .side { display: grid; gap: var(--space-5); }
 
   h1 { font-family: var(--font-display); font-size: var(--fs-h1); font-weight: var(--fw-bold); line-height: 1.12; }
 
@@ -217,19 +254,5 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
   }
   .num { font-family: var(--font-display); font-size: 22px; font-weight: var(--fw-bold); color: var(--caramel); }
   ol li span:last-child { font-size: var(--fs-body-sm); line-height: 1.55; }
-
-  .peer {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--tap-min);
-    font-size: var(--fs-body-sm);
-    padding: 0 var(--space-5);
-    border: 1px solid var(--line-strong);
-    text-decoration: none;
-    color: var(--text-body);
-    background: var(--surface-card);
-    /* Le fond qui reste visible pendant le balayage (voir `survol.css`). */
-    --survol-lit: var(--surface-card);
-  }
 
 </style>

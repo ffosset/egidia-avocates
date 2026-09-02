@@ -29,9 +29,17 @@ standalone. Elle dépend d'un global `window.EgidiaDesignSystem_36aa4a` et n'est
 ## JavaScript : presque zéro
 
 Le design system porte son interactivité en CSS : la signature de la marque —
-l'inversion au survol — vit dans `.eg-invert` (`tokens/base.css`). Les
-composants React d'origine pilotaient le survol avec `useState` ; en `.astro`
-c'est `:hover`.
+le lit et l'encre au survol — vit dans `src/styles/survol.css`, sous
+`.eg-inverse` (les cadres qui s'allument) et `.eg-survol` (les surfaces qui
+écrivent leur propre encre). Les composants React d'origine pilotaient le survol avec
+`useState` ; en `.astro` c'est `:hover`.
+
+Le design system a la même idée sous le nom `.eg-invert` (`tokens/base.css`),
+mais il l'écrit en `!important` : rien ne pouvait plus la faire taire, et il
+FAUT pouvoir la faire taire — un écran tactile n'a pas de survol, il a un appui
+que le navigateur laisse allumé. Le site a donc repris la classe à son compte.
+Tout ce qui s'allume au pointeur est enfermé dans `@media (hover: hover)` ;
+le focus clavier, lui, vaut sur tous les écrans et reste hors du garde.
 
 **Trois des quatre gabarits ne livrent aucun script.** Seul l'accueil en charge,
 et uniquement pour la carte d'accès :
@@ -413,13 +421,24 @@ deux valeurs varient, et sans marche. Voir « Comment le site se replie ».
 
 ### Interaction
 
-- **Le survol inverse.** Tout cadre cliquable passe d'un fond clair à un aplat
-  brun profond, texte crème, en 140ms. C'est le signal principal de ce qui est
-  cliquable : ne jamais l'adoucir. Un enfant marqué `.eg-accent` passe en sauge
-  clair plutôt qu'en crème.
+- **Le survol couche la surface.** Tout cadre cliquable se couche dans un voile
+  de caramel (`--survol-aplat`) en 140ms ; son nom passe au brun profond, son
+  carré s'allume en caramel, et son contenu avance de 3px en 220ms. C'est le
+  signal principal de ce qui est cliquable : ne jamais l'adoucir.
+- **L'encre monte d'un cran, elle ne s'aplatit pas.** L'étiquette rejoint le
+  brun moyen (par le token `--text-label`, jamais par un sélecteur), le nom le
+  brun profond, le résumé ne bouge pas. Une cellule survolée garde les trois
+  niveaux qu'elle a au repos — c'est ce que l'inversion d'avant détruisait.
+- **Un fond sombre repose le lit chez lui.** Le voile est un premier cran sur du
+  clair ; sur du sauge obscur il ferait une tache. Seul le panneau des
+  honoraires a ce cas, et il redéclare `--survol-aplat`.
 - **L'opacité n'est jamais un état de survol.** Rien ne se soulève, rien ne
-  grossit, rien ne prend une ombre plus large. Le basculement de couleur fait
-  tout le travail.
+  grossit, rien ne prend une ombre plus large.
+- **Le décalage ne prend que les enfants directs**, jamais l'élément : une
+  cellule qui se translate emporte ses filets et découd le registre. Un lien
+  qui n'a que du texte ne se décale donc pas — il reçoit le lit et l'encre.
+  Sous `prefers-reduced-motion`, le décalage se retire entièrement ; le voile et
+  l'encre restent, parce qu'ils sont l'état et non le mouvement.
 - **Appui** : `scale(0.99)` et la couleur de survol. Rien ne se déplace.
 - **Le focus est toujours visible** : contour sauge 3px, décalé de 2px. On ne le
   retire sur aucun contrôle, jamais.

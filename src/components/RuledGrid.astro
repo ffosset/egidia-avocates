@@ -31,8 +31,13 @@ interface Props {
 const { columns = 2, min, maxCols = 12, class: klass, noLeft, noTop } = Astro.props;
 
 const minW = typeof min === 'number' ? `${min}px` : min;
+/* `min(--registre, …)` : la largeur demandée pour une cellule est un SOUHAIT,
+   jamais un plancher. Sans ce plafond, un registre dessiné pour des cellules de
+   380px poussait 380px de large dans un téléphone de 375 et faisait glisser
+   toute la page de côté. --registre est la largeur utile du registre : sa
+   largeur moins son propre filet de gauche (voir la feuille de style). */
 const tpl = minW
-  ? `repeat(auto-fit, minmax(max(${minW}, 100% / ${maxCols}), 1fr))`
+  ? `repeat(auto-fit, minmax(min(var(--registre), max(${minW}, 100% / ${maxCols})), 1fr))`
   : typeof columns === 'number'
     ? `repeat(${columns}, 1fr)`
     : columns;
@@ -50,12 +55,20 @@ const tpl = minW
     grid-template-columns: var(--cols);
     border-top: var(--divider);
     border-left: var(--divider);
+    /* ---- LA LARGEUR UTILE DU REGISTRE ----
+       Le plafond que les deux gabarits ci-dessus posent sur la largeur d'une
+       cellule. Un `100%` seul ne suffit pas : dans une fonction de piste, il se
+       résout sur la boîte de BORDURE de la grille, filet de gauche compris —
+       la piste valait donc la grille entière, et la dernière cellule dépassait
+       d'exactement l'épaisseur de ce filet. On le retire une fois pour toutes,
+       ici, plutôt que dans chaque gabarit. */
+    --registre: calc(100% - 1px);
     /* La section décide de la couleur ; le registre la reprend, pour que son
        intérieur et la gouttière ne puissent pas diverger. Sans section
        colorée, le registre garde le blanc-papier d'avant. */
     background: var(--section-surface, var(--surface-card));
   }
-  .no-left { border-left: none; }
+  .no-left { border-left: none; --registre: 100%; }
   .no-top { border-top: none; }
 
   /* Seul le mode composé a besoin d'une rupture : ses cellules sont placées à
@@ -68,7 +81,7 @@ const tpl = minW
   @media (--lap) {
     .composed {
       grid-template-columns:
-        repeat(auto-fit, minmax(max(var(--lap-min, 100%), 100% / var(--lap-max, 1)), 1fr));
+        repeat(auto-fit, minmax(min(var(--registre), max(var(--lap-min, 100%), 100% / var(--lap-max, 1))), 1fr));
     }
     /* Un enfant explicitement placé retrouve le flux normal… */
     .composed > :global(*:not(.lap-span)) { grid-column: auto !important; grid-row: auto !important; }

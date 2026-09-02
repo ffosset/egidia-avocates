@@ -60,10 +60,38 @@ import { CONTACT } from '../data/site.js';
   /* Alignées à droite face au texte, recalées à gauche une fois empilées.
      Une requête de CONTENEUR, pas de fenêtre : la bascule dépend de la place
      dont dispose la bande, pas de la taille de l'écran. Aucun point de rupture
-     global n'est introduit ici. */
-  .actions { display: flex; gap: var(--space-4); flex-wrap: wrap; justify-content: flex-end; }
+     global n'est introduit ici.
+
+     Les deux boutons font la MÊME boîte : deux pistes `1fr` dans une grille
+     dimensionnée au contenu (`width: fit-content`). Une piste `1fr` vaut, en
+     max-content, la largeur du plus large des deux — les deux la prennent
+     donc ensemble. Aucune largeur devinée n'est écrite ici : c'est le libellé
+     le plus long qui décide.
+
+     `flex: 0 0 auto` lève la base `26ch` que `.split > *` pose sur ses
+     colonnes — sans quoi la paire recevait la moitié de la bande et les deux
+     boutons s'y écrasaient, « Écrire au cabinet » sur deux lignes hors cadre.
+     Le sélecteur est `.split > .actions` pour passer devant cette base. */
+  .split > .actions {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    width: fit-content;
+    gap: var(--space-4);
+  }
   @container band (width < 56rem) {
-    .actions { justify-content: flex-start; }
+    /* Les deux colonnes de la bande sont passées l'une sous l'autre : les
+       boutons se recalent sur le bord gauche du texte. */
+    .split > .actions { margin-inline-start: 0; }
+  }
+  /* Plus bas, les deux boutons cessent de tenir côte à côte : la paire fait
+     deux fois ~13rem plus l'écart, et la bande garde ses marges de page. Ils
+     passent alors l'un sous l'autre — la piste reste `1fr`, donc ils gardent
+     la même largeur, empilés comme alignés. */
+  @container band (width < 34rem) {
+    .split > .actions { grid-auto-flow: row; }
   }
 
 </style>

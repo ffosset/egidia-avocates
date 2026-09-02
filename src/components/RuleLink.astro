@@ -34,7 +34,6 @@ const hrefOut = withBase(href);
     cursor: pointer;
     transition: var(--transition-control);
   }
-  .rule-link:hover,
   .rule-link:focus-visible { color: var(--text-heading); }
 
   .rule {
@@ -44,6 +43,12 @@ const hrefOut = withBase(href);
     background: currentColor;
     transition: width var(--dur-base) var(--ease-standard);
   }
-  .rule-link:hover .rule,
   .rule-link:focus-visible .rule { width: 56px; }
+
+  /* Le survol ne s'écrit que là où un pointeur survole : au doigt, `:hover`
+     reste allumé après l'appui (voir `styles/survol.css`). */
+  @media (hover: hover) {
+    .rule-link:hover { color: var(--text-heading); }
+    .rule-link:hover .rule { width: 56px; }
+  }
 </style>

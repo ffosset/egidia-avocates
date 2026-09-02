@@ -118,47 +118,77 @@
   --type-subtitle-weight: var(--fw-semibold);
   --type-subtitle-color:  var(--brun-moyen);
   /* Le carré qui ouvre le sous-titre. Mesuré en `em` : il est à l'échelle du
-     texte qu'il annonce, et suivra la taille si elle bouge encore. Il n'a pas
-     de couleur à lui — il prend `currentColor`, donc le brun du sous-titre, et
-     il bascule AVEC lui quand une cellule cliquable s'inverse au survol. */
-  --type-subtitle-mark:     0.27em;
-  --type-subtitle-mark-gap: 0.5em;
+     texte qu'il annonce, et suivra la taille si elle bouge encore.
+
+     Sa couleur passe par une variable, et non par `currentColor`, pour une
+     seule raison : au survol, le carré ne va PAS où va le titre. Le titre
+     fonce, le carré s'allume en caramel — c'est le seul point chaud du geste,
+     et c'est lui qui empêche la cellule survolée d'être simplement une cellule
+     plus foncée. `currentColor` les aurait attachés l'un à l'autre.
+
+     Une custom property HÉRITE : la règle de survol la repose sur la cellule,
+     et les deux carrés du site (registre des matières, cellules de contact) la
+     lisent sans que `survol.css` ait à connaître leurs sélecteurs. */
+  --type-subtitle-mark:       0.27em;
+  --type-subtitle-mark-gap:   0.5em;
+  --type-subtitle-mark-color: currentColor;
 }
 
 /* ---- Le survol ----
-   La signature interactive du site change de couleur ET de geste. L'aplat brun
-   profond devient CARAMEL, et il ne s'allume plus d'un bloc : il pousse depuis
-   le bord gauche de la cellule jusqu'au bord droit. Le front est D'ÉQUERRE d'un
-   bout à l'autre — la loi des angles droits vaut aussi pendant le mouvement, et
-   pas seulement au repos et à l'arrivée (voir `tokens/borders.css`).
+   La signature interactive du site : sous le pointeur, une surface se COUCHE
+   dans un voile de caramel, son nom fonce, son carré s'allume, et son contenu
+   avance de trois pixels. Rien ne traverse, rien ne se remplit.
 
-   L'encre passe au brun profond et non au crème : sur le caramel, le crème ne
-   tient que 2,8:1 là où le brun profond monte à 4,3:1 — le maximum que la
-   palette permette sur une valeur aussi moyenne.
+   Le balayage d'avant peignait la cellule d'un aplat caramel plein. Il la
+   DÉSIGNAIT mal, à force de la repeindre : sous le curseur, une matière du
+   registre devenait un autre objet que ses voisines, et le quadrillage se
+   défaisait à chaque mouvement de souris. Le voile dit la même chose — c'est
+   celle-ci que vous regardez — sans rien effacer de ce qui est écrit dessus.
+
+   Trois valeurs, trois gestes, et l'échelle des encres monte d'un cran avec la
+   surface : l'étiquette rejoint le brun moyen, le nom le brun profond, le
+   résumé ne bouge pas (il y est déjà). C'est ce qui garde la hiérarchie de la
+   cellule intacte pendant le survol, là où l'inversion l'aplatissait.
 
    Le mécanisme est dans `survol.css` ; ici, seulement ce qu'il lit. */
 :root {
-  --hover-invert-bg:   var(--caramel);
-  --hover-invert-fg:   var(--brun-profond);
-  --hover-invert-line: rgba(59, 46, 30, .28);
+  /* LE LIT — un caramel très clair, le premier cran de la rampe chaude. Il
+     s'écrit dans le fond de l'élément, sans calque ni découpe : un aplat qui ne
+     va nulle part n'a pas besoin d'être découpé, il fond. */
+  --survol-aplat: var(--caramel-voile);
 
-  /* ---- La forme du front ----
-     Le caramel ne grandit pas depuis un point : il TRAVERSE. Un front DROIT part
-     du bord gauche de la cellule et va jusqu'au bord droit. Rien ne se déforme
-     en route ; c'est ce qui fait lire un déplacement plutôt qu'un gonflement.
+  /* L'ENCRE — le nom passe au brun profond. Sur le voile il tient à 12:1, et
+     sur le caramel plein du bandeau des portraits — le seul endroit où le lit
+     monte d'un cran de plus — encore à 4,3:1, le maximum que la palette
+     permette sur une valeur aussi moyenne. */
+  --survol-encre: var(--brun-profond);
 
-     Le bord d'attaque était arrondi ; il ne l'est plus. Le système ne pose
-     AUCUN rayon — ni sur les cadres, ni sur les filets, ni sur les boutons
-     (`tokens/borders.css`) — et un nez arrondi qui balayait la cellule était le
-     seul endroit du site où cette loi cédait, fût-ce pour 180 ms. La verticale
-     dit la même chose que le reste : angles droits.
+  /* LA MARQUE — le point chaud, là où le caramel devient une SURFACE : le
+     bandeau des portraits, la teinte posée sur la photographie. Le caramel
+     plein, celui que le balayage étalait autrefois sur toute la cellule,
+     réduit à ce qui le porte. */
+  --survol-marque: var(--caramel);
 
-     UNE seule valeur bouge entre les deux états, l'écart de droite. Les
-     `inset()` gardent la même forme des deux côtés — c'est la condition pour
-     que le navigateur interpole le `clip-path` au lieu de le remplacer. */
-  --survol-ferme:  inset(0 100% 0 0);
-  --survol-ouvert: inset(0 0 0 0);
-  /* « Vite » : le pas le plus court de l'échelle qui laisse encore voir un
-     geste. Le même que celui des changements de couleur du système. */
-  --survol-duree: var(--dur-fast);
+  /* LE CARRÉ — le même point chaud, mais posé EN PETIT SUR LE VOILE, et c'est
+     ce qui lui vaut une valeur à lui. Le caramel plein sur le voile ne tient
+     que 2,6:1 : le carré serait devenu MOINS visible au survol qu'il ne l'est
+     au repos (6,2:1 en brun moyen sur le papier), soit l'inverse exact de ce
+     qu'on lui demande. Un cran plus foncé — la valeur que le bouton chaud
+     prend déjà sous le doigt — il monte à 3,4:1 et reste franchement caramel.
+     Le contraste d'un aplat de 7px ne se lit pas comme celui d'un aplat de
+     300 : c'est la seule raison pour laquelle les deux valeurs diffèrent. */
+  --survol-carre: var(--btn-warm-bg-hover);
+
+  /* LE DÉCALAGE — le contenu avance. Trois pixels : assez pour que l'œil le
+     voie, trop peu pour qu'une ligne change de place dans la page. C'est le
+     seul mouvement du geste, et le seul qui se retire sous
+     `prefers-reduced-motion`. */
+  --survol-decalage: 3px;
+
+  /* Deux durées, parce qu'il y a deux natures de changement. La couleur est
+     « vite » — le pas le plus court de l'échelle, celui de tous les changements
+     d'encre du système. Le déplacement est plus lent : il doit se LIRE comme un
+     déplacement, et 140 ms le feraient sauter. */
+  --survol-duree:       var(--dur-fast);
+  --survol-duree-geste: var(--dur-base);
 }

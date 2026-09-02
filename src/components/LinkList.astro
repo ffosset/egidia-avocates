@@ -8,8 +8,8 @@ const { items } = Astro.props;
       comme partout ailleurs. La flèche oblique et l'adresse écrite en clair
       l'annoncent déjà au lecteur — il n'y a rien à ajouter au libellé. */}
   {items.map(([label, url]) => (
-    <a href={`https://${url}`} class="eg-invert" target="_blank" rel="noopener">
-      <span class="eg-accent glyph"><Icon name="arrow-up-right" size={20} /></span>
+    <a href={`https://${url}`} class="eg-inverse" target="_blank" rel="noopener">
+      <span class="eg-accent glyph"><Icon name="arrow-up-right" size={18} /></span>
       <span>{label}<span class="url">{url}</span></span>
     </a>
   ))}
@@ -29,6 +29,22 @@ const { items } = Astro.props;
     font-size: var(--fs-body-sm);
     line-height: 1.5;
   }
-  .glyph { color: var(--sauge-obscur); margin-top: 2px; }
-  .url { display: block; color: var(--text-label); font-size: 16px; margin-top: 2px; }
+  /* Le glyphe est posé sur la première ligne, pas centré sur le bloc — un
+     libellé en prend deux avec son adresse. Les 3px rattrapent la demi-
+     différence entre la hauteur de ligne (27px) et le glyphe (18px), moins ce
+     que le trait laisse d'air en haut : la même valeur que les lignes de
+     coordonnées de l'accueil, pour le même glyphe sur la même ligne. */
+  .glyph { color: var(--sauge-obscur); margin-top: 3px; }
+  /* Une adresse écrite en clair est un mot que rien ne coupe : sur un petit
+     téléphone, elle imposait sa longueur à la colonne entière et la poussait
+     hors du cadre. `anywhere` la laisse se casser — et, à la différence de
+     `break-word`, il compte aussi dans la largeur MINIMALE de la colonne, ce
+     qui est précisément ce qui décidait du débordement. */
+  .url {
+    display: block;
+    color: var(--text-label);
+    font-size: 16px;
+    margin-top: 2px;
+    overflow-wrap: anywhere;
+  }
 </style>

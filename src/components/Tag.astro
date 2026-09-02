@@ -1,9 +1,15 @@
 ---
+import { withBase } from '../lib/base.js';
+/**
+ * LA pastille du site : services, langues, consœurs — un seul objet, une seule
+ * boîte, un seul filet. `href` en fait un lien, qui s'inverse au survol ; sans
+ * lui, la pastille ne fait que nommer.
+ */
 interface Props { selected?: boolean; href?: string }
 const { selected, href } = Astro.props;
 const Tag = href ? 'a' : 'span';
 ---
-<Tag href={href} class:list={['tag', { selected }, href && 'eg-invert']}><slot /></Tag>
+<Tag href={withBase(href)} class:list={['tag', { selected }, href && 'eg-inverse']}><slot /></Tag>
 
 <style>
   .tag {
@@ -21,5 +27,9 @@ const Tag = href ? 'a' : 'span';
     text-decoration: none;
     transition: var(--transition-control);
   }
+  /* Une pastille qui MÈNE quelque part porte l'encre vive du texte ; une
+     pastille qui ne fait que nommer reste dans le brun de son propre filet.
+     La boîte ne change pas : seule l'encre dit lequel des deux on regarde. */
+  a.tag { color: var(--text-body); }
   .tag.selected { background: var(--brun-profond); color: var(--creme); border-color: var(--brun-profond); }
 </style>

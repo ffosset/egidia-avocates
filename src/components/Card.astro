@@ -12,7 +12,7 @@ const clickable = !!href && tone !== 'ink';
 ---
 <Tag
   href={href}
-  class:list={['card', `t-${tone}`, { accent: accentEdge }, clickable && 'eg-invert', klass]}
+  class:list={['card', `t-${tone}`, { accent: accentEdge }, clickable && 'eg-inverse', klass]}
   style={padding ? `padding:${padding}` : undefined}
 >
   <slot />

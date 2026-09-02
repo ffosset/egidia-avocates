@@ -18,7 +18,9 @@ import Icon from './Icon.astro';
 
 const {
   variant = 'primary',
-  size = 'lg',
+  // `md` est LA taille du site : plus rien n'appelle `lg`, qui reste
+  // disponible pour un bouton isolé qui aurait à crier plus fort.
+  size = 'md',
   icon,
   iconPosition = 'right',
   fullWidth,
@@ -29,7 +31,9 @@ const {
 
 const Tag = href ? 'a' : 'button';
 const hrefOut = withBase(href);
-const iconSize = size === 'lg' ? 22 : 20;
+// Un glyphe fait la taille du texte à côté duquel il se pose : --fs-body (20)
+// pour `lg`, --fs-body-sm (18) pour `md`. Jamais une valeur à part.
+const iconSize = size === 'lg' ? 20 : 18;
 ---
 
 <Tag
@@ -41,8 +45,8 @@ const iconSize = size === 'lg' ? 22 : 20;
     `v-${variant}`,
     `s-${size}`,
     { full: fullWidth },
-    // Les deux variantes qui s'inversent au survol prennent le balayage
-    // commun ; les autres ne font qu'approfondir leur propre couleur.
+    // Les deux variantes qui s'allument au survol prennent le lit commun ;
+    // les autres ne font qu'approfondir leur propre couleur.
     (variant === 'secondary' || variant === 'shadow') && 'eg-survol',
     klass,
   ]}
@@ -77,10 +81,6 @@ const iconSize = size === 'lg' ? 22 : 20;
     color: var(--btn-primary-fg);
     border: 1px solid var(--btn-primary-bg);
   }
-  .v-primary:hover {
-    background: var(--btn-primary-bg-hover);
-    border-color: var(--btn-primary-bg-hover);
-  }
 
   /* Inversion : le cadre clair devient un aplat brun profond. */
   .v-secondary {
@@ -88,21 +88,11 @@ const iconSize = size === 'lg' ? 22 : 20;
     color: var(--btn-secondary-fg);
     border: 1px solid var(--btn-secondary-border);
   }
-  /* L'aplat vient du calque de `.eg-survol` (voir `styles/survol.css`) : le
-     bouton ne pose que son cadre et son encre. */
-  .v-secondary:hover {
-    border-color: var(--hover-invert-bg);
-    color: var(--hover-invert-fg);
-  }
 
   .v-accent {
     background: var(--btn-accent-bg);
     color: var(--btn-accent-fg);
     border: 1px solid var(--btn-accent-bg);
-  }
-  .v-accent:hover {
-    background: var(--btn-accent-bg-hover);
-    border-color: var(--btn-accent-bg-hover);
   }
 
   /* Bouton d'ombre : du papier posé sur la page. L'emphase vient de l'ombre
@@ -114,7 +104,6 @@ const iconSize = size === 'lg' ? 22 : 20;
     border: 1px solid var(--line-hairline);
     box-shadow: var(--shadow-raised);
   }
-  .v-shadow:hover,
   .v-shadow:focus-visible {
     border-color: var(--hover-invert-bg);
     color: var(--hover-invert-fg);
@@ -127,7 +116,33 @@ const iconSize = size === 'lg' ? 22 : 20;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
-  .v-quiet:hover { color: var(--text-link-hover); }
+
+  /* ---- LES CINQ SURVOLS, ENSEMBLE ----
+     Ils ne s'écrivent que là où un pointeur survole. Au doigt, `:hover` est
+     posé par l'appui et LAISSÉ allumé jusqu'au prochain — un bouton resterait
+     dans son état de survol après avoir été touché (voir `styles/survol.css`).
+     L'appui, lui, garde son `scale` : c'est le retour du geste, pas un état.
+     Et le lit du secondaire vient de `.eg-survol` : le bouton ne pose ici que
+     son cadre et son encre. */
+  @media (hover: hover) {
+    .v-primary:hover {
+      background: var(--btn-primary-bg-hover);
+      border-color: var(--btn-primary-bg-hover);
+    }
+    .v-secondary:hover {
+      border-color: var(--hover-invert-bg);
+      color: var(--hover-invert-fg);
+    }
+    .v-accent:hover {
+      background: var(--btn-accent-bg-hover);
+      border-color: var(--btn-accent-bg-hover);
+    }
+    .v-shadow:hover {
+      border-color: var(--hover-invert-bg);
+      color: var(--hover-invert-fg);
+    }
+    .v-quiet:hover { color: var(--text-link-hover); }
+  }
 
   .btn[aria-disabled='true'],
   .btn:disabled {

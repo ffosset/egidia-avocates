@@ -33,7 +33,7 @@ const mh = typeof minHeight === 'number' ? `${minHeight}px` : minHeight;
     'pile',
     `a-${align}`,
     edge && `e-${edge}`,
-    href && 'eg-invert',
+    href && 'eg-inverse',
     klass,
   ]}
   style={[`min-height:${mh}`, style].filter(Boolean).join(';')}
@@ -97,7 +97,9 @@ const mh = typeof minHeight === 'number' ? `${minHeight}px` : minHeight;
     width: var(--type-subtitle-mark);
     height: var(--type-subtitle-mark);
     margin-right: var(--type-subtitle-mark-gap);
-    background: currentColor;
+    /* Pas `currentColor` : au survol le carré s'allume en caramel pendant que
+       le titre fonce (voir `styles/tokens.css`). */
+    background: var(--type-subtitle-mark-color);
   }
   .cell p {
     font-size: var(--fs-body-sm);

@@ -1,87 +1,140 @@
-/* ---- LE BALAYAGE ----
-   Tout ce qui se survole sur ce site s'allume de la même façon : un aplat
-   caramel qui pousse depuis le bord GAUCHE, arrondi tant qu'il avance, et
-   d'équerre une fois arrivé. Une seule mécanique, ici, pour tout le site.
-   (La couleur et la durée, elles, sont dans `tokens.css`.)
+/* ---- LE LIT ET L'ENCRE ----
+   Tout ce qui se survole sur ce site s'allume de la même façon : la surface se
+   couche dans un voile de caramel, l'encre monte d'un cran, le carré du nom
+   s'allume, et le contenu avance de trois pixels. Une seule mécanique, ici,
+   pour tout le site. (Les valeurs, elles, sont dans `tokens.css`.)
 
-   Elle tient dans un calque `::before`, et non dans le fond de l'élément : un
-   `background-color` ne sait pas d'où il vient, il ne peut que fondre. Le
-   calque, lui, se DÉCOUPE — `clip-path: inset(…)` n'en laisse voir qu'une
-   fenêtre, et on fait glisser le bord droit de cette fenêtre d'un bord de la
-   cellule à l'autre. UNE SEULE valeur bouge, l'écart de droite ; le rayon ne
-   bouge pas. Le front garde donc sa forme d'un bout à l'autre, et le geste se
-   lit comme un déplacement et non comme une croissance.
+   Ce qui remplace le balayage, et pourquoi : l'aplat caramel qui traversait la
+   cellule la REPEIGNAIT, quand tout ce qu'on lui demandait était de la
+   désigner. Sous le curseur, une matière du registre cessait de ressembler à
+   ses voisines, et le quadrillage se défaisait à chaque mouvement de souris.
+   Il n'en reste rien : ni calque `::before`, ni `clip-path`, ni `isolation`
+   pour enfermer le calque. Un aplat qui ne va nulle part n'a pas besoin d'être
+   découpé — il s'écrit dans le fond de l'élément, et il fond.
 
-   Les deux états sont dans `tokens.css` (`--survol-ferme`, `--survol-ouvert`) :
-   ils sont la même forme à deux positions, et rien ici n'a le droit de les
-   redessiner en chemin.
+   ---- LES TROIS GESTES ----
+   1. LE LIT. `--survol-aplat` dans `background-color`. C'est tout.
 
-   Le calque se glisse SOUS le texte et AU-DESSUS du fond propre de l'élément :
-   c'est exactement ce que fait un enfant en z-index négatif. `isolation`
-   l'enferme dans l'élément — sans elle il passerait derrière le fond de la
-   section, et on ne verrait plus rien.
+   2. L'ENCRE, d'un cran. L'étiquette rejoint le brun moyen, le nom le brun
+      profond, le résumé ne bouge pas — il est déjà au brun moyen, et sur un
+      voile aussi clair il n'a rien à y gagner. C'est la différence qui compte
+      avec l'inversion d'avant : elle fonçait TOUT au même brun, et la cellule
+      survolée perdait la hiérarchie que la cellule au repos avait. Ici les
+      trois niveaux restent trois niveaux.
 
-   Deux crochets, un seul geste :
-   - `.eg-invert` — la classe du système (`tokens/base.css`), portée par les
-     cellules, les cartes, les listes de liens ;
-   - `.eg-survol` — pour les surfaces qui écrivent leur survol dans leur propre
-     composant : l'en-tête, le bandeau des portraits, les boutons. Elles n'ont
-     plus qu'une chose à faire : ne PAS repeindre leur fond au survol. */
+      Le cran du bas ne passe PAS par un sélecteur, mais par le token :
+      `--text-label` est reposé sur la cellule, et tout ce qui le lit suit —
+      l'étiquette du registre, l'adresse en petit d'une liste de liens, le
+      glyphe d'une ligne de contact. Ce n'est pas qu'une commodité d'écriture :
+      sur le voile, le gris-brun de l'étiquette tombe à 4,37:1, sous le seuil.
+      Une règle par classe en aurait oublié une ; le token n'en oublie aucune.
 
-.eg-invert,
-.eg-survol { position: relative; isolation: isolate; }
+      Le nom, lui, a besoin du `!important` : sa couleur au repos est posée par
+      les composants, chacun avec sa spécificité propre, et il n'y a pas d'autre
+      façon de les rassembler d'un coup. Il ne coûte rien — la règle vit dans un
+      `@media` qui sait la retirer.
 
-.eg-invert::before,
-.eg-survol::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--hover-invert-bg);
-  /* Fermé : le front est rangé contre le bord gauche, largeur nulle. */
-  clip-path: var(--survol-ferme);
-  transition: clip-path var(--survol-duree) var(--ease-out);
-  pointer-events: none;
+   3. LE DÉCALAGE. Il ne prend que les enfants DIRECTS, jamais l'élément
+      lui-même : une cellule qui se translate emporte ses filets, et le registre
+      entier se découd sous le pointeur. Conséquence assumée — un lien qui n'a
+      que du texte pour enfant (une pastille, un nom de consœur) ne se décale
+      pas. Il reçoit le lit et l'encre, ce qui suffit largement à le désigner ;
+      le décalage est ce que les grandes cellules ont en plus, pas ce que les
+      petites ont en moins.
+
+   ---- LES FILETS NE BOUGENT PAS ----
+   Un filet n'appartient pas à la cellule : il appartient au REGISTRE, qui court
+   d'un bord à l'autre de la section. Une cellule qui recolore les siens perce
+   un trou dans le quadrillage, et le rectangle survolé se DÉTACHE de la grille
+   au lieu de s'y allumer. Rien ici ne les touche.
+
+   ---- DEUX CROCHETS, UN SEUL GESTE ----
+   - `.eg-inverse` — les cadres qui s'allument : cellules du registre, cartes
+     cliquables, listes de liens, pastilles ;
+   - `.eg-survol` — les surfaces qui écrivent leur propre encre au survol et ne
+     veulent du geste que le lit : l'en-tête, les boutons.
+
+   ---- POURQUOI PAS `.eg-invert` ----
+   Le design system porte la même idée sous ce nom (`tokens/base.css`), mais il
+   l'écrit en `!important` : quatre déclarations qu'aucune règle de composant ne
+   peut reprendre, et — c'est le point — qu'aucun `@media` ne peut retirer, les
+   encres au repos étant cinq ou six selon l'endroit et aucune n'étant celle du
+   voisin. Il fallait pouvoir se TAIRE, et pas seulement parler plus fort. Le
+   site a donc repris la classe à son compte : elle change de nom, elle reste le
+   même geste, et `base.css` demeure le miroir exact du projet de design. */
+
+.eg-inverse,
+.eg-survol {
+  /* `relative` reste : des composants y accrochent des enfants absolus. C'est
+     `isolation` qui part avec le calque — plus rien à enfermer. */
+  position: relative;
+  transition: background-color var(--survol-duree) var(--ease-standard),
+              color var(--survol-duree) var(--ease-standard);
 }
 
-.eg-invert:hover::before,
-.eg-invert:focus-visible::before,
-.eg-survol:hover::before,
-.eg-survol:focus-visible::before { clip-path: var(--survol-ouvert); }
+.eg-inverse > * {
+  transition: transform var(--survol-duree-geste) var(--ease-standard);
+}
 
-/* `base.css` repeint le fond de l'élément d'un aplat `!important` au survol :
-   il couvrirait le balayage d'un bloc, avant même qu'il ait commencé. On le
-   ramène au LIT — le fond que l'élément avait au repos, celui qui doit rester
-   visible dans la part que la pastille n'a pas encore atteinte. Transparent par
-   défaut, ce qui suffit partout où la cellule n'a pas de fond à elle ; une
-   surface qui EN A un le déclare (`--survol-lit`), faute de quoi on verrait la
-   page au travers pendant le mouvement. */
-.eg-invert:hover,
-.eg-invert:focus-visible { background-color: var(--survol-lit, transparent) !important; }
+/* ---- LE CLAVIER ----
+   Il ouvre le geste partout : c'est la seule façon de voir où l'on est. La
+   souris, elle, ne l'ouvre que là où il y en a une — voir plus bas. */
+.eg-inverse:focus-visible,
+.eg-survol:focus-visible { background-color: var(--survol-aplat); }
 
-/* Et le même geste pour les FILETS. `base.css` repeint aussi les bordures au
-   survol — celle de l'élément d'un aplat caramel, celles de ses enfants d'un
-   brun voilé. Or un filet n'appartient pas à la cellule : il appartient au
-   REGISTRE, qui court d'un bord à l'autre de la section. Une cellule qui
-   recolore les siens perce un trou caramel dans le quadrillage, et le
-   rectangle survolé se DÉTACHE de la grille au lieu de s'y allumer.
+.eg-inverse:focus-visible {
+  --type-subtitle-mark-color: var(--survol-carre);
+  --text-label: var(--text-muted);
+}
 
-   Le balayage dit déjà tout ce qu'il y a à dire. Les filets, eux, gardent la
-   couleur qu'ils ont au repos — celle du trait du registre — au survol comme
-   ailleurs. Rien ne se dessine autour de ce qu'on survole. */
-.eg-invert:hover,
-.eg-invert:focus-visible,
-.eg-invert:hover *,
-.eg-invert:focus-visible * { border-color: var(--line-rule) !important; }
+.eg-inverse:focus-visible :is(h2, h3, h4) { color: var(--survol-encre) !important; }
 
-/* Sur le caramel, le vert clair de l'accent tombe à 2:1. L'accent rejoint donc
-   l'encre du survol : une cellule survolée parle d'une seule couleur. */
-.eg-invert:hover .eg-accent,
-.eg-invert:focus-visible .eg-accent { color: var(--hover-invert-fg) !important; }
+/* Un lien qui n'a pas d'enfant — une pastille, un nom — porte son encre
+   lui-même : c'est sa propre couleur qui monte d'un cran. */
+.eg-inverse:focus-visible { color: var(--survol-encre) !important; }
 
-/* Le geste est un confort, pas une information : qui le refuse reçoit l'aplat,
-   d'un coup. */
+.eg-inverse:focus-visible > * { transform: translateX(var(--survol-decalage)); }
+
+/* ---- PAS DE SURVOL AU DOIGT ----
+   Un écran tactile n'a pas de survol : il a un appui, que le navigateur traduit
+   en `:hover` et LAISSE ALLUMÉ jusqu'au prochain appui ailleurs. Une cellule
+   touchée en passant restait donc allumée, décalée de trois pixels, sans que
+   rien ne l'ait demandé — un état qui ne veut plus rien dire une fois qu'on ne
+   peut plus en sortir. Là où le pointeur ne survole pas, le site n'a pas d'état
+   de survol du tout : ni ici, ni dans les composants, qui posent le même
+   `@media` chez eux.
+
+   Le focus clavier, lui, reste : il existe aussi sur un écran tactile, et c'est
+   le seul repère de qui navigue au clavier branché. */
+@media (hover: hover) {
+  .eg-inverse:hover,
+  .eg-survol:hover { background-color: var(--survol-aplat); }
+
+  .eg-inverse:hover {
+    --type-subtitle-mark-color: var(--survol-carre);
+    --text-label: var(--text-muted);
+  }
+
+  .eg-inverse:hover :is(h2, h3, h4) { color: var(--survol-encre) !important; }
+
+  .eg-inverse:hover { color: var(--survol-encre) !important; }
+
+  .eg-inverse:hover > * { transform: translateX(var(--survol-decalage)); }
+}
+
+/* Le lien courant, lui, change d'encre et s'épaissit au survol (`base.css`,
+   qui ne connaît pas le doigt). Sans souris, il garde son état de repos. */
+@media (hover: none) {
+  a:hover { color: var(--text-link); text-decoration-thickness: 1px; }
+}
+
+/* ---- QUI REFUSE LE MOUVEMENT ----
+   Reçoit le lit et l'encre — ils ne sont pas un mouvement, ils sont l'état — et
+   ne reçoit PAS le décalage. Un déplacement de position est précisément ce que
+   ce réglage demande d'éviter, et il ne porte ici aucune information que le
+   voile ne porte déjà. La règle vient après les deux blocs d'état : à
+   spécificité égale, c'est la dernière qui parle. */
 @media (prefers-reduced-motion: reduce) {
-  .eg-invert::before,
-  .eg-survol::before { transition-duration: 0s; }
+  .eg-inverse:hover > *,
+  .eg-inverse:focus-visible > * { transform: none; }
 }

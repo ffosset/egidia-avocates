@@ -59,6 +59,25 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
   img { max-width: 100%; }
 
+  /* ---- LA PAGE NE DÉFILE QUE VERS LE BAS ----
+     Rien, sur ce site, ne se lit de gauche à droite au-delà du cadre : un
+     défilement horizontal n'y est jamais un service rendu, c'est toujours le
+     symptôme d'un bloc qui dépasse. Sur un téléphone il coûte cher — la page
+     part de travers au premier geste du pouce, et les filets de marge, qui
+     sont `fixed`, restent en place pendant que le contenu glisse dessous.
+
+     `clip` et non `hidden` : `hidden` aurait fait de <html> une boîte de
+     défilement, ce qui casse `position: sticky` et donne un axe qu'on peut
+     encore atteindre au clavier. `clip` ferme l'axe, sans rien d'autre.
+     L'`overflow` de la racine se propage à la FENÊTRE : les filets de marge
+     n'y sont donc pas rognés, et le défilement vertical est intact.
+
+     C'est un garde-fou, pas un correctif : ce qui dépassait a été corrigé là
+     où ça dépassait (le registre intrinsèque de `RuledGrid`, le portrait des
+     pages d'avocate). La règle est là pour que le prochain dépassement se voie
+     comme un bloc coupé — et non comme un site qui bouge. */
+  html { overflow-x: clip; }
+
   /* ---- Les ancres de la navigation glissent, elles ne sautent pas ----
      « Services », « Équipe », « Honoraires », « Contact » mènent à des sections
      de l'accueil. Sans ce glissement, le clic remplace l'écran d'un coup et se
