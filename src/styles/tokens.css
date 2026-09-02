@@ -98,6 +98,36 @@
   --frame-inset: calc(max(0px, (100vw - var(--page-max)) / 2) + var(--page-margin));
 }
 
+/* ---- LA COUTURE DE LA NAVIGATION ----
+   La barre pose quatre cellules d'égale largeur entre la couture du héros
+   (--hero-split) et le filet de droite. La MOITIÉ de cette course est donc le
+   bord gauche de la troisième cellule, et c'est sur ce trait que la colonne de
+   droite des pages intérieures vient s'arrêter : la carte de liens et
+   l'intitulé de navigation qui la surplombe tombent sur la même verticale.
+
+   La valeur est une LARGEUR — la distance du bord droit du contenu à cette
+   couture — parce que c'est ce dont une colonne flex a besoin :
+
+       largeur = (contenu + filet - couture) / 2
+
+   Elle s'écrit en `100%` et non en `100vw`, et c'est délibéré : le pourcentage
+   est résolu par le LECTEUR (ici la base flex de l'aside, donc sur la largeur
+   du contenu), tandis que `vw` compte la barre de défilement que le contenu ne
+   compte pas. Les quinze pixels d'écart auraient suffi à décoller le trait.
+
+   Déplacer la couture d'une cellule, le jour où l'ordre de la navigation
+   change : c'est la division par 2 qu'on touche — un quart de la course par
+   cellule (3/4 pour la deuxième, 1/4 pour la quatrième).
+
+   Le plancher est la même concession que celle du mot-symbole dans l'en-tête :
+   l'alignement est un idéal, pas un dogme. Sous ~1200px la couture passerait
+   sous la mesure qu'une carte de liens demande pour rester lisible, et c'est la
+   lisibilité qui gagne. Sous --lap la barre n'existe plus du tout — la colonne
+   reprend alors ses proportions, et l'alignement ne s'applique pas. */
+:root {
+  --nav-seam-col: max(16rem, calc((100% + var(--frame-inset) - var(--hero-split)) / 2));
+}
+
 /* ---- Le quatrième pas de la pile ----
    La loi nommait trois pas et tolérait 8px « pour une paire label/valeur ».
    Cette tolérance était en fait la relation la plus serrée de la page — un

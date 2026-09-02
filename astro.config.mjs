@@ -17,11 +17,18 @@ import postcssCustomMedia from 'postcss-custom-media';
    Astro compile chaque `<style>` de composant séparément, et postcss-custom-media
    ne lit que le fichier courant : le petit greffon ci-dessous injecte la
    définition en tête de CHAQUE feuille avant qu'il ne s'exécute. */
-const LAP = '(max-width: 1000px)';
+const LAP_MAX = 1000;
+const LAP = `(max-width: ${LAP_MAX}px)`;
+/* Le complément exact de --lap. Il existe parce que certaines compositions ne
+   valent que là où la BARRE de navigation existe : sous --lap elle devient un
+   menu, et une colonne alignée sur une de ses cellules s'alignerait sur rien.
+   Les deux media dérivent de la même constante — ils ne peuvent pas dériver. */
+const DESK = `(min-width: ${LAP_MAX + 1}px)`;
 
 const injectBreakpoints = {
   postcssPlugin: 'egidia-breakpoints',
   Once(root, { atRule }) {
+    root.prepend(atRule({ name: 'custom-media', params: `--desk ${DESK}` }));
     root.prepend(atRule({ name: 'custom-media', params: `--lap ${LAP}` }));
   },
 };

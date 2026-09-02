@@ -195,6 +195,15 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
   @media (--lap) {
     .split > .corps { padding-top: var(--section-y-sm); }
   }
+  /* Là où la barre de navigation existe, la colonne de droite s'arrête sur la
+     couture de sa troisième cellule (voir --nav-seam-col dans `tokens.css`).
+     Elle ne se replie plus par proportion : c'est une largeur posée, et le
+     corps prend tout le reste. Sous --lap la barre devient un menu, il n'y a
+     plus de couture à suivre, et les bases en `ch` reprennent la main — y
+     compris pour décider du moment où le bloc passe dessous. */
+  @media (--desk) {
+    .split > aside { flex: 0 0 var(--nav-seam-col); }
+  }
 
   aside { display: grid; gap: var(--space-5); align-content: start; }
   .block { margin-top: var(--stack-loose); }
