@@ -42,25 +42,38 @@ Tout ce qui s'allume au pointeur est enfermé dans `@media (hover: hover)` ;
 le focus clavier, lui, vaut sur tous les écrans et reste hors du garde.
 
 **Trois des quatre gabarits ne livrent aucun script.** Seul l'accueil en charge,
-et uniquement pour la carte d'accès :
+et uniquement pour le voile de la carte d'accès :
 
 | Route | JS livré |
 | --- | --- |
-| `/` | 2 Ko (observateur) + Leaflet 147 Ko en import différé |
+| `/` | moins d'1 Ko (le voile de la carte) |
 | `/matieres/[id]` | aucun |
 | `/avocates/[slug]` | aucun |
 | `/aide-juridique` | aucun |
 
-`MapEmbed` exige Leaflet : le design system impose des tuiles OpenStreetMap
-réelles — « jamais un plan de rue dessiné ou illustré ». Trois décisions pour
-limiter la casse :
+`MapEmbed` est un `<iframe>` Google Maps en chargement différé : aucune
+bibliothèque, aucun kilo-octet de carte à empaqueter. Le design system impose un
+plan de rue réel — « jamais un plan de rue dessiné ou illustré » — et Google
+porte en plus les repères que le quartier a dans la tête (Louise, Stéphanie,
+les commerces). Les tuiles OpenStreetMap d'avant, servies par Leaflet, étaient
+justes mais muettes : désaturées à fond, elles ne nommaient presque rien, et
+elles coûtaient 147 Ko. Trois décisions :
 
-1. **Leaflet est empaqueté**, pas chargé depuis un CDN — comme les icônes.
-2. **Import dynamique déclenché par `IntersectionObserver`** : les 147 Ko ne
-   partent que si la carte entre dans le champ. La carte est la dernière
-   section de la page ; qui ne descend pas jusqu'en bas ne paie rien.
-3. **`<noscript>` donne l'adresse et un lien d'itinéraire.** Sans JavaScript on
-   ne perd pas l'information, seulement la carte.
+1. **La teinte est légère.** Assez pour que le plan appartienne au papier, pas
+   assez pour effacer un nom de rue ; carte activée, elle retombe presque au
+   réel — au moment où l'on s'en sert, la lisibilité passe devant l'accord de
+   tons.
+2. **Un voile intercepte la molette**, sinon la carte confisque le défilement de
+   la page. C'est le seul script de la page, et il n'existe que si le script
+   tourne : sans lui la carte reste pleinement manipulable.
+3. **L'adresse et l'itinéraire vivent hors du cadre**, dans une barre sous le
+   plan. Sans JavaScript comme sans Google, on ne perd pas l'information.
+
+L'embarqué a deux adresses possibles : avec `PUBLIC_GOOGLE_MAPS_KEY` dans
+`.env`, l'API officielle Maps Embed ; sans clé, `maps?…&output=embed`,
+l'embarqué public historique. Le repli sans clé marche aujourd'hui mais n'est
+pas contractuel — poser la clé fait passer le site sur la voie officielle sans
+rien changer d'autre.
 
 Aucune page n'utilise `Accordion`, `Dialog` ni `Tooltip` — il n'y a donc pas
 d'autre île. Si un besoin apparaît, ce sont les trois candidats ; le reste doit
@@ -77,7 +90,7 @@ src/
   data/          Contenu transcrit — matieres, avocates, prodeo, site
   components/    24 composants .astro portés du design system
                  (dont ArcPanel — le héros, RuleLink — action discrète,
-                  et MapEmbed — la carte d'accès Leaflet)
+                  et MapEmbed — la carte d'accès Google en <iframe>)
   layouts/       Base.astro — <head>, filets de marge, en-tête, pied de page
   pages/
     index.astro              Accueil, 7 sections en scroll
@@ -276,8 +289,9 @@ point de tout le dispositif.
 
 - `equipe-2.jpg` n'a jamais été fourni ; `PHOTOS.equipeAlt` retombe sur la photo
   principale.
-- Les coordonnées de la carte (`CONTACT.coords`) sont déduites de l'adresse —
-  **à faire confirmer par le cabinet** avant mise en ligne.
+- L'épingle de la carte est posée par géocodage de l'adresse ; `CONTACT.coords`
+  ne sert plus qu'à documenter le lieu — **à faire confirmer par le cabinet**
+  avant mise en ligne, comme l'orthographe exacte de l'adresse envoyée à Google.
 - Pas de numéro général pour le cabinet ; Floriane Delplancke n'a pas encore de
   ligne directe (sa fiche affiche « Ligne directe à venir »).
 - LinkedIn absent pour Delplancke, Doyen, Ghymers et Vryens.

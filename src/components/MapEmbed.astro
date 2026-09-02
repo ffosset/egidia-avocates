@@ -1,136 +1,191 @@
 ---
 /**
- * Carte de rue réelle : tuiles OpenStreetMap via Leaflet, teintées aux tons du
- * cabinet. Aucun tracé dessiné à la main — la géographie est une donnée.
+ * Carte d'accès : l'embarqué Google Maps, teinté aux tons du cabinet.
  *
- * Leaflet est empaqueté (pas de CDN) et chargé en import dynamique quand la
- * carte entre dans le champ : le reste de la page ne paie pas ses ~150 Ko.
- * Sans JavaScript, le <noscript> donne l'adresse et un lien d'itinéraire.
+ * Pourquoi Google plutôt que les tuiles OpenStreetMap d'avant : la carte n'est
+ * pas une décoration, elle sert à SE SITUER. Google porte les repères que le
+ * quartier a dans la tête — Louise, Stéphanie, l'avenue, les commerces — et
+ * c'est le plan que le visiteur reconnaît déjà. Le plan précédent était juste,
+ * mais muet : désaturé à fond, il ne nommait presque rien.
+ *
+ * Le style ne vient donc PAS d'un effacement. La teinte est légère et les
+ * libellés restent lisibles ; dès que la carte est activée, elle retombe
+ * presque à ses vraies couleurs — au moment où l'on s'en sert, la lisibilité
+ * passe devant l'accord de tons.
+ *
+ * Zéro dépendance et zéro kilo-octet de bibliothèque : c'est un <iframe> en
+ * chargement différé. Sans JavaScript, la carte fonctionne quand même.
+ *
+ * Deux adresses possibles pour l'embarqué :
+ *  - avec clé, l'API officielle Maps Embed (PUBLIC_GOOGLE_MAPS_KEY) ;
+ *  - sans clé, `maps?…&output=embed`, l'embarqué public historique.
+ * Le repli sans clé marche aujourd'hui mais n'est pas contractuel : poser la
+ * clé dans `.env` fait passer le site sur la voie officielle sans rien changer
+ * d'autre.
  */
-import 'leaflet/dist/leaflet.css';
-
 interface Props {
   lat: number;
   lon: number;
   zoom?: number;
   label?: string;
+  /** Ce que Google doit chercher. Par défaut le libellé, parenthèses ôtées. */
+  query?: string;
+  /** Adresse répétée sous le plan. Inutile quand une cellule voisine la porte. */
+  caption?: string;
   tint?: boolean;
-  /** false verrouille le déplacement et masque le zoom — carte d'accès figée. */
-  interactive?: boolean;
   class?: string;
 }
-const { lat, lon, zoom = 16, label, tint = true, interactive = true, class: klass } = Astro.props;
-const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(label ?? `${lat},${lon}`)}`;
+const { lat, lon, zoom = 15, label, query, caption, tint = true, class: klass } = Astro.props;
+
+/* Une adresse géocodée pose une épingle plus juste que des coordonnées
+   approchées (voir ARCHITECTURE, « ce qui manque encore »). « (1er étage) »
+   n'aide pas un géocodeur : les parenthèses tombent. */
+const cible = query ?? label?.replace(/\s*\([^)]*\)/g, '').trim() ?? `${lat},${lon}`;
+const cle = import.meta.env.PUBLIC_GOOGLE_MAPS_KEY;
+const src = cle
+  ? `https://www.google.com/maps/embed/v1/place?key=${cle}&q=${encodeURIComponent(cible)}&zoom=${zoom}&language=fr&region=BE`
+  : `https://www.google.com/maps?q=${encodeURIComponent(cible)}&z=${zoom}&hl=fr&output=embed`;
+const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(cible)}`;
 ---
-<div class:list={['map-wrap', klass]}>
-  <div
-    class:list={['map', { tint }]}
-    data-map
-    data-lat={lat}
-    data-lon={lon}
-    data-zoom={zoom}
-    data-label={label}
-    data-interactive={String(interactive)}
-    role="img"
-    aria-label={label ? `Carte : ${label}` : 'Carte'}
-  ></div>
-  <noscript>
-    <div class="fallback">
-      <span>{label}</span>
-      <a href={itineraire} target="_blank" rel="noopener">Itinéraire</a>
-    </div>
-  </noscript>
+<div class:list={['map-wrap', klass]} data-map>
+  <div class="map-frame">
+    <iframe
+      class:list={['map', { tint }]}
+      src={src}
+      title={label ? `Carte : ${label}` : 'Carte du cabinet'}
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      allowfullscreen
+    ></iframe>
+    {/* Le voile n'existe QUE si le script tourne : sans lui, la carte reste
+        pleinement manipulable — mieux vaut une carte qui capte la molette
+        qu'une carte morte. */}
+    <button class="veil" type="button" data-veil>
+      <span class="tag">Activer la carte</span>
+    </button>
+  </div>
+
+  {/* Un <div>, pas un <p> : la loi de base retient la prose à une mesure
+      (`--measure-prose`), et la barre doit courir sur toute la largeur. */}
+  <div class="bar">
+    {caption && <span class="adresse">{caption}</span>}
+    <a class="rule-link" href={itineraire} target="_blank" rel="noopener">
+      Itinéraire
+      <span class="rule" aria-hidden="true"></span>
+    </a>
+  </div>
 </div>
 
 <script>
-  const nodes = document.querySelectorAll<HTMLElement>('[data-map]');
-  if (nodes.length) {
-    const init = async (el: HTMLElement) => {
-      try {
-        const L = (await import('leaflet')).default;
-        const lat = Number(el.dataset.lat);
-        const lon = Number(el.dataset.lon);
-        const interactive = el.dataset.interactive !== 'false';
-        const label = el.dataset.label;
-
-        const map = L.map(el, {
-          center: [lat, lon],
-          zoom: Number(el.dataset.zoom ?? 16),
-          zoomControl: interactive,
-          // Ne jamais confisquer le défilement de la page.
-          scrollWheelZoom: false,
-          dragging: interactive,
-          attributionControl: true,
-        });
-
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          // L'attribution OpenStreetMap est une obligation de licence.
-          attribution: '© OpenStreetMap contributors',
-          maxZoom: 19,
-        }).addTo(map);
-
-        const pin = L.divIcon({
-          className: '',
-          html: '<span class="eg-pin"></span>',
-          iconSize: [20, 20],
-          iconAnchor: [10, 10],
-        });
-        const marker = L.marker([lat, lon], { icon: pin, title: label, alt: label ?? '' }).addTo(map);
-        if (label) marker.bindPopup(label);
-      } catch {
-        el.classList.add('failed');
-      }
-    };
-
-    const io = new IntersectionObserver(
-      (entries, obs) => {
-        for (const e of entries) {
-          if (!e.isIntersecting) continue;
-          obs.unobserve(e.target);
-          init(e.target as HTMLElement);
-        }
-      },
-      { rootMargin: '300px' },
-    );
-    nodes.forEach((n) => io.observe(n));
+  /* Une carte embarquée zoome à la molette, et confisque donc le défilement de
+     la page. Le voile lui rend la main : au repos on lit le plan, au clic on le
+     manipule. Douze lignes, là où le plan précédent chargeait 147 Ko. */
+  for (const wrap of document.querySelectorAll<HTMLElement>('[data-map]')) {
+    const veil = wrap.querySelector<HTMLButtonElement>('[data-veil]');
+    if (!veil) continue;
+    wrap.classList.add('veiled');
+    veil.addEventListener('click', () => wrap.classList.remove('veiled'));
   }
 </script>
 
 <style>
   .map-wrap {
-    position: relative;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     min-height: 320px;
     background: var(--surface-inset);
   }
-  .map { position: absolute; inset: 0; }
-  /* Désaturée et légèrement chaude, pour ne pas trancher avec le papier. */
-  .map.tint { filter: grayscale(1) contrast(0.92) brightness(1.06) sepia(0.14); }
+  /* Le cadre porte la carte ; la barre d'adresse reste sous elle, jamais
+     par-dessus : rien ne masque le plan. */
+  .map-frame { position: relative; flex: 1; overflow: hidden; }
+  .map { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-  .fallback,
-  .map.failed::after {
+  /* La teinte : chaude et légère. Assez pour que le plan appartienne au
+     papier, pas assez pour effacer un nom de rue. */
+  .map.tint {
+    filter: sepia(0.24) saturate(0.72) hue-rotate(-6deg) brightness(1.02) contrast(1.02);
+    transition: filter var(--dur-base) var(--ease-standard);
+  }
+  /* Carte activée : on la rend au réel. */
+  .map-wrap:not(.veiled) .map.tint { filter: sepia(0.06) saturate(0.94); }
+
+  .veil {
     position: absolute;
     inset: 0;
-    display: grid;
-    place-items: center;
-    gap: var(--space-3);
-    text-align: center;
-    padding: var(--space-6);
-    font-size: 16px;
-    color: var(--text-label);
+    display: none;
+    place-items: end start;
+    padding: var(--space-3);
+    border: 0;
+    background: transparent;
+    cursor: pointer;
   }
-  .map.failed::after { content: 'Carte indisponible.'; }
+  .map-wrap.veiled .veil { display: grid; }
+  /* Le voile posé, la carte ne reçoit plus la molette. */
+  .map-wrap.veiled .map { pointer-events: none; }
 
-  .map-wrap :global(.eg-pin) {
-    display: block;
-    width: 20px;
-    height: 20px;
-    background: var(--brun-profond);
-    box-shadow: 0 0 0 6px rgba(70, 101, 74, 0.35);
+  /* L'étiquette d'activation : du papier à filet, comme le reste du site —
+     ni pastille, ni coin arrondi. */
+  .tag {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--line-strong);
+    background: var(--surface-page);
+    font-family: var(--font-body);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: var(--transition-control);
   }
-  /* Leaflet impose ses propres couleurs : on les ramène au papier du cabinet. */
-  .map-wrap :global(.leaflet-container) { background: var(--surface-inset); font-family: var(--font-body); }
-  .map-wrap :global(.leaflet-control-attribution) { background: rgba(250, 247, 244, 0.86); font-size: 11px; }
-  .map-wrap :global(.leaflet-popup-content-wrapper),
-  .map-wrap :global(.leaflet-popup-tip) { border-radius: 0; }
+  .veil:focus-visible .tag { color: var(--text-heading); background: var(--surface-inset); }
+  @media (hover: hover) {
+    .veil:hover .tag { color: var(--text-heading); background: var(--surface-inset); }
+  }
+
+  /* ---- La barre d'adresse ----
+     C'est elle qui fait le lien entre le plan et le texte du registre : la même
+     encre, le même filet, et l'action discrète du site (`RuleLink`) pour
+     l'itinéraire. */
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-6);
+    margin: 0;
+    padding: var(--space-4) var(--cell-pad);
+    border-top: var(--divider);
+    background: var(--section-surface, var(--surface-page));
+  }
+  .adresse { font-size: 16px; color: var(--text-muted); }
+
+  /* Seule au pied du cadre, l'action reste à droite : `space-between` aurait
+     ramené un enfant unique à gauche. */
+  .rule-link {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text-muted);
+    white-space: nowrap;
+    transition: var(--transition-control);
+  }
+  .rule {
+    display: block;
+    height: 1px;
+    width: 32px;
+    background: currentColor;
+    transition: width var(--dur-base) var(--ease-standard);
+  }
+  .rule-link:focus-visible { color: var(--text-heading); }
+  .rule-link:focus-visible .rule { width: 56px; }
+  @media (hover: hover) {
+    .rule-link:hover { color: var(--text-heading); }
+    .rule-link:hover .rule { width: 56px; }
+  }
 </style>
