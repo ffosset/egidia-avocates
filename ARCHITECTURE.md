@@ -50,46 +50,77 @@ fond gardait ce fond au survol tout en appliquant son encre de survol : sur les
 honoraires, le bouton secondaire écrivait sauge obscur sur sauge obscur. Le
 détail du calcul est en tête de `survol.css`.
 
-**Trois des quatre gabarits ne livrent aucun script.** Seul l'accueil en charge,
-et uniquement pour le voile de la carte d'accès :
+**Cinq des six gabarits ne livrent aucun script.** Seul l'accueil en charge,
+et uniquement pour l'appel de la carte d'accès :
 
 | Route | JS livré |
 | --- | --- |
-| `/` | moins d'1 Ko (le voile de la carte) |
-| `/matieres/[id]` | aucun |
+| `/` | moins d'1 Ko (l'appel de la carte et son voile) |
+| `/services/[id]` | aucun |
 | `/avocates/[slug]` | aucun |
 | `/aide-juridique` | aucun |
+| `/mentions-legales` | aucun |
+| `/vie-privee` | aucun |
 
-`MapEmbed` est un `<iframe>` Google Maps en chargement différé : aucune
-bibliothèque, aucun kilo-octet de carte à empaqueter. Le design system impose un
-plan de rue réel — « jamais un plan de rue dessiné ou illustré » — et Google
-porte en plus les repères que le quartier a dans la tête (Louise, Stéphanie,
-les commerces). Les tuiles OpenStreetMap d'avant, servies par Leaflet, étaient
-justes mais muettes : désaturées à fond, elles ne nommaient presque rien, et
-elles coûtaient 147 Ko. Trois décisions :
+`MapEmbed` est un `<iframe>` Google Maps que **le serveur ne rend pas** :
+aucune bibliothèque, aucun kilo-octet de carte à empaqueter, et surtout aucune
+requête vers Google tant que personne ne l'a demandée. Le design system impose
+un plan de rue réel — « jamais un plan de rue dessiné ou illustré » — et Google
+porte les repères que le quartier a dans la tête (Louise, Stéphanie, les
+commerces). Quatre décisions :
 
-1. **La teinte est légère.** Assez pour que le plan appartienne au papier, pas
+1. **Le plan ne part pas seul.** L'adresse de l'embarqué dort dans un `data-`
+   et le script ne fabrique le cadre qu'au clic sur « Afficher le plan ». Tant
+   que personne n'a cliqué, Google ne voit ni l'adresse IP du visiteur, ni la
+   page consultée, ni l'heure de la visite. `loading="lazy"` n'y suffisait pas :
+   il ne retarde le départ que jusqu'au défilement. Voir « Aucune fuite ».
+2. **La teinte est légère.** Assez pour que le plan appartienne au papier, pas
    assez pour effacer un nom de rue ; carte activée, elle retombe presque au
    réel — au moment où l'on s'en sert, la lisibilité passe devant l'accord de
-   tons.
-2. **Un voile intercepte la molette**, sinon la carte confisque le défilement de
-   la page. C'est le seul script de la page, et il n'existe que si le script
-   tourne : sans lui la carte reste pleinement manipulable.
-3. **L'action vit hors du cadre**, dans une barre sous le plan : rien ne
-   recouvre la carte. Sur l'accueil, cette barre ne porte que « Itinéraire » —
-   l'adresse est déjà dans la cellule voisine, et le composant ne la répète que
-   si on lui passe `caption` (utile partout où le plan est seul).
-   L'épingle, elle, suit l'ADRESSE géocodée, pas `CONTACT.coords`.
+   tons. Le basculement est net, sans transition : sur un `<iframe>` d'une
+   autre origine, le moteur ne démarre pas la transition de `filter` et cloue
+   la propriété à son ancienne valeur (commentaire à l'appui dans le composant).
+3. **Un voile intercepte la molette**, sinon la carte confisque le défilement de
+   la page. Il ne naît qu'avec le script, comme le cadre qu'il couvre.
+4. **Le plan occupe toute la cellule, et RIEN ne se pose sous lui** — ni barre,
+   ni lien d'itinéraire. `a9990cf` avait retiré ce lien du registre du contact,
+   et c'est ce retrait qui permet aux quatre cellules de partir du haut sur un
+   seul plancher ; le remettre au pied de la carte rouvrirait exactement ce que
+   ce commit avait refermé. L'adresse vit dans la cellule « Nous trouver », à
+   côté. L'épingle, elle, suit l'ADRESSE géocodée ; `CONTACT.coords` n'est que
+   le repli.
+
+Trois états, donc, et le script est le seul à pouvoir les franchir : au repos
+(aucune requête) → chargé (le voile garde la molette) → manipulable. Sans
+JavaScript, l'écran d'appel reste ce qu'il est — l'adresse, sous un intitulé
+qui dit ce qui manque : on ne perd que le plan.
+
+**Le plan montre les commerces, et c'est assumé.** Restaurants et hôtels
+appartiennent au fond de Google, qui n'offre AUCUN moyen de les retirer :
+l'API Embed n'a pas de paramètre de style, et les surfaces stylables (JS,
+Static) exigent une clé et une facturation. Un fond sans commerces existe et a
+été essayé — CARTO Positron via Leaflet, gratuit et sans clé, avec les deux
+arrêts posés à la main — puis écarté : le cabinet préfère le plan que ses
+visiteurs reconnaissent. Ne pas re-tenter le remplacement sans le lui demander.
+(Coordonnées relevées à cette occasion, si la question revient : Louise
+50.835392, 4.354668 ; Stéphanie 50.833034, 4.357664.)
 
 L'embarqué a deux adresses possibles : avec `PUBLIC_GOOGLE_MAPS_KEY` dans
 `.env`, l'API officielle Maps Embed ; sans clé, `maps?…&output=embed`,
 l'embarqué public historique. Le repli sans clé marche aujourd'hui mais n'est
 pas contractuel — poser la clé fait passer le site sur la voie officielle sans
-rien changer d'autre.
+rien changer d'autre. (Ni l'une ni l'autre ne sait masquer un commerce.)
 
-Aucune page n'utilise `Accordion`, `Dialog` ni `Tooltip` — il n'y a donc pas
-d'autre île. Si un besoin apparaît, ce sont les trois candidats ; le reste doit
-rester statique.
+Aucune page n'utilise `Dialog` ni `Tooltip` — il n'y a donc pas d'autre île. Si
+un besoin apparaît, ce sont les deux candidats ; le reste doit rester statique.
+
+Le sélecteur de situation de `/aide-juridique` est un accordéon, et il n'est
+pas une île : c'est une suite de `<details name="situation">`, dont
+l'exclusivité — une seule situation ouverte à la fois — est portée par le
+navigateur. Le composant `Accordion` du design system, lui, pilote son état en
+`useState` ; il n'a pas été porté, et il n'a pas à l'être tant que `name`
+suffit. Sur un navigateur qui ignore l'attribut, plusieurs situations peuvent
+s'ouvrir : on lit plus, on ne perd rien.
 
 Le site ne comporte **aucun formulaire**, par décision du cabinet : il ne
 collecte aucune donnée personnelle. Tout appel à l'action est un `mailto:` ou
@@ -102,14 +133,20 @@ src/
   data/          Contenu transcrit — matieres, avocates, prodeo, site
   components/    24 composants .astro portés du design system
                  (dont ArcPanel — le héros, RuleLink — action discrète,
-                  et MapEmbed — la carte d'accès Google en <iframe>)
+                  et MapEmbed — la carte d'accès Google, sous consentement)
   layouts/       Base.astro — <head>, filets de marge, en-tête, pied de page
   pages/
     index.astro              Accueil, 7 sections en scroll
     matieres/[id].astro      ×5, générées depuis MATIERES
     avocates/[slug].astro    ×7, générées depuis AVOCATES
     aide-juridique.astro     Documents à produire (pro deo)
-  styles/tokens.css          Importe les 8 fichiers de tokens à la racine
+    mentions-legales.astro   Éditeur, titre professionnel, déontologie
+    vie-privee.astro         Ce que le site ne collecte pas — et le peu qu'il laisse
+
+  fonts/                     Les quatre woff2 (variables, latin + latin-ext)
+                             et leurs licences OFL
+  styles/tokens.css          Importe les 7 fichiers de tokens à la racine,
+                             plus `fonts.css` local à la place du huitième
 ```
 
 Le contenu vit dans `src/data/`, jamais dans les gabarits. Sa source est
@@ -237,8 +274,25 @@ Ce qui donne, pour les sept portraits de l'équipe (`min={240} maxCols={4}`) :
 | colonnes | 4 | 3 | 2 | 1 |
 
 Restent composés — et gardent donc `--lap` — le **registre des matières**
-(placement en zigzag, photo sur trois rangées) et le **héros**. La carte d'accès
-est intrinsèque : son `grid-column: span 2` reste juste à 3, 2 et 1 colonnes.
+(placement en zigzag, photo sur trois rangées), le **registre des liens utiles**
+et le **héros**. La carte d'accès est intrinsèque : son `grid-column: span 2`
+reste juste à 3, 2 et 1 colonnes.
+
+Le registre des liens utiles est composé, lui, pour tenir un ORDRE. Il a deux
+rangées — les noms de groupes en haut, les listes en dessous — et un groupe
+écrit ses deux enfants à la suite dans le DOM, puis les place à la main. Sous
+`--lap`, le mode composé rend les cellules au flux et l'ordre du DOM devient le
+seul juge : chaque nom reste alors collé à la liste qu'il ouvre. Écrit rangée
+par rangée, il aurait donné les deux noms l'un sur l'autre, loin de leurs
+listes.
+
+C'est aussi le seul registre de l'accueil qui ne remplisse pas sa section : il
+est POSÉ dedans, entre deux `--section-y`. La boîte ne prend que ce qui se lit
+comme une table — les lignes de liens. Le nom de la section et le nom de chaque
+groupe restent sur le papier, au-dessus des filets ; un filet ne sert que là où
+il sépare deux entrées. Une seule verticale gouverne la section, `--cell-pad`
+depuis le filet de marge : le titre, le nom du groupe et l'intitulé d'un lien
+commencent tous là.
 
 Le registre des matières ne retombe pas d'un coup sur une colonne. Il a trois
 états, et la photographie décide du premier :
@@ -256,9 +310,10 @@ exception à la remise à plat des placements explicites.
 
 ### Les colonnes proportionnelles se replient sur le texte
 
-Les découpes `7fr 5fr` (matière), `4fr 8fr` (fiche avocate) et `8fr 4fr` (aide
-juridique) sont des `flex-wrap` à bases en `ch`, pas des grilles à points de
-rupture. Deux effets qu'un `@media` ne donne pas : l'asymétrie **se détend vers
+Les découpes `7fr 5fr` (matière **et aide juridique**, qui prend la même mise
+en page — deux colonnes qui coulent depuis le haut, l'aplat ouvrant celle de
+droite) et `4fr 8fr` (fiche avocate) sont des `flex-wrap` à bases en `ch`, pas
+des grilles à points de rupture. Deux effets qu'un `@media` ne donne pas : l'asymétrie **se détend vers
 l'égalité** quand la place manque, puis le bloc passe dessous — et la bascule
 est décidée par la mesure du texte, pas par un pixel deviné.
 
@@ -303,14 +358,23 @@ point de tout le dispositif.
   principale.
 - L'épingle de la carte est posée par géocodage de l'adresse ; `CONTACT.coords`
   ne sert plus qu'à documenter le lieu — **à faire confirmer par le cabinet**
-  avant mise en ligne, comme l'orthographe exacte de l'adresse envoyée à Google.
+  avant mise en ligne.
 - Pas de numéro général pour le cabinet ; Floriane Delplancke n'a pas encore de
   ligne directe (sa fiche affiche « Ligne directe à venir »).
 - LinkedIn absent pour Delplancke, Doyen, Ghymers et Vryens.
 - Liens utiles pour « Droit des MENA » — marqués `[Ajouter]` dans le PDF source.
-- Pages `/mentions-legales` et `/vie-privee` liées par le pied de page mais pas
-  encore écrites.
 - Le domaine dans `astro.config.mjs` (`site`) est à confirmer.
+- Trois faits manquent aux pages légales, et `src/data/legal.js` les tient à
+  `null` en attendant — la page n'affiche alors rien plutôt qu'un chiffre
+  inventé : la forme juridique commune du cabinet (s'il en a une) et son numéro
+  d'entreprise, et le nom de l'assureur en responsabilité professionnelle. Les
+  numéros d'entreprise des sept avocates, eux, sont dans `avocates.js` et sont
+  affichés.
+- `HEBERGEUR` dans `legal.js` dit GitHub Pages : à corriger le jour où le site
+  passe sur le domaine du cabinet. Les deux pages légales le nomment, parce
+  qu'il est le seul destinataire que le visiteur ne choisit pas.
+- `MAJ` dans `legal.js` est la date des deux pages légales. Elle se change à la
+  main quand leur contenu change — et seulement alors.
 
 ## Écarts assumés par rapport au design system
 
@@ -326,6 +390,7 @@ claude.ai/design. Une resynchronisation ne doit pas les écraser sans demander.
 | Cadrage du héros | Photo non retouchée | `brightness(1.09)` + `scale(1.18)`, origine au coin supérieur droit | Recentre le groupe dans le cadre et lui donne de la présence. |
 | Filet sous le héros | `border-bottom` sur la section | Aucun filet | La bande sauge doit enchaîner sans ligne claire. |
 | Filets de marge | `--line-page-rule: rgba(122,107,90,.38)` | `#B2A497` | Filets extérieurs plus présents. Surcharge dans `src/styles/tokens.css`. |
+| Polices | `tokens/fonts.css` — `@import` vers `fonts.googleapis.com` | `src/styles/fonts.css` — `@font-face` locales, fichiers dans `src/fonts/` | Un `@import` distant envoyait l'IP de chaque visiteur à Google à chaque page. Le miroir à la racine n'est PAS édité : il n'est plus importé, c'est tout. `styles.css` (l'agrégat du design system, à la racine) garde donc l'`@import` distant — le site ne le charge nulle part, aucune page n'en dépend. Une resynchronisation ne doit pas rétablir cet import dans `src/`. |
 
 Les trois premiers écarts portent un commentaire à leur point d'appel dans
 `src/pages/index.astro`. Le quatrième s'écarte aussi de
@@ -375,6 +440,47 @@ laisser fuir la situation d'une personne est inacceptable. Pas de formulaire de
 contact, pas de champ, pas d'envoi de fichier, pas d'inscription. Le design
 system ne livre délibérément **aucun composant de formulaire**, ni `Toast`. Si
 un besoin semble en réclamer un, la réponse est un lien `mailto:` ou `tel:`.
+
+### Aucune fuite
+
+Ne rien collecter ne suffit pas : encore faut-il ne rien laisser PARTIR. Une
+personne qui cherche une avocate en droit des étrangers ou en aide à la jeunesse
+ne doit apparaître dans les journaux de personne. La règle : **aucun tiers n'est
+contacté sans un geste explicite du visiteur.**
+
+- **La carte est sous consentement.** Aucun `<iframe>` dans le HTML servi ;
+  Google n'est appelé qu'au clic sur « Afficher le plan », et l'écran d'appel
+  dit ce que cela transmet. Le consentement **n'est pas mémorisé** — ni cookie,
+  ni `localStorage`, ni `sessionStorage` : le site ne garde rien sur la machine
+  du visiteur, pas même le souvenir d'avoir dit oui. Vérifié dans le
+  navigateur : au repos, AUCUNE requête ne sort de l'origine du site, zéro
+  cookie, zéro entrée de stockage ; après le clic, le seul tiers contacté est
+  `www.google.com`.
+- **`referrerpolicy="strict-origin-when-cross-origin"`** sur le cadre : Google
+  reçoit l'origine (ce dont une clé restreinte par référent a besoin), jamais le
+  chemin de la page consultée.
+- **Les liens sortants ne partent qu'au clic** — liens utiles, profils
+  LinkedIn. Un lien ne charge rien.
+- **Aucune mesure d'audience, aucune balise, aucun CDN.** Les icônes et les
+  images sont servies par le site lui-même.
+- **Les polices sont servies par le site.** `tokens/fonts.css` les importait de
+  `fonts.googleapis.com`, ce qui envoyait l'adresse IP de CHAQUE visiteur à
+  Google à CHAQUE page, sans clic et sans recours — la même transmission que la
+  carte, en pire, puisqu'elle était inconditionnelle. Les quatre fichiers vivent
+  maintenant dans `src/fonts/` et les `@font-face` dans `src/styles/fonts.css`.
+  Vite les empreinte et leur pose le `base` : aucun chemin n'est écrit à la main.
+
+**Vérifié dans le navigateur** : page chargée, aucune requête ne sort de
+l'origine du site — pas une police, pas une balise, pas un pixel. La carte au
+repos ne fait rien partir non plus ; la première requête vers un tiers est celle
+que le visiteur a demandée.
+
+Tout cela est écrit en clair sur `/vie-privee`, qui nomme Google comme
+destinataire de la seule requête que le site puisse déclencher, et l'hébergeur
+comme le seul destinataire que le visiteur ne choisit pas. Le fournisseur du
+plan y est lu depuis `data/legal.js` (`CARTE`) : si le fond de carte change,
+l'écran de consentement de `MapEmbed` et la page ne peuvent pas diverger sans
+qu'on s'en aperçoive.
 
 ### La loi des marges
 
@@ -436,10 +542,22 @@ deux valeurs varient, et sans marche. Voir « Comment le site se replie ».
 
 ### Typographie
 
-- **Playfair Display 700 pour tout titre**, Source Sans 3 pour le reste.
+- **Fira Sans Extra Condensed 700 pour tout titre**, la même en 500 pour les
+  sous-titres (noms de matières, d'avocates, de points de contact), Source
+  Sans 3 pour le reste. La famille d'affichage n'est servie qu'en ces deux
+  graisses : n'en demander aucune autre, un gras synthétique sur une condensée
+  se voit.
+- **Playfair Display ne subsiste que pour le mot-symbole** — EGIDIA dans
+  l'en-tête, et rien d'autre. C'est la signature du cabinet, pas un niveau de
+  titre ; elle a son propre token (`--font-wordmark`) pour ne pas suivre
+  `--font-display` la prochaine fois que celui-ci change.
 - **Le corps ne descend jamais sous 18px**, 20px par défaut.
-- **Playfair jamais sous 22px**, jamais pour un label d'interface. Source Sans
-  jamais pour un titre.
+- **La famille d'affichage jamais sous 22px**, jamais pour un label
+  d'interface. Source Sans jamais pour un titre.
+- **Toute largeur calculée sur un titre se remesure quand la famille
+  d'affichage change** : une condensée n'occupe pas la place d'une empattement,
+  et c'est le repli le plus large de la pile — pas la webfont — qui fixe la
+  borne (voir `.band-title` dans l'accueil).
 - **Mesures plafonnées** : 66ch en prose, 44ch pour un chapô.
 - **Le mono est réservé aux références légales** (`L. 425-9 CESEDA`).
 - Le texte est aligné à gauche partout, **sauf** dans une `Band` pleine largeur,
