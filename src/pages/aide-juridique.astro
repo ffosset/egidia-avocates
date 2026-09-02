@@ -5,7 +5,7 @@ import Breadcrumb from '../components/Breadcrumb.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import Card from '../components/Card.astro';
 import Callout from '../components/Callout.astro';
-import RuledList from '../components/RuledList.astro';
+import Icon from '../components/Icon.astro';
 import LinkList from '../components/LinkList.astro';
 import ContactBand from '../components/ContactBand.astro';
 import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
@@ -15,62 +15,91 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
   description="La liste des documents à apporter pour constituer une demande d'aide juridique (pro deo) au cabinet Egidia."
 >
   <main>
-    <section class="hero">
-      <Page>
-        <Breadcrumb items={[
-          { label: 'Accueil', href: '/' },
-          { label: 'Honoraires', href: '/#honoraires' },
-          { label: "Documents pour l'aide juridique" },
-        ]} />
-        <h1>Faire une demande d'aide juridique</h1>
-        <p class="lead">
-          Apportez les documents généraux, puis ceux qui correspondent à votre situation.
-          Si un document manque, venez quand même : nous verrons ensemble comment l'obtenir.
-        </p>
-      </Page>
-    </section>
-
+    {/* PAS de bande de héros : la page prend la mise en page des pages de
+        matière — deux colonnes qui coulent depuis le haut, l'aplat ouvrant la
+        colonne de droite. Une bande aurait imposé sa hauteur au titre et coupé
+        l'aplat en deux. */}
     <Page>
       <div class="split">
-        <div>
-          <h2 class="step">Documents généraux</h2>
-          <div class="prose"><RuledList items={GENERAUX} /></div>
-          <div class="prose spaced">
-            <Callout tone="urgent" title="Ce n'est pas la proposition de déclaration simplifiée">
-              L'Avertissement-Extrait de Rôle est le document définitif. La proposition de
-              déclaration simplifiée n'est qu'un calcul provisoire et ne sera pas acceptée.
-            </Callout>
+        <div class="corps">
+          <div class="fil">
+            <Breadcrumb items={[
+              { label: 'Accueil', href: '/' },
+              { label: 'Honoraires', href: '/#honoraires' },
+              { label: "Documents pour l'aide juridique" },
+            ]} />
           </div>
-
-          <h2 class="step far">Preuves de revenus, selon votre situation</h2>
-          <div class="situations">
-            {REVENUS.map(([titre, docs]) => (
-              <Card padding="var(--space-5) var(--space-6)">
-                <div class="sit-title">{titre}</div>
-                <ul>
-                  {docs.map((d) => (
-                    <li><span class="dash" aria-hidden="true"></span><span>{d}</span></li>
-                  ))}
-                </ul>
-              </Card>
-            ))}
-          </div>
-
-          <h2 class="step far">Si vous vivez avec d'autres personnes majeures</h2>
-          <p class="after">
-            Chaque adulte mentionné sur votre composition de ménage doit fournir ses preuves de
-            revenus et son AER — sauf s'il s'agit de votre conjoint et que vous demandez un divorce
-            ou une séparation.
+          <h1>Faire une demande d'aide juridique</h1>
+          <p class="lead">
+            Apportez les documents généraux, puis ceux qui correspondent à votre situation.
+            Si un document manque, venez quand même : nous verrons ensemble comment l'obtenir.
           </p>
+
+          <div class="block">
+            <Eyebrow>Documents généraux</Eyebrow>
+            <ul class="generaux">
+              {GENERAUX.map((g) => (
+                <li>
+                  <span class="dash" aria-hidden="true"></span>
+                  <div>
+                    <span>{g.doc}</span>
+                    {g.garde && (
+                      <div class="garde">
+                        <Callout tone="urgent" title={g.garde.titre}>{g.garde.texte}</Callout>
+                      </div>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="block far">
+            <Eyebrow>Preuves de revenus</Eyebrow>
+            <h2>Choisissez votre situation</h2>
+            <p class="consigne">
+              Une seule situation à la fois. Ouvrez la vôtre : elle donne les documents
+              à joindre aux deux ci-dessus.
+            </p>
+
+            {/* ---- LE SÉLECTEUR ----
+                Neuf situations, une seule ouverte. C'est un `<details name>` :
+                l'exclusivité est portée par le navigateur, pas par un script —
+                la page reste sans JavaScript, et le dispositif marche au
+                clavier comme au doigt sans que rien n'ait à s'exécuter. Sur un
+                navigateur qui ignore `name`, plusieurs situations peuvent
+                s'ouvrir : on lit plus, on ne perd rien.
+
+                Pas de champ, pas de bouton radio : le cabinet ne collecte
+                aucune donnée, et rien ici ne doit ressembler à un formulaire. */}
+            <div class="choix">
+              {REVENUS.map((s) => (
+                <details class="situation" name="situation">
+                  <summary class="eg-inverse">
+                    <span class="sit-titre">{s.titre}</span>
+                    <span class="chev" aria-hidden="true"><Icon name="chevron-down" size={26} /></span>
+                  </summary>
+                  <div class="reponse" id={s.id}>
+                    <ul>
+                      {s.docs.map((d) => (
+                        <li><span class="dash" aria-hidden="true"></span><span>{d}</span></li>
+                      ))}
+                    </ul>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
         </div>
 
         <aside>
-          <Card tone="warm" padding="var(--space-6)">
-            <Eyebrow>L'aide juridique</Eyebrow>
-            <p class="claim">Ce n'est pas une faveur : c'est un droit.</p>
+          <div class="aplat" aria-hidden="true"></div>
+          <Card padding="var(--space-6)">
+            <Eyebrow>Autres personnes du ménage</Eyebrow>
             <p class="note">
-              Toutes les avocates du cabinet travaillent dans le cadre de l'aide juridique.
-              Nous vérifions avec vous si vous remplissez les conditions.
+              Chaque adulte mentionné sur votre composition de ménage doit fournir ses preuves de
+              revenus et son AER — sauf s'il s'agit de votre conjoint et que vous demandez un divorce
+              ou une séparation.
             </p>
           </Card>
           <Card tone="inset" padding="var(--space-6)">
@@ -85,26 +114,57 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
 </Base>
 
 <style>
-  .hero {
-    background: var(--surface-margin);
-    border-bottom: var(--divider);
-    padding: var(--space-6) 0 var(--space-9);
+  /* ---- L'APLAT ----
+     Le même dispositif que la page de matière (`services/[id].astro`), et pour
+     la même raison : il ouvre la colonne de DROITE, donc l'arc du bouclier
+     tombe en bas à gauche. Ce n'est pas une photographie mais une couleur
+     pleine, et la loi des marges ne laisse franchir les filets qu'à la
+     photographie : l'aplat s'arrête donc PILE sur le filet, son débord latéral
+     valant exactement une gouttière. Les cartes flottent dessus.
+
+     Sa hauteur est bornée par la colonne : deux cartes courtes ne portent pas
+     78vh d'aplat, et `min()` le fait épouser le plus petit des deux. */
+  aside {
+    --debord: var(--space-6);
+    position: relative;
+    /* Le débord du HAUT est un padding, pas un décalage négatif : l'aplat part
+       du bord supérieur de la colonne, et ce sont les cartes qui descendent.
+       Un `top` négatif l'aurait glissé SOUS l'en-tête, qui l'aurait mangé. */
+    padding-top: var(--debord);
   }
+  .aplat {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: calc(-1 * var(--gutter));
+    right: calc(-1 * var(--gutter));
+    height: min(clamp(440px, 78vh, 820px), calc(100% + var(--debord)));
+    background: var(--brun-moyen);
+    border-bottom-left-radius: 78% 58%;
+  }
+  @media (--lap) {
+    .aplat { height: calc(100% + var(--debord)); }
+  }
+
+  /* Le fil d'Ariane n'est pas l'étiquette du titre (ce serait --stack-bind) :
+     c'est un bloc distinct qui le précède. */
+  .fil { margin-bottom: var(--stack); }
+
   h1 {
-    margin-top: var(--space-5);
     font-family: var(--font-display);
     font-size: var(--fs-h1);
     font-weight: var(--fw-bold);
     line-height: 1.12;
   }
   .lead {
-    margin-top: var(--space-5);
+    margin-top: var(--stack-tight);
     font-size: var(--fs-lead);
     line-height: 1.5;
     color: var(--brun-moyen);
   }
   /* Le titre et son chapô cassent sur la même verticale (voir RuledCell). */
-  h1, .lead { max-width: 35rem; }
+  h1, .lead { max-width: 33rem; }
+
   /* Deux colonnes proportionnelles tant qu'elles tiennent, puis empilées.
      `flex-wrap` fait deux choses qu'une grille à points de rupture ne fait pas :
      l'asymétrie se DÉTEND vers l'égalité à mesure que la place manque, puis le
@@ -113,35 +173,111 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
 
      Pas de `min-width: 0` sur les colonnes : ce serait les autoriser à devenir
      plus étroites que leur propre contenu, et les cartes déborderaient au lieu
-     de passer à la ligne. Le `min-width: auto` par défaut est ce qui déclenche
-     le retour à la ligne au bon moment. */
+     de passer à la ligne. */
   .split {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
     gap: var(--space-9);
-    padding: var(--space-9) 0 0;
+    padding: 0 0 var(--section-y);
   }
-  .split > div   { flex: 8 1 40ch; }
-  .split > aside { flex: 4 1 24ch; }
-  .step { font-family: var(--font-display); font-size: var(--fs-h3); font-weight: var(--fw-bold); }
-  .step.far { margin-top: var(--space-10); }
+  /* L'aplat touche l'en-tête ; seul le TEXTE descend. */
+  .split > .corps { flex: 7 1 34ch; padding-top: var(--section-y); }
+  .split > aside  { flex: 5 1 26ch; }
+  @media (--lap) {
+    .split > .corps { padding-top: var(--section-y-sm); }
+  }
 
-  .prose { margin-top: var(--space-5); max-width: var(--measure-prose); }
-  .prose.spaced { margin-top: var(--space-6); }
-  .situations { margin-top: var(--space-5); display: grid; gap: var(--space-4); }
-  .sit-title {
+  aside { display: grid; gap: var(--space-5); align-content: start; }
+  .block { margin-top: var(--stack-loose); }
+  .far { margin-top: var(--space-9); }
+  .tight { margin-top: var(--stack-tight); }
+  .note { margin: var(--stack-tight) 0 0; font-size: var(--fs-body-sm); color: var(--text-muted); line-height: 1.6; }
+
+  /* ---- LES DOCUMENTS GÉNÉRAUX ----
+     La liste éditoriale de `RuledList` — filet en tête de ligne, tiret caramel,
+     jamais de coche — écrite ici parce qu'un document peut porter sa mise en
+     garde SOUS lui : l'avertissement sur l'AER appartient à l'AER, et posé à la
+     suite de la liste il se lisait comme valant pour les deux. */
+  .generaux { list-style: none; margin: var(--space-5) 0 0; padding: 0; max-width: var(--measure-prose); }
+  .generaux > li {
+    display: flex;
+    gap: var(--space-4);
+    align-items: baseline;
+    padding: var(--space-4) 0;
+    border-top: var(--divider);
+    font-size: var(--fs-body);
+    line-height: 1.5;
+  }
+  .garde { margin-top: var(--space-4); }
+
+  /* ---- LE SÉLECTEUR DE SITUATION ----
+     Il ne doit pas se lire comme une liste de plus : le cadre fort, la consigne
+     et les chevrons disent qu'il y a un CHOIX à faire. Les lignes sont hautes
+     (72px, la mesure du composant Accordion du design system), largement au-delà
+     de la cible tactile. */
+  h2 {
+    margin-top: var(--stack-bind);
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+  }
+  .consigne {
+    margin-top: var(--stack-tight);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--text-muted);
+    max-width: var(--measure-prose);
+  }
+  .choix {
+    margin-top: var(--stack-loose);
+    border: var(--border-frame-strong);
+    padding: 0 var(--space-6);
+  }
+  /* Le premier filet est celui du cadre : une bordure de plus ferait un trait
+     double en haut de la boîte. */
+  .situation + .situation { border-top: var(--divider); }
+
+  .situation > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    min-height: 72px;
+    /* Le lit du survol court d'un bord à l'autre du cadre, la ligne reste
+       alignée sur le texte de la page : le padding du cadre est rendu à la
+       ligne, qui le reprend à son compte. */
+    margin: 0 calc(-1 * var(--space-6));
+    padding: var(--space-4) var(--space-6);
+    cursor: pointer;
+    list-style: none;
     font-family: var(--type-subtitle-family);
     font-size: var(--type-subtitle-size);
     font-weight: var(--type-subtitle-weight);
+    line-height: 1.2;
     color: var(--type-subtitle-color);
   }
-  /* La même liste que les documents généraux (voir RuledList) : un filet en
-     tête de ligne et un tiret caramel, jamais de coche. Seule la taille change
-     — celle de la carte, secondaire par rapport à son titre. Pas de `gap` : ce
-     sont les filets qui séparent, et un gap ferait deux séparations. */
-  .situations ul { margin: var(--space-4) 0 0; padding-left: 0; list-style: none; }
-  .situations li {
+  .situation > summary::-webkit-details-marker { display: none; }
+
+  /* Le chevron ne suit PAS le décalage de trois pixels : il porte déjà une
+     transformation à lui, celle qui dit ouvert/fermé, et `transform` est une
+     seule propriété — l'un des deux gestes aurait effacé l'autre. */
+  .chev {
+    display: inline-flex;
+    flex: 0 0 auto;
+    color: var(--sauge-obscur);
+    transform: rotate(0deg);
+    transition: transform var(--dur-base) var(--ease-standard);
+  }
+  .situation[open] .chev { transform: rotate(180deg); }
+
+  /* La réponse : la même liste que les documents généraux, un cran plus bas —
+     c'est le contenu d'une situation, pas le titre de la page. Pas de `gap` :
+     ce sont les filets qui séparent. */
+  .reponse { padding: 0 0 var(--space-6); max-width: var(--measure-prose); }
+  .reponse ul { list-style: none; margin: 0; padding: 0; }
+  .reponse li {
     display: flex;
     gap: var(--space-4);
     align-items: baseline;
@@ -151,25 +287,12 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
     line-height: 1.5;
     color: var(--text-muted);
   }
-  .situations .dash {
+
+  .dash {
     width: 14px;
     height: 1px;
     background: var(--caramel);
     flex: 0 0 auto;
     transform: translateY(-6px);
   }
-  .after { margin-top: var(--stack-tight); font-size: var(--fs-body); line-height: 1.6; max-width: var(--measure-prose); }
-
-  aside { display: grid; gap: var(--space-5); align-content: start; position: sticky; top: 24px; }
-  .claim {
-    margin-top: var(--stack-tight);
-    margin-bottom: 0;
-    font-family: var(--font-display);
-    font-size: 26px;
-    font-weight: var(--fw-bold);
-    line-height: 1.35;
-  }
-  .note { margin-top: var(--stack-tight); margin-bottom: 0; font-size: var(--fs-body-sm); color: var(--text-muted); line-height: 1.6; }
-  .tight { margin-top: var(--stack-tight); }
-
 </style>

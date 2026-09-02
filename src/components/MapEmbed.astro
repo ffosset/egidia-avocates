@@ -1,6 +1,7 @@
 ---
 /**
- * Carte d'accès : l'embarqué Google Maps, teinté aux tons du cabinet.
+ * Carte d'accès : l'embarqué Google Maps, teinté aux tons du cabinet — et qui
+ * ne contacte Google que si on le lui demande.
  *
  * Pourquoi Google plutôt que les tuiles OpenStreetMap d'avant : la carte n'est
  * pas une décoration, elle sert à SE SITUER. Google porte les repères que le
@@ -8,13 +9,26 @@
  * c'est le plan que le visiteur reconnaît déjà. Le plan précédent était juste,
  * mais muet : désaturé à fond, il ne nommait presque rien.
  *
- * Le style ne vient donc PAS d'un effacement. La teinte est légère et les
- * libellés restent lisibles ; dès que la carte est activée, elle retombe
- * presque à ses vraies couleurs — au moment où l'on s'en sert, la lisibilité
- * passe devant l'accord de tons.
+ * ---- LE PLAN NE PART PAS SEUL ----
+ * Le serveur ne rend AUCUN <iframe> : l'adresse de l'embarqué dort dans un
+ * `data-`, et le script ne fabrique le cadre qu'au clic. Tant que personne n'a
+ * cliqué, aucune requête ne quitte le navigateur — Google ne voit ni l'adresse
+ * IP, ni la page consultée, ni l'heure de la visite.
  *
- * Zéro dépendance et zéro kilo-octet de bibliothèque : c'est un <iframe> en
- * chargement différé. Sans JavaScript, la carte fonctionne quand même.
+ * Ce n'est pas de la prudence de principe : le site ne collecte rien et ne pose
+ * aucun formulaire, précisément parce que la situation d'une personne qui
+ * cherche un avocat en droit des étrangers ou en aide à la jeunesse ne doit
+ * fuir nulle part. Un plan chargé d'office aurait été la seule fuite du site,
+ * et la plus bête. Un `<iframe loading="lazy">` n'y suffisait pas : il ne
+ * retarde le départ que jusqu'au défilement.
+ *
+ * Le consentement n'est PAS mémorisé : ni cookie, ni `localStorage`. Le site ne
+ * garde rien sur la machine du visiteur — pas même le souvenir d'avoir dit oui.
+ *
+ * ---- LE STYLE EST UNE TEINTE, PAS UN EFFACEMENT ----
+ * La teinte est légère et les libellés restent lisibles ; dès que la carte est
+ * activée, elle retombe presque à ses vraies couleurs — au moment où l'on s'en
+ * sert, la lisibilité passe devant l'accord de tons.
  *
  * Deux adresses possibles pour l'embarqué :
  *  - avec clé, l'API officielle Maps Embed (PUBLIC_GOOGLE_MAPS_KEY) ;
@@ -47,26 +61,38 @@ const src = cle
   : `https://www.google.com/maps?q=${encodeURIComponent(cible)}&z=${zoom}&hl=fr&output=embed`;
 const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(cible)}`;
 ---
-<div class:list={['map-wrap', klass]} data-map>
+<div
+  class:list={['map-wrap', klass]}
+  data-map
+  data-src={src}
+  data-tint={String(tint)}
+  data-title={label ? `Carte : ${label}` : 'Carte du cabinet'}
+>
   <div class="map-frame">
-    <iframe
-      class:list={['map', { tint }]}
-      src={src}
-      title={label ? `Carte : ${label}` : 'Carte du cabinet'}
-      loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade"
-      allowfullscreen
-    ></iframe>
-    {/* Le voile n'existe QUE si le script tourne : sans lui, la carte reste
-        pleinement manipulable — mieux vaut une carte qui capte la molette
-        qu'une carte morte. */}
+    {/* L'écran d'appel. Il tient tout seul : sans script, il reste ce qu'il
+        est — l'adresse, sous un intitulé qui dit ce qui manque. Le bouton et
+        sa phrase, eux, ne s'allument que si le script tourne (classe `js`) :
+        pas de commande morte. */}
+    <div class="consent">
+      <p class="consent-lead">{label ?? 'Le plan du cabinet'}</p>
+      <p class="note">
+        Le plan est hébergé par Google. L'afficher lui transmet votre adresse IP.
+        Rien n'est envoyé tant que vous ne l'avez pas demandé.
+      </p>
+      <button class="load" type="button" data-load>Afficher le plan</button>
+    </div>
+
+    {/* Le voile : posé une fois le plan chargé, il rend la molette à la page.
+        Il ne naît qu'avec le script, comme le cadre qu'il couvre. */}
     <button class="veil" type="button" data-veil>
-      <span class="tag">Activer la carte</span>
+      <span class="tag">Déplacer la carte</span>
     </button>
   </div>
 
   {/* Un <div>, pas un <p> : la loi de base retient la prose à une mesure
-      (`--measure-prose`), et la barre doit courir sur toute la largeur. */}
+      (`--measure-prose`), et la barre doit courir sur toute la largeur.
+      L'itinéraire est un simple lien sortant — il ne part qu'au clic, lui
+      aussi, et ne charge rien dans la page. */}
   <div class="bar">
     {caption && <span class="adresse">{caption}</span>}
     <a class="rule-link" href={itineraire} target="_blank" rel="noopener">
@@ -77,13 +103,31 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
 </div>
 
 <script>
-  /* Une carte embarquée zoome à la molette, et confisque donc le défilement de
-     la page. Le voile lui rend la main : au repos on lit le plan, au clic on le
-     manipule. Douze lignes, là où le plan précédent chargeait 147 Ko. */
+  /* Trois états, et le script est le seul à pouvoir les franchir :
+       au repos       — aucun <iframe>, aucune requête ;
+       chargé         — le cadre existe, le voile garde la molette ;
+       manipulable    — le voile est tombé.
+     Vingt lignes, là où le plan précédent chargeait 147 Ko de bibliothèque. */
   for (const wrap of document.querySelectorAll<HTMLElement>('[data-map]')) {
+    const load = wrap.querySelector<HTMLButtonElement>('[data-load]');
     const veil = wrap.querySelector<HTMLButtonElement>('[data-veil]');
-    if (!veil) continue;
-    wrap.classList.add('veiled');
+    const frame = wrap.querySelector('.map-frame');
+    if (!load || !veil || !frame) continue;
+
+    wrap.classList.add('js');
+    load.addEventListener('click', () => {
+      const map = document.createElement('iframe');
+      map.className = wrap.dataset.tint === 'false' ? 'eg-map' : 'eg-map tint';
+      map.title = wrap.dataset.title ?? 'Carte';
+      /* L'origine suffit à une clé restreinte par référent ; le chemin de la
+         page consultée, lui, ne regarde pas Google. */
+      map.referrerPolicy = 'strict-origin-when-cross-origin';
+      map.allowFullscreen = true;
+      map.src = wrap.dataset.src ?? '';
+      frame.prepend(map);
+      wrap.classList.add('loaded', 'veiled');
+      veil.focus();
+    });
     veil.addEventListener('click', () => wrap.classList.remove('veiled'));
   }
 </script>
@@ -95,20 +139,100 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     min-height: 320px;
     background: var(--surface-inset);
   }
-  /* Le cadre porte la carte ; la barre d'adresse reste sous elle, jamais
-     par-dessus : rien ne masque le plan. */
+  /* Le cadre porte la carte ; la barre reste sous elle, jamais par-dessus :
+     rien ne masque le plan. */
   .map-frame { position: relative; flex: 1; overflow: hidden; }
-  .map { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-  /* La teinte : chaude et légère. Assez pour que le plan appartienne au
-     papier, pas assez pour effacer un nom de rue. */
-  .map.tint {
-    filter: sepia(0.24) saturate(0.72) hue-rotate(-6deg) brightness(1.02) contrast(1.02);
-    transition: filter var(--dur-base) var(--ease-standard);
+  /* L'<iframe> naît dans le script : il n'a pas l'attribut de portée d'Astro,
+     d'où `:global`. */
+  .map-frame :global(.eg-map) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
   }
-  /* Carte activée : on la rend au réel. */
-  .map-wrap:not(.veiled) .map.tint { filter: sepia(0.06) saturate(0.94); }
+  /* ---- La teinte ----
+     Chaude et légère : assez pour que le plan appartienne au papier, pas assez
+     pour effacer un nom de rue. Voile tombé — donc carte en usage — elle
+     retombe presque au réel.
 
+     UNE seule règle écrit `filter`, et c'est la variable qui change avec
+     l'état. Deux règles concurrentes (`:not(.veiled)` contre la règle de base)
+     s'étaient déjà montrées peu fiables ici, et le doute ne valait pas la
+     virgule de spécificité gagnée.
+
+     PAS de `transition` sur ce `filter`, et ce n'est pas un oubli : sur un
+     <iframe> d'une autre origine, le moteur ne DÉMARRE pas la transition —
+     `getAnimations()` reste vide — et laisse la propriété clouée à son
+     ancienne valeur. La carte gardait sa teinte de repos une fois activée.
+     Posée sans transition, elle bascule net, ce qui est très bien : le clic
+     est franc, la carte l'est aussi. (Les deux listes gardent les mêmes
+     fonctions dans le même ordre — si une transition redevient possible un
+     jour, elles s'interpoleront.) */
+  .map-wrap {
+    --map-teinte: sepia(0.06) saturate(0.94) hue-rotate(0deg) brightness(1) contrast(1);
+  }
+  .map-wrap.veiled {
+    --map-teinte: sepia(0.24) saturate(0.72) hue-rotate(-6deg) brightness(1.02) contrast(1.02);
+  }
+  .map-frame :global(.eg-map.tint) { filter: var(--map-teinte); }
+
+  /* ---- L'écran d'appel ---- */
+  .consent {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--cell-pad);
+    background: var(--surface-inset);
+  }
+  .map-wrap.loaded .consent { display: none; }
+
+  .consent-lead {
+    margin: 0;
+    max-width: 34rem;
+    font-size: 16px;
+    color: var(--text-body);
+  }
+  .note {
+    margin: var(--stack-tight) 0 0;
+    max-width: 34rem;
+    font-size: var(--fs-label);
+    line-height: 1.5;
+    color: var(--text-label, var(--text-muted));
+  }
+  /* Ni la phrase ni le bouton n'ont de sens sans script : ils ne s'allument
+     qu'une fois la classe posée. */
+  .note, .load { display: none; }
+  .map-wrap.js .note { display: block; }
+  .map-wrap.js .load { display: inline-flex; }
+
+  .load {
+    align-items: center;
+    min-height: var(--tap-min);
+    margin-top: var(--stack-tight);
+    padding: var(--space-3) var(--space-5);
+    border: 1px solid var(--line-strong);
+    background: var(--surface-page);
+    font-family: var(--font-body);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--text-heading);
+    cursor: pointer;
+    transition: var(--transition-control);
+  }
+  .load:focus-visible { background: var(--brun-profond); color: var(--creme); }
+  @media (hover: hover) {
+    .load:hover { background: var(--brun-profond); color: var(--creme); }
+  }
+
+  /* ---- Le voile ---- */
   .veil {
     position: absolute;
     inset: 0;
@@ -120,11 +244,11 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     cursor: pointer;
   }
   .map-wrap.veiled .veil { display: grid; }
-  /* Le voile posé, la carte ne reçoit plus la molette. */
-  .map-wrap.veiled .map { pointer-events: none; }
+  .map-wrap.veiled .map-frame :global(.eg-map) { pointer-events: none; }
 
   /* L'étiquette d'activation : du papier à filet, comme le reste du site —
-     ni pastille, ni coin arrondi. */
+     ni pastille, ni coin arrondi. Là où un pointeur survole, elle attend
+     d'être appelée ; au doigt, où rien ne survole, elle reste visible. */
   .tag {
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--line-strong);
@@ -135,17 +259,18 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     letter-spacing: var(--ls-label);
     text-transform: uppercase;
     color: var(--text-muted);
-    transition: var(--transition-control);
+    transition: opacity var(--dur-base) var(--ease-standard),
+                var(--transition-control);
   }
-  .veil:focus-visible .tag { color: var(--text-heading); background: var(--surface-inset); }
+  .veil:focus-visible .tag { opacity: 1; color: var(--text-heading); background: var(--surface-inset); }
   @media (hover: hover) {
-    .veil:hover .tag { color: var(--text-heading); background: var(--surface-inset); }
+    .tag { opacity: 0; }
+    .veil:hover .tag { opacity: 1; color: var(--text-heading); background: var(--surface-inset); }
   }
 
-  /* ---- La barre d'adresse ----
+  /* ---- La barre ----
      C'est elle qui fait le lien entre le plan et le texte du registre : la même
-     encre, le même filet, et l'action discrète du site (`RuleLink`) pour
-     l'itinéraire. */
+     encre, le même filet, et l'action discrète du site (`RuleLink`). */
   .bar {
     display: flex;
     flex-wrap: wrap;

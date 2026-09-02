@@ -56,9 +56,9 @@ export const LIENS_ACCUEIL = [
 // pour qu'une matière ajoutée là apparaisse ici sans qu'on y pense.
 export const NAV = [
   {
-    href: '/#matieres',
+    href: '/#services',
     label: 'Services',
-    enfants: MATIERES.map((m) => ({ href: `/matieres/${m.id}`, label: m.titre })),
+    enfants: MATIERES.map((m) => ({ href: `/services/${m.id}`, label: m.titre })),
   },
   { href: '/#equipe', label: 'Équipe' },
   { href: '/#honoraires', label: 'Honoraires' },

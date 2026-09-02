@@ -74,7 +74,7 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
             <div class="chips">
               {a.motsCles.map((t) => {
                 const m = MATIERES.find((x) => x.titre.toLowerCase() === t.toLowerCase());
-                return <Tag href={m ? `/matieres/${m.id}` : undefined}>{t}</Tag>;
+                return <Tag href={m ? `/services/${m.id}` : undefined}>{t}</Tag>;
               })}
             </div>
           </div>

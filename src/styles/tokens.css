@@ -20,11 +20,16 @@
    surtout à éviter que 80px d'inset ne dévorent un téléphone ; il dévorait
    aussi une tablette, qui n'avait droit à rien.
 
-       viewport   inset avant   inset après
-        375px        36px          36px
-        768px        80px          41px
-       1000px        80px          54px
-      >1500px        80px          80px
+       viewport   filet   inset (filet + gouttière)
+        375px      20px            36px
+        768px      25px            41px
+       1000px      32px            54px
+      >1250px      40px            72px
+
+   Le plafond du filet est passé de 48px à 40px : sur un grand écran le cadre
+   se tenait trop loin du bord pour se lire comme un cadre. La gouttière ne
+   bouge pas — c'est tout le cadre qui glisse de 8px vers le bord, le texte
+   avec lui, et l'écart filet/texte reste celui que la loi nomme.
 
    On ne rend fluide que le CADRE — marges, gouttière, respiration des sections,
    padding de cellule. Les trois pas de la pile verticale (--stack-tight,
@@ -34,8 +39,8 @@
    (Les tokens à la racine sont le miroir du design system : on les surcharge
    ici, on ne les édite pas là-bas.) */
 :root {
-  --page-margin:  clamp(20px, 3.2vw, 48px);
-  --gutter:       clamp(16px, 2.2vw, 32px);  /* => --content-inset = 36px … 80px */
+  --page-margin:  clamp(20px, 3.2vw, 40px);
+  --gutter:       clamp(16px, 2.2vw, 32px);  /* => --content-inset = 36px … 72px */
   --cell-pad:     clamp(24px, 3vw,   48px);
   --section-y:    clamp(64px, 8vw,  128px);
   --section-y-sm: clamp(48px, 5vw,   64px);
@@ -74,11 +79,15 @@
 }
 
 /* ---- Filets de marge ----
-   Le cabinet veut des filets extérieurs plus présents que le gris translucide
-   du design system (`rgba(122,107,90,.38)`). Surcharge locale : les tokens à la
-   racine restent le miroir exact du projet claude.ai/design. */
+   Les deux filets extérieurs portent la MÊME encre que les bords de cellule :
+   `--line-rule`, le trait de tout le quadrillage. Ils étaient plus foncés
+   (#B2A497), et le cadre du site se lisait alors comme un trait d'une autre
+   nature que les filets du registre — deux gris pour une seule idée.
+   Surcharge locale du gris translucide du design system
+   (`rgba(122,107,90,.38)`) : les tokens à la racine restent le miroir exact du
+   projet claude.ai/design. */
 :root {
-  --line-page-rule: #B2A497;
+  --line-page-rule: var(--line-rule);
 }
 
 /* ---- Une section, une couleur ----

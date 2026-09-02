@@ -62,7 +62,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
             Egidia est un cabinet bruxellois en droit des étrangers, de la famille, de l'aide
             sociale et de la jeunesse. Une relation fondée sur l'écoute et la transparence.
           </p>
-          <div class="cta pile-block"><Button href="#matieres" variant="secondary">Voir nos domaines</Button></div>
+          <div class="cta pile-block"><Button href="#services" variant="secondary">Voir nos domaines</Button></div>
         </div>
       </ArcPanel>
     </section>
@@ -87,7 +87,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
 
     {/* 3 — MATIÈRES : le filet gauche du registre tombe sur le filet de marge ;
         seule la photographie franchit le filet de droite. */}
-    <section id="matieres" class="matieres">
+    <section id="services" class="matieres">
       <RuledGrid columns="minmax(0, 1fr) minmax(0, 1fr) var(--photo-track)" noTop>
         <RuledCell align="center">
           <Eyebrow>Services</Eyebrow>
@@ -100,7 +100,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
             <RuledCell
               title={m.titre}
               lead={m.resume}
-              href={`/matieres/${m.id}`}
+              href={`/services/${m.id}`}
               style={`grid-column:${col};grid-row:${Math.floor(n / 2) + 1}`}
             >
               <span class="count pile-foot"><span class="eg-pastille">{m.nb} avocates</span></span>
@@ -121,10 +121,10 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
           <h2 class="big">Nos avocates</h2>
         </RuledCell>
         <RuledCell align="center" minHeight={280}>
-          <p class="statement eg-title">Une seule interlocutrice pour votre dossier</p>
           <p class="sub">
-            Celle que vous rencontrez est celle qui plaide. Cliquez sur un nom pour lire son
-            parcours, ses publications, et la contacter directement.
+            Une seule interlocutrice pour votre dossier : celle que vous rencontrez est celle
+            qui plaide. Cliquez sur un nom pour lire son parcours, ses publications, et la
+            contacter directement.
           </p>
         </RuledCell>
       </RuledGrid>
@@ -397,6 +397,27 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   }
   .ruled-section { padding: 0 var(--page-margin); border-top: var(--divider); container: registre / inline-size; }
 
+  /* ---- UNE frontière, UN filet ----
+     Un registre se ferme TOUT SEUL : la dernière rangée de cellules porte son
+     filet bas. La section qui suit pose, elle, le filet de frontière. Empilés,
+     les deux traits faisaient 2px entre les matières et l'équipe, puis entre
+     l'équipe et les honoraires — un trait deux fois plus épais que tous les
+     autres filets de la page, à l'endroit précis où l'on change de sujet.
+
+     Aucun des deux n'est de trop : ils ne couvrent pas la même largeur. Le
+     filet du registre s'arrête aux filets de marge (à droite des matières, il
+     va jusqu'au bord, la photographie franchit le filet) ; celui de la section
+     traverse la page entière, bandes de marge comprises — c'est LUI qu'on voit
+     ailleurs sur le site. On ne supprime donc ni l'un ni l'autre : on les fait
+     tomber au même endroit. Le -1px remonte la section d'exactement une
+     épaisseur de filet, et les deux traits n'en font plus qu'un.
+
+     Le sélecteur porte sur ce qui PRÉCÈDE, pas sur une section nommée : toute
+     section qui suit un registre s'y colle, quel que soit l'ordre de la page.
+     Une section qui suit `.hono` ou `.liens` — qui ne ferment rien — n'est pas
+     concernée et garde son filet à elle. */
+  .matieres + section, .ruled-section + section { margin-top: -1px; }
+
   /* ---- Une section, une couleur ----
      La section est pleine largeur : lui poser un fond peint AUSSI la gouttière,
      de part et d'autre du registre. Le registre, lui, reprend la même valeur par
@@ -404,7 +425,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
      aucune dérive possible entre l'intérieur du registre et la bande de marge. */
   .matieres, .ruled-section, .hono, .liens { background: var(--section-surface); }
 
-  #matieres   { --section-surface: var(--surface-services); }
+  #services   { --section-surface: var(--surface-services); }
   #equipe     { --section-surface: var(--surface-equipe); }
   #honoraires { --section-surface: var(--surface-honoraires); }
   #liens      { --section-surface: var(--surface-liens); }
@@ -509,18 +530,16 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     line-height: 1.02;
     letter-spacing: -0.02em;
   }
-  /* `.statement` et `.filler` sont des <p> qui tiennent le rôle d'un titre :
-     `eg-title` leur donne l'œil du display ET le pas qui va avec (voir pile.css).
-     Il ne reste ici que ce qui leur est propre — la taille et la mesure. */
-  /* Dans une cellule du registre, la mesure appartient à la cellule : la
-     déclaration et le texte qui la suit cassent sur la même verticale. Ici
-     cette verticale est le bord de la cellule lui-même : les deux paragraphes
-     courent sur toute la largeur, jusqu'au `--cell-pad`. Il faut le dire deux
-     fois — abandonner `--cell-measure`, ET lever le `--measure-prose` que
-     `tokens/base.css` pose sur tout <p> (66ch, qui reprendrait la main avant
-     le bord dès que la cellule dépasse ~650px). Écart assumé. */
-  .statement, .sub { max-width: none; }
-  .statement { font-size: clamp(24px, 2.2vw, 32px); line-height: 1.25; }
+  /* `.filler` est un <p> qui tient le rôle d'un titre : `eg-title` lui donne
+     l'œil du display ET le pas qui va avec (voir pile.css). Il ne reste ici
+     que ce qui lui est propre — la taille et la mesure. */
+  /* Dans une cellule du registre, la mesure appartient à la cellule : le texte
+     casse sur la verticale de la cellule elle-même, et court donc sur toute la
+     largeur jusqu'au `--cell-pad`. Il faut le dire deux fois — abandonner
+     `--cell-measure`, ET lever le `--measure-prose` que `tokens/base.css` pose
+     sur tout <p> (66ch, qui reprendrait la main avant le bord dès que la
+     cellule dépasse ~650px). Écart assumé. */
+  .sub { max-width: none; }
   .filler { font-size: 26px; line-height: 1.3; max-width: 16ch; }
 
   /* ---- 6. LIENS UTILES ---- */
