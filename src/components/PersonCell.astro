@@ -6,28 +6,33 @@ import ArcImage from './ArcImage.astro';
 interface Props {
   name: string;
   photo?: string;
-  meta?: string | null;
+  /** Codes de langue déjà abrégés — « FR », « EN »… */
+  langues?: string[];
   ratio?: string;
   edge?: 'left' | 'right' | 'both';
   href?: string;
 }
-const { name, photo, meta, ratio = '4 / 5', edge, href } = Astro.props;
-const [prenom, ...reste] = String(name).split(' ');
-const nom = reste.join(' ');
+const { name, photo, langues = [], ratio = '4 / 5', edge, href } = Astro.props;
 const Tag = href ? 'a' : 'div';
 ---
 <Tag href={withBase(href)} class:list={['person', edge && `e-${edge}`, { clickable: !!href }]}>
   <span class="media">
     <ArcImage src={photo} alt={name} ratio={ratio} corner="none" legend="Portrait à fournir" />
-    {meta && <span class="meta">{meta}</span>}
   </span>
   <span class="band">
-    <span class="name">{prenom}<br />{nom}</span>
+    <span class="name">{name}</span>
+    {langues.length > 0 && (
+      <span class="langues eg-pastilles">{langues.map((l) => <span class="eg-pastille">{l}</span>)}</span>
+    )}
   </span>
 </Tag>
 
 <style>
   .person {
+    /* Le nom tient sur UNE ligne : sa taille est donc lue sur la largeur de la
+       cellule (`cqi` plus bas), pas sur celle de la page. La cellule doit
+       s'annoncer comme contexte pour que cette lecture soit possible. */
+    container-type: inline-size;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -38,27 +43,12 @@ const Tag = href ? 'a' : 'div';
     color: inherit;
   }
   .media { position: relative; display: block; flex: 1; }
-  .meta {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 8px var(--space-3);
-    background: var(--surface-page);
-    border-left: var(--divider);
-    border-bottom: var(--divider);
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: var(--fw-semibold);
-    letter-spacing: var(--ls-label);
-    text-transform: uppercase;
-    color: var(--text-label);
-    white-space: nowrap;
-  }
-  .e-right .meta, .e-both .meta { right: var(--gutter); }
-
   .band {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: var(--space-3);
     padding: var(--space-5);
     min-height: 108px;
     /* Voile de caramel : la même famille chaude que le brun du nom, plutôt
@@ -74,12 +64,23 @@ const Tag = href ? 'a' : 'div';
   .e-left .band,  .e-both .band { padding-left: var(--content-inset); }
   .e-right .band, .e-both .band { padding-right: var(--content-inset); }
 
+  /* Prénom et nom sur une seule ligne. La taille se lit sur la largeur de la
+     cellule : `clamp` la retient entre le label et le chapô, et le terme en
+     `cqi` la fait descendre d'elle-même dans les cellules étroites, là où
+     « Floriane Delplancke » ne tiendrait plus. Aucun point de rupture — la
+     même absence de marche que la grille elle-même. */
   .name {
     font-family: var(--type-subtitle-family);
-    font-size: var(--type-subtitle-size);
+    font-size: clamp(var(--fs-label), 8.4cqi, var(--fs-lead));
     font-weight: var(--type-subtitle-weight);
     line-height: 1.18;
   }
+
+  /* Les langues, sous le nom : la pastille de filet du site, définie une fois
+     pour toutes dans `styles/pastille.css` et partagée avec le registre des
+     matières. Elle prend son encre au BANDEAU, par `currentColor` — elle suit
+     donc l'inversion du survol sans que rien ne soit réécrit ici. */
+
   /* ---- LE LIT, SUR UN PORTRAIT ----
      La cellule-portrait ne peut pas recevoir le voile comme les autres : son
      fond n'est jamais visible, couvert en haut par la photographie et en bas
@@ -119,6 +120,7 @@ const Tag = href ? 'a' : 'div';
   /* Le nom et la flèche avancent du même pas que le contenu des autres
      cellules. Le bandeau, lui, ne bouge pas : il porte le filet du registre. */
   .clickable .name,
+  .clickable .langues,
   .clickable .arrow {
     transition: transform var(--survol-duree-geste) var(--ease-standard);
   }
@@ -132,6 +134,7 @@ const Tag = href ? 'a' : 'div';
   }
   .clickable:focus-visible .media::after { opacity: .3; }
   .clickable:focus-visible .name,
+  .clickable:focus-visible .langues,
   .clickable:focus-visible .arrow { transform: translateX(var(--survol-decalage)); }
 
   /* Le geste ne s'écrit que là où un pointeur survole : au doigt, `:hover` est
@@ -144,6 +147,7 @@ const Tag = href ? 'a' : 'div';
     }
     .clickable:hover .media::after { opacity: .3; }
     .clickable:hover .name,
+    .clickable:hover .langues,
     .clickable:hover .arrow { transform: translateX(var(--survol-decalage)); }
   }
 
@@ -151,8 +155,10 @@ const Tag = href ? 'a' : 'div';
   @media (prefers-reduced-motion: reduce) {
     .clickable .media::after { transition-duration: 0s; }
     .clickable:hover .name,
+    .clickable:hover .langues,
     .clickable:hover .arrow,
     .clickable:focus-visible .name,
+    .clickable:focus-visible .langues,
     .clickable:focus-visible .arrow { transform: none; }
   }
 </style>

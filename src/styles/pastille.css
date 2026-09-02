@@ -1,0 +1,41 @@
+/* ---- LA PASTILLE DE FILET ----
+   La petite étiquette du site : les langues d'une avocate, le nombre
+   d'avocates qui prennent une matière. Un mot court, posé dans un rectangle
+   dessiné d'un seul trait — jamais un aplat, jamais un bouton.
+
+   Elle ne se confond pas avec `Tag.astro`, qui est la pastille CLIQUABLE des
+   pages intérieures : celle-là a la hauteur du doigt (`--tap-min`) parce qu'on
+   la touche. Celle-ci ne mène nulle part, elle NOMME, et sa taille est celle
+   d'une note en marge.
+
+   Le filet et l'encre sont pris à `currentColor` : la pastille suit la couleur
+   posée sur ce qui la porte — le bandeau d'un portrait, une cellule du
+   registre — et donc son inversion au survol, sans avoir à la réécrire. C'est
+   la surface qui décide de l'encre ; la pastille ne décide que de sa boîte.
+
+   Le filet est cette même encre ÉCLAIRCIE : à pleine force il pesait autant
+   que le mot qu'il entoure, et deux pastilles côte à côte se lisaient comme
+   deux boutons. Dilué de moitié dans le fond, il redevient ce qu'il doit
+   être — un trait qui délimite, pas un trait qui appelle. Le mélange part de
+   `currentColor` : la règle s'éclaircit donc AVEC l'encre, y compris quand la
+   surface s'inverse au survol. */
+.eg-pastille {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border: 1px solid currentColor;
+  /* Repris juste après le raccourci : les navigateurs sans `color-mix`
+     gardent le filet à pleine force plutôt que de perdre la boîte. */
+  border-color: color-mix(in srgb, currentColor 50%, transparent);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  background: transparent;
+  color: inherit;
+}
+
+/* Plusieurs pastilles à la suite : elles se replient dans la largeur qu'on
+   leur laisse, elles ne débordent pas d'une cellule étroite. */
+.eg-pastilles { display: flex; flex-wrap: wrap; gap: var(--space-2); }

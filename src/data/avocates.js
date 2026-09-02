@@ -191,9 +191,9 @@ const CODE_LANGUE = {
   Italien: 'IT',
 };
 
-/** « FR · EN · ES » — la mention en petites capitales d'une cellule-portrait. */
-export const languesCourtes = (langues) =>
-  (langues || []).map((l) => CODE_LANGUE[l] || l.slice(0, 2).toUpperCase()).join(' · ');
+/** ['FR', 'EN', 'ES'] — les pastilles de langue d'une cellule-portrait. */
+export const codesLangues = (langues) =>
+  (langues || []).map((l) => CODE_LANGUE[l] || l.slice(0, 2).toUpperCase());
 
 export const getAvocate = (slug) => AVOCATES.find((a) => a.slug === slug);
 export const parNom = (nom) => AVOCATES.find((a) => a.nom === nom);

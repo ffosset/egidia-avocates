@@ -15,7 +15,7 @@ import PersonCell from '../components/PersonCell.astro';
 import MapEmbed from '../components/MapEmbed.astro';
 import LinkList from '../components/LinkList.astro';
 import { MATIERES } from '../data/matieres.js';
-import { AVOCATES, languesCourtes } from '../data/avocates.js';
+import { AVOCATES, codesLangues } from '../data/avocates.js';
 import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
 ---
 <Base title="Egidia">
@@ -103,7 +103,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
               href={`/matieres/${m.id}`}
               style={`grid-column:${col};grid-row:${Math.floor(n / 2) + 1}`}
             >
-              <span class="count eg-accent pile-foot">{m.nb} avocates</span>
+              <span class="count pile-foot"><span class="eg-pastille">{m.nb} avocates</span></span>
             </RuledCell>
           );
         })}
@@ -135,7 +135,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
           <PersonCell
             name={a.nom}
             photo={a.photo}
-            meta={languesCourtes(a.langues)}
+            langues={codesLangues(a.langues)}
             href={`/avocates/${a.slug}`}
           />
         ))}
@@ -419,11 +419,23 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
        sur la même verticale, et non sur deux `ch` de corps différents. */
     max-width: var(--cell-measure);
   }
-  .count {
-    font-size: 16px;
-    font-weight: var(--fw-semibold);
-    color: var(--sauge-obscur);
-  }
+  /* Le nombre d'avocates qui prennent la matière : la MÊME pastille de filet
+     que les langues d'un portrait (`styles/pastille.css`) — une note posée au
+     pied de la cellule, pas une seconde ligne de texte.
+
+     La boîte vient de la classe partagée ; il ne reste ici que l'encre, et
+     elle est celle des étiquettes. Elle est écrite par `--text-label`, une
+     custom property, et non par une couleur en dur : au survol, la cellule
+     repose cette variable un cran plus foncé (voir `styles/survol.css`) et la
+     pastille suit le reste de la cellule au lieu de rester en arrière — ce
+     qu'une couleur écrite ici aurait empêché, la règle de survol portant sur
+     la cellule et non sur ses enfants.
+
+     La pastille est ENVELOPPÉE, et c'est `pile-foot` qui l'impose : ce pied de
+     pile pose son écart en `padding-top`, et un padding posé sur la pastille
+     elle-même passerait DANS son filet — un rectangle de 48px de haut autour
+     de trois mots. L'enveloppe prend l'écart, la pastille garde sa boîte. */
+  .count { color: var(--text-label); }
   .matiere-photo { grid-column: 3; grid-row: 1 / span 3; border-bottom: var(--divider); }
 
   /* ---- 4. HONORAIRES ----
