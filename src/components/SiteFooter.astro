@@ -38,7 +38,11 @@ import { withBase } from '../lib/base.js';
           <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
           <div class="lieu">
             <span class="plain">{CONTACT.adresse}</span>
-            <span class="plain">{CONTACT.metro} · {CONTACT.tram}</span>
+            {/* Le pied ne porte QUE les noms d'arrêt : les distances de
+                marche appartiennent à la section « Nous trouver », qui a la
+                place de les aligner et le bouton qui va avec. Ici, elles
+                allongeraient une ligne déjà à l'étroit dans sa colonne. */}
+            <span class="plain">{CONTACT.transports.map((a) => a.nom).join(' · ')}</span>
           </div>
         </div>
       </div>

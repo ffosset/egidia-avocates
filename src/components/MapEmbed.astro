@@ -44,12 +44,10 @@ interface Props {
   label?: string;
   /** Ce que Google doit chercher. Par défaut le libellé, parenthèses ôtées. */
   query?: string;
-  /** Adresse répétée sous le plan. Inutile quand une cellule voisine la porte. */
-  caption?: string;
   tint?: boolean;
   class?: string;
 }
-const { lat, lon, zoom = 15, label, query, caption, tint = true, class: klass } = Astro.props;
+const { lat, lon, zoom = 15, label, query, tint = true, class: klass } = Astro.props;
 
 /* Une adresse géocodée pose une épingle plus juste que des coordonnées
    approchées (voir ARCHITECTURE, « ce qui manque encore »). « (1er étage) »
@@ -59,7 +57,6 @@ const cle = import.meta.env.PUBLIC_GOOGLE_MAPS_KEY;
 const src = cle
   ? `https://www.google.com/maps/embed/v1/place?key=${cle}&q=${encodeURIComponent(cible)}&zoom=${zoom}&language=fr&region=BE`
   : `https://www.google.com/maps?q=${encodeURIComponent(cible)}&z=${zoom}&hl=fr&output=embed`;
-const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(cible)}`;
 ---
 <div
   class:list={['map-wrap', klass]}
@@ -68,38 +65,24 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   data-tint={String(tint)}
   data-title={label ? `Carte : ${label}` : 'Carte du cabinet'}
 >
-  <div class="map-frame">
-    {/* L'écran d'appel. Il tient tout seul : sans script, il reste ce qu'il
-        est — l'adresse, sous un intitulé qui dit ce qui manque. Le bouton et
-        sa phrase, eux, ne s'allument que si le script tourne (classe `js`) :
-        pas de commande morte. */}
-    <div class="consent">
-      <p class="consent-lead">{label ?? 'Le plan du cabinet'}</p>
-      <p class="note">
-        Le plan est hébergé par Google. L'afficher lui transmet votre adresse IP.
-        Rien n'est envoyé tant que vous ne l'avez pas demandé.
-      </p>
-      <button class="load" type="button" data-load>Afficher le plan</button>
-    </div>
-
-    {/* Le voile : posé une fois le plan chargé, il rend la molette à la page.
-        Il ne naît qu'avec le script, comme le cadre qu'il couvre. */}
-    <button class="veil" type="button" data-veil>
-      <span class="tag">Déplacer la carte</span>
-    </button>
+  {/* L'écran d'appel. Il tient tout seul : sans script, il reste ce qu'il
+      est — l'adresse, sous un intitulé qui dit ce qui manque. Le bouton et
+      sa phrase, eux, ne s'allument que si le script tourne (classe `js`) :
+      pas de commande morte. */}
+  <div class="consent">
+    <p class="consent-lead">{label ?? 'Le plan du cabinet'}</p>
+    <p class="note">
+      Le plan est hébergé par Google. L'afficher lui transmet votre adresse IP.
+      Rien n'est envoyé tant que vous ne l'avez pas demandé.
+    </p>
+    <button class="load" type="button" data-load>Afficher le plan</button>
   </div>
 
-  {/* Un <div>, pas un <p> : la loi de base retient la prose à une mesure
-      (`--measure-prose`), et la barre doit courir sur toute la largeur.
-      L'itinéraire est un simple lien sortant — il ne part qu'au clic, lui
-      aussi, et ne charge rien dans la page. */}
-  <div class="bar">
-    {caption && <span class="adresse">{caption}</span>}
-    <a class="rule-link" href={itineraire} target="_blank" rel="noopener">
-      Itinéraire
-      <span class="rule" aria-hidden="true"></span>
-    </a>
-  </div>
+  {/* Le voile : posé une fois le plan chargé, il rend la molette à la page.
+      Il ne naît qu'avec le script, comme le cadre qu'il couvre. */}
+  <button class="veil" type="button" data-veil>
+    <span class="tag">Déplacer la carte</span>
+  </button>
 </div>
 
 <script>
@@ -111,8 +94,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   for (const wrap of document.querySelectorAll<HTMLElement>('[data-map]')) {
     const load = wrap.querySelector<HTMLButtonElement>('[data-load]');
     const veil = wrap.querySelector<HTMLButtonElement>('[data-veil]');
-    const frame = wrap.querySelector('.map-frame');
-    if (!load || !veil || !frame) continue;
+    if (!load || !veil) continue;
 
     wrap.classList.add('js');
     load.addEventListener('click', () => {
@@ -124,7 +106,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
       map.referrerPolicy = 'strict-origin-when-cross-origin';
       map.allowFullscreen = true;
       map.src = wrap.dataset.src ?? '';
-      frame.prepend(map);
+      wrap.prepend(map);
       wrap.classList.add('loaded', 'veiled');
       veil.focus();
     });
@@ -133,19 +115,20 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
 </script>
 
 <style>
+  /* Le plan occupe toute la cellule : rien ne se pose sous lui. Le registre du
+     contact tient sur UN plancher (les quatre cellules partent du haut, aucune
+     ne porte de lien à son pied) — une barre ici rouvrirait exactement ce que
+     `a9990cf` avait refermé. */
   .map-wrap {
-    display: flex;
-    flex-direction: column;
+    position: relative;
+    overflow: hidden;
     min-height: 320px;
     background: var(--surface-inset);
   }
-  /* Le cadre porte la carte ; la barre reste sous elle, jamais par-dessus :
-     rien ne masque le plan. */
-  .map-frame { position: relative; flex: 1; overflow: hidden; }
 
   /* L'<iframe> naît dans le script : il n'a pas l'attribut de portée d'Astro,
      d'où `:global`. */
-  .map-frame :global(.eg-map) {
+  .map-wrap :global(.eg-map) {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -176,7 +159,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   .map-wrap.veiled {
     --map-teinte: sepia(0.24) saturate(0.72) hue-rotate(-6deg) brightness(1.02) contrast(1.02);
   }
-  .map-frame :global(.eg-map.tint) { filter: var(--map-teinte); }
+  .map-wrap :global(.eg-map.tint) { filter: var(--map-teinte); }
 
   /* ---- L'écran d'appel ---- */
   .consent {
@@ -244,7 +227,7 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     cursor: pointer;
   }
   .map-wrap.veiled .veil { display: grid; }
-  .map-wrap.veiled .map-frame :global(.eg-map) { pointer-events: none; }
+  .map-wrap.veiled :global(.eg-map) { pointer-events: none; }
 
   /* L'étiquette d'activation : du papier à filet, comme le reste du site —
      ni pastille, ni coin arrondi. Là où un pointeur survole, elle attend
@@ -268,49 +251,4 @@ const itineraire = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
     .veil:hover .tag { opacity: 1; color: var(--text-heading); background: var(--surface-inset); }
   }
 
-  /* ---- La barre ----
-     C'est elle qui fait le lien entre le plan et le texte du registre : la même
-     encre, le même filet, et l'action discrète du site (`RuleLink`). */
-  .bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3) var(--space-6);
-    margin: 0;
-    padding: var(--space-4) var(--cell-pad);
-    border-top: var(--divider);
-    background: var(--section-surface, var(--surface-page));
-  }
-  .adresse { font-size: 16px; color: var(--text-muted); }
-
-  /* Seule au pied du cadre, l'action reste à droite : `space-between` aurait
-     ramené un enfant unique à gauche. */
-  .rule-link {
-    margin-left: auto;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-3);
-    font-size: var(--fs-label);
-    font-weight: var(--fw-semibold);
-    letter-spacing: var(--ls-label);
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--text-muted);
-    white-space: nowrap;
-    transition: var(--transition-control);
-  }
-  .rule {
-    display: block;
-    height: 1px;
-    width: 32px;
-    background: currentColor;
-    transition: width var(--dur-base) var(--ease-standard);
-  }
-  .rule-link:focus-visible { color: var(--text-heading); }
-  .rule-link:focus-visible .rule { width: 56px; }
-  @media (hover: hover) {
-    .rule-link:hover { color: var(--text-heading); }
-    .rule-link:hover .rule { width: 56px; }
-  }
 </style>

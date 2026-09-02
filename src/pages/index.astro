@@ -254,15 +254,28 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
 
         <RuledCell minHeight={320}>
           <h3 class="cell-h3">En transports en commun</h3>
+          {/* Les trois arrêts se lisent comme un tableau à deux colonnes : le
+              nom, puis la marche, celle-ci alignée à DROITE. Les distances se
+              comparent alors d'un coup d'œil vertical, ce qu'une distance
+              collée au bout de chaque nom, à une abscisse différente à chaque
+              ligne, ne permet jamais. */}
           <div class="lines">
-            <span class="line">
-              <span class="ico"><Icon name="train-front-tunnel" size={18} /></span>
-              {CONTACT.metro}
-            </span>
-            <span class="line">
-              <span class="ico"><Icon name="tram-front" size={18} /></span>
-              {CONTACT.tram}
-            </span>
+            {CONTACT.transports.map((arret) => (
+              <span class="line">
+                <span class="ico"><Icon name={arret.icone} size={18} /></span>
+                <span class="arret-nom">{arret.nom}</span>
+                <span class="arret-marche">{arret.marche}</span>
+              </span>
+            ))}
+          </div>
+          {/* Le bouton clôt la cellule : on lit d'abord les arrêts, on ne part
+              chercher un itinéraire qu'ensuite. `secondary` — le cadre nu — car
+              cette cellule n'est pas l'appel du site : l'appel, c'est écrire au
+              cabinet. */}
+          <div class="cell-cta">
+            <Button href={CONTACT.itineraire} variant="secondary" icon="route" iconPosition="left" target="_blank" rel="noopener">
+              Trouver l'itinéraire
+            </Button>
           </div>
         </RuledCell>
 
@@ -610,12 +623,25 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   /* Chaque ligne s'ouvre par son glyphe : ce qu'elle EST se lit avant ce
      qu'elle dit — une adresse, un téléphone, un métro. */
   .line { display: flex; gap: var(--space-3); }
+  /* Le nom pousse la marche au bord droit de la mesure ; la marche, elle, ne se
+     laisse jamais couper — c'est un nombre, il tient sur une ligne. Le gris la
+     met un cran en retrait du nom : c'est une précision, pas l'information. */
+  .arret-nom { flex: 1 1 auto; }
+  .arret-marche {
+    flex: 0 0 auto;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
   /* Le glyphe est posé sur la PREMIÈRE ligne, pas centré sur le bloc :
      l'adresse en prend deux, et une icône centrée flotterait entre les deux.
      Les 3px rattrapent la demi-différence entre la hauteur de ligne (27px) et
      le glyphe (18px), moins ce que le trait laisse d'air en haut. */
   .ico { flex: 0 0 auto; margin-top: 3px; color: var(--text-label); }
   .muted-line { color: var(--text-muted); }
+  /* Le bouton se pose sous les arrêts, à la même mesure qu'eux, et respire du
+     pas de la pile — jamais collé à la dernière ligne. */
+  .cell-cta { max-width: var(--cell-measure); margin-top: var(--space-6); }
   .map-cell { grid-column: span 2; border-bottom: var(--divider); }
   /* À une seule colonne, `span 2` fabriquerait une colonne implicite et
      casserait la grille : on le retire. Requête de CONTENEUR — la mesure est

@@ -12,6 +12,9 @@ interface Props {
   fullWidth?: boolean;
   disabled?: boolean;
   href?: string;
+  /** Lien externe : `target="_blank"` va toujours avec `rel="noopener"`. */
+  target?: string;
+  rel?: string;
   class?: string;
 }
 import Icon from './Icon.astro';
@@ -26,6 +29,8 @@ const {
   fullWidth,
   disabled,
   href,
+  target,
+  rel,
   class: klass,
 } = Astro.props;
 
@@ -38,6 +43,8 @@ const iconSize = size === 'lg' ? 20 : 18;
 
 <Tag
   href={hrefOut}
+  target={href ? target : undefined}
+  rel={href ? rel : undefined}
   disabled={!href && disabled ? true : undefined}
   aria-disabled={disabled ? 'true' : undefined}
   class:list={[
