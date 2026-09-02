@@ -62,7 +62,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
             Egidia est un cabinet bruxellois en droit des étrangers, de la famille, de l'aide
             sociale et de la jeunesse. Une relation fondée sur l'écoute et la transparence.
           </p>
-          <div class="cta pile-block"><Button href="#services" variant="secondary">Voir nos domaines</Button></div>
+          <div class="cta"><Button href="#services" variant="secondary">Voir nos domaines</Button></div>
         </div>
       </ArcPanel>
     </section>
@@ -329,8 +329,14 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
        --content-inset, et le pas de section (et non le petit) en vertical. */
     padding-left: calc(var(--content-inset) + var(--cell-pad));
     padding-right: var(--space-8);
-    padding-top: var(--section-y);
-    padding-bottom: var(--section-y);
+    /* Un cran de plus que le pas de section, en vertical comme en horizontal
+       (même formule que le padding-left ci-dessus) : le héros n'est pas une
+       bande comme les autres, il porte trois éléments sur une photographie et
+       doit leur laisser plus d'air qu'une section courante. C'est ce padding
+       qui donne sa hauteur au héros — le `min-height` plus haut n'est qu'un
+       plancher. */
+    padding-top: calc(var(--section-y) + var(--cell-pad));
+    padding-bottom: calc(var(--section-y) + var(--cell-pad));
   }
   .hero h1 {
     font-family: var(--font-display);
@@ -347,7 +353,14 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     color: var(--brun-moyen);
     max-width: var(--hero-measure);
   }
-  /* .cta porte `pile-block` : l'écart est nommé par la pile, pas écrit ici. */
+  /* .cta ne porte PAS `pile-block` — écart assumé au motif. Le bouton du héros
+     n'ouvre pas un bloc à part : il achève la phrase du chapô (« voici qui nous
+     sommes, voilà où regarder »). Il prend donc le pas courant de la pile,
+     --stack, et non --stack-loose. Le héros n'a que trois éléments ; à 48px le
+     bouton se détachait et le titre et le chapô se lisaient comme un couple
+     avec un intrus dessous. À 32px, les trois pas (16 / 32) montent
+     régulièrement et les trois éléments tiennent ensemble. L'écart reste nommé
+     par la pile, jamais écrit ici. */
 
   /* ---- 2. VALEURS ---- */
   /* Le titre de la bande tient sur UNE ligne, toujours : c'est une phrase, et
