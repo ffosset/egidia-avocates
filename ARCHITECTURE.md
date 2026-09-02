@@ -75,8 +75,11 @@ elles coûtaient 147 Ko. Trois décisions :
 2. **Un voile intercepte la molette**, sinon la carte confisque le défilement de
    la page. C'est le seul script de la page, et il n'existe que si le script
    tourne : sans lui la carte reste pleinement manipulable.
-3. **L'adresse et l'itinéraire vivent hors du cadre**, dans une barre sous le
-   plan. Sans JavaScript comme sans Google, on ne perd pas l'information.
+3. **L'action vit hors du cadre**, dans une barre sous le plan : rien ne
+   recouvre la carte. Sur l'accueil, cette barre ne porte que « Itinéraire » —
+   l'adresse est déjà dans la cellule voisine, et le composant ne la répète que
+   si on lui passe `caption` (utile partout où le plan est seul).
+   L'épingle, elle, suit l'ADRESSE géocodée, pas `CONTACT.coords`.
 
 L'embarqué a deux adresses possibles : avec `PUBLIC_GOOGLE_MAPS_KEY` dans
 `.env`, l'API officielle Maps Embed ; sans clé, `maps?…&output=embed`,

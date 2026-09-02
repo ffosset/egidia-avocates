@@ -148,7 +148,7 @@ import Icon from './Icon.astro';
   }
   /* Le lit du survol est posé par `.eg-survol` (voir `styles/survol.css`) : la
      cellule ne repeint que son encre. */
-  .cells a:focus-visible { color: var(--hover-invert-fg); }
+  .cells a:focus-visible { color: var(--survol-encre); }
 
   /* ---- Le déroulant des matières ----
      « Services » RESTE un lien : il mène à la section de l'accueil, comme
@@ -225,7 +225,7 @@ import Icon from './Icon.astro';
     transition: var(--transition-control);
   }
   .menu > summary::-webkit-details-marker { display: none; }
-  .menu > summary:focus-visible { color: var(--hover-invert-fg); }
+  .menu > summary:focus-visible { color: var(--survol-encre); }
   /* Le glyphe dit l'état : barres fermé, croix ouvert. (Le sélecteur porte sur
      une enveloppe locale, pas sur `Icon` : les styles de ce composant ne
      descendent pas dans le gabarit d'un autre.) */
@@ -258,7 +258,7 @@ import Icon from './Icon.astro';
     color: var(--text-muted);
     transition: var(--transition-control);
   }
-  .drawer a:focus-visible { color: var(--hover-invert-fg); }
+  .drawer a:focus-visible { color: var(--survol-encre); }
 
   /* ---- LES SURVOLS DE L'EN-TÊTE ----
      Ils ne s'écrivent que là où un pointeur survole. Au doigt, `:hover` est
@@ -268,7 +268,7 @@ import Icon from './Icon.astro';
   @media (hover: hover) {
     .cells a:hover,
     .menu > summary:hover,
-    .drawer a:hover { color: var(--hover-invert-fg); }
+    .drawer a:hover { color: var(--survol-encre); }
   }
   /* Sous le point de rupture il n'y a pas de déroulant : les matières se
      rangent sous « Services », en retrait et dans leur casse propre. */
