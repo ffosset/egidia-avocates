@@ -59,6 +59,21 @@
 .eg-invert:hover,
 .eg-invert:focus-visible { background-color: var(--survol-lit, transparent) !important; }
 
+/* Et le même geste pour les FILETS. `base.css` repeint aussi les bordures au
+   survol — celle de l'élément d'un aplat caramel, celles de ses enfants d'un
+   brun voilé. Or un filet n'appartient pas à la cellule : il appartient au
+   REGISTRE, qui court d'un bord à l'autre de la section. Une cellule qui
+   recolore les siens perce un trou caramel dans le quadrillage, et le
+   rectangle survolé se DÉTACHE de la grille au lieu de s'y allumer.
+
+   Le balayage dit déjà tout ce qu'il y a à dire. Les filets, eux, gardent la
+   couleur qu'ils ont au repos — celle du trait du registre — au survol comme
+   ailleurs. Rien ne se dessine autour de ce qu'on survole. */
+.eg-invert:hover,
+.eg-invert:focus-visible,
+.eg-invert:hover *,
+.eg-invert:focus-visible * { border-color: var(--line-rule) !important; }
+
 /* Sur le caramel, le vert clair de l'accent tombe à 2:1. L'accent rejoint donc
    l'encre du survol : une cellule survolée parle d'une seule couleur. */
 .eg-invert:hover .eg-accent,
