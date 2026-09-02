@@ -163,10 +163,16 @@ import { withBase } from '../lib/base.js';
     color: var(--sable-clair);
   }
   .signature { color: var(--caramel-voile); text-decoration: none; }
-  @media (hover: hover) {
-    .signature:hover { text-decoration: underline; text-decoration-thickness: 2px; }
-  }
   .legal-links { display: flex; gap: 24px; }
   .legal-links a { color: var(--caramel-voile); text-decoration: none; }
+  /* La bande des mentions porte les mêmes liens que les colonnes au-dessus, et
+     elle s'allume comme elles : le même trait de deux pixels, sous le même
+     garde `hover: hover` — au doigt, `:hover` reste allumé après l'appui (voir
+     `styles/survol.css`). « Mentions légales » et « Vie privée » étaient les
+     deux seuls liens du pied à ne rien faire sous le pointeur. */
+  @media (hover: hover) {
+    .signature:hover,
+    .legal-links a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+  }
 
 </style>

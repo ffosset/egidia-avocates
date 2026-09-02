@@ -1,0 +1,224 @@
+---
+/**
+ * Le gabarit des deux pages de bas de page — « Mentions légales » et
+ * « Vie privée ». Elles disent des choses différentes, mais elles sont le même
+ * OBJET : un document numéroté qu'on parcourt, dont on lit un article, et dont
+ * on repart. Il n'y en aura pas un troisième modèle.
+ *
+ * ---- PAS D'APLAT ----
+ * Les pages de service, d'avocate et d'aide juridique ouvrent leur colonne de
+ * droite sur un aplat brun. Ici, non : l'aplat annonce une page qu'on vient
+ * LIRE, et celles-ci se consultent. La colonne de droite ne porte qu'un
+ * sommaire, et le papier reste nu — deux tons de fond au maximum, et la page
+ * n'en dépense qu'un.
+ *
+ * ---- LE SOMMAIRE EST ÉCRIT EN PREMIER, ET S'AFFICHE À DROITE ----
+ * `row-reverse` sur une boîte qui peut passer à la ligne : tant que les deux
+ * colonnes tiennent côte à côte, le sommaire va à DROITE et le texte à gauche —
+ * la disposition des autres pages intérieures. Dès qu'elles s'empilent, chaque
+ * colonne prend sa propre ligne, et c'est l'ordre du DOM qui décide : le
+ * sommaire passe alors AU-DESSUS du document. Un sommaire posé sous quinze
+ * articles n'aurait servi à personne.
+ *
+ * ---- UN SEUL TABLEAU POUR LES DEUX ----
+ * Les articles et le sommaire se déduisent de la MÊME liste `sections` : le
+ * gabarit pose le titre et l'ancre, la page ne fournit que le corps de chaque
+ * article, par slot nommé. Un article ne peut donc pas manquer au sommaire, ni
+ * le sommaire pointer sur une ancre morte.
+ */
+import Page from './Page.astro';
+import Breadcrumb from './Breadcrumb.astro';
+import Eyebrow from './Eyebrow.astro';
+import Card from './Card.astro';
+
+interface Props {
+  /** Le nom du document : fil d'Ariane et onglet. */
+  nom: string;
+  /** Le titre lu, qui est une affirmation — il ne répète pas le nom. */
+  titre: string;
+  lead: string;
+  sections: Array<{ id: string; titre: string }>;
+  maj: string;
+}
+const { nom, titre, lead, sections, maj } = Astro.props;
+
+/* Le corps de chaque article arrive par slot nommé — mais `slot[name]` doit
+   être une chaîne littérale dans un gabarit Astro : on ne peut pas écrire
+   `<slot name={s.id} />` dans une boucle. `Astro.slots.render` fait la même
+   chose depuis le frontmatter, où le nom peut être une variable. C'est ce qui
+   permet de tenir les articles et le sommaire dans UNE seule liste. */
+const corps = await Promise.all(
+  sections.map((s) => (Astro.slots.has(s.id) ? Astro.slots.render(s.id) : ''))
+);
+---
+<Page>
+  <div class="split">
+    <aside>
+      <div class="sticky">
+        <Card tone="inset" padding="var(--space-6)">
+          <Eyebrow>Sur cette page</Eyebrow>
+          <nav class="somm" aria-label={`Sommaire — ${nom}`}>
+            {sections.map((s) => (
+              <a href={`#${s.id}`} class="eg-inverse"><span>{s.titre}</span></a>
+            ))}
+          </nav>
+        </Card>
+        <slot name="aside" />
+      </div>
+    </aside>
+
+    <div class="corps">
+      <div class="fil">
+        <Breadcrumb items={[{ label: 'Accueil', href: '/' }, { label: nom }]} />
+      </div>
+      <h1>{titre}</h1>
+      <p class="lead">{lead}</p>
+
+      {sections.map((s, i) => (
+        <section id={s.id} class="art pile">
+          <h2>{s.titre}</h2>
+          <Fragment set:html={corps[i]} />
+        </section>
+      ))}
+
+      <p class="maj">Dernière mise à jour : {maj}.</p>
+    </div>
+  </div>
+</Page>
+
+<style>
+  /* Deux colonnes proportionnelles tant qu'elles tiennent, puis empilées — la
+     mise en page des autres pages intérieures, à ceci près qu'elle se lit à
+     l'envers dans le DOM (voir l'en-tête du fichier). La bascule est décidée
+     par la mesure du texte, en `ch`, pas par un pixel deviné.
+
+     Pas de `min-width: 0` sur les colonnes : ce serait les autoriser à devenir
+     plus étroites que leur contenu. */
+  .split {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-9);
+    padding: var(--section-y) 0;
+  }
+  .split > .corps { flex: 8 1 38ch; }
+  .split > aside  { flex: 4 1 22ch; }
+  @media (--lap) {
+    .split { padding: var(--section-y-sm) 0 var(--section-y); gap: var(--space-7); }
+  }
+
+  /* Le sommaire suit la lecture tant que la colonne est là. Une fois les deux
+     colonnes empilées, il n'y a plus rien à côté de quoi tenir : `sticky` ne
+     colle alors qu'à lui-même, ce qui ne coûte rien et ne se voit pas. */
+  .sticky {
+    position: sticky;
+    top: var(--gutter);
+    display: grid;
+    gap: var(--space-5);
+    /* Treize entrées et un encadré peuvent dépasser la hauteur d'un écran
+       d'ordinateur portable. Un bloc collé plus haut que la fenêtre a un bas
+       qu'on n'atteint jamais : il se borne donc à la fenêtre et défile pour
+       lui-même. Tant qu'il tient, rien de tout cela ne se voit. */
+    max-height: calc(100vh - var(--gutter) * 2);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Les entrées débordent du padding de la carte pour que le filet — et le lit
+     du survol — aillent d'un bord à l'autre. Le padding horizontal reprend
+     exactement la même valeur : le texte revient PILE sous l'étiquette. */
+  .somm { margin-top: var(--space-2); display: grid; }
+  .somm a {
+    padding: var(--space-4) var(--space-6);
+    margin-inline: calc(-1 * var(--space-6));
+    border-top: var(--divider);
+    font-size: var(--fs-body-sm);
+    line-height: 1.4;
+    color: var(--text-body);
+    text-decoration: none;
+  }
+
+  /* Le fil d'Ariane n'est pas l'étiquette du titre : c'est un bloc distinct qui
+     le précède. */
+  .fil { margin-bottom: var(--stack); }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-bold);
+    line-height: 1.12;
+  }
+  .lead {
+    margin-top: var(--stack-tight);
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+    color: var(--brun-moyen);
+  }
+  /* Le titre et son chapô cassent sur la même verticale : une seule mesure,
+     écrite une seule fois, en rem. */
+  h1, .lead { max-width: 33rem; }
+
+  /* ---- UN ARTICLE ----
+     Le filet ne décore pas : il SÉPARE deux articles. Il a donc autant d'air
+     au-dessus qu'en dessous, et le premier article en porte un comme les
+     autres — c'est lui qui ferme le chapô. */
+  .art {
+    margin-top: var(--stack-loose);
+    padding-top: var(--stack-loose);
+    border-top: var(--divider);
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+    color: var(--text-heading);
+  }
+
+  /* Le corps d'un article arrive par slot : il porte la portée de la PAGE, pas
+     celle de ce fichier. D'où `:global` — sans quoi aucune de ces règles ne
+     l'atteindrait. Le pas vertical, lui, est porté par `.pile` (feuille
+     globale), et rien ici n'écrit de `margin-top`. */
+  .art :global(p) {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    max-width: var(--measure-prose);
+  }
+  .art :global(a) { color: var(--text-link); }
+  .art :global(a:hover) { color: var(--text-link-hover); }
+
+  /* Une paire nom/valeur : l'identité de l'éditeur, celle du responsable du
+     traitement. Le même dessin que « En bref » sur une fiche d'avocate — c'est
+     la même nature d'information. */
+  .art :global(dl.ident) { margin: 0; max-width: var(--measure-prose); }
+  .art :global(dl.ident > div) {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-5);
+    padding: var(--space-4) 0;
+    border-top: var(--divider);
+  }
+  .art :global(dl.ident dt) { font-size: 16px; color: var(--text-label); }
+  /* Variante `noms` : à gauche, ce n'est plus une étiquette mais le NOM d'une
+     personne — il se lit dans l'encre du texte, et c'est le numéro qui passe au
+     second plan. */
+  .art :global(dl.ident.noms dt) { font-size: var(--fs-body-sm); color: var(--text-body); }
+  .art :global(dl.ident dd) {
+    margin: 0;
+    font-size: var(--fs-body-sm);
+    text-align: right;
+  }
+  /* Le mono est réservé aux références légales — un numéro d'entreprise, un
+     numéro de TVA en sont. */
+  .art :global(.ref) { font-family: var(--font-mono); font-size: 16px; }
+
+  .maj {
+    margin-top: var(--stack-loose);
+    padding-top: var(--stack-loose);
+    border-top: var(--divider);
+    font-size: 16px;
+    color: var(--text-label);
+  }
+</style>

@@ -1,0 +1,217 @@
+---
+import Base from '../layouts/Base.astro';
+import LegalDoc from '../components/LegalDoc.astro';
+import Callout from '../components/Callout.astro';
+import RuledList from '../components/RuledList.astro';
+import ContactBand from '../components/ContactBand.astro';
+import { withBase } from '../lib/base.js';
+import { CONTACT } from '../data/site.js';
+import { MAJ, EDITEUR, HEBERGEUR, CARTE, APD } from '../data/legal.js';
+
+/* Les articles et le sommaire se déduisent de cette seule liste. */
+const SECTIONS = [
+  { id: 'rien', titre: "Ce que ce site ne fait pas" },
+  { id: 'carte', titre: "Le plan d'accès, et lui seul" },
+  { id: 'hebergeur', titre: "Ce que l'hébergeur enregistre" },
+  { id: 'courriel', titre: 'Si vous nous écrivez' },
+  { id: 'liens', titre: 'Quand vous suivez un lien' },
+  { id: 'dossier', titre: 'Si vous nous confiez un dossier' },
+  { id: 'responsable', titre: 'Qui répond de tout cela' },
+  { id: 'droits', titre: 'Vos droits' },
+  { id: 'plainte', titre: 'Si notre réponse ne vous suffit pas' },
+  { id: 'changements', titre: 'Si cette page change' },
+];
+
+/* La liste est ici, et pas dans `data/legal.js` : ce ne sont pas des faits
+   administratifs mais la description du site lui-même. Chaque ligne est
+   vérifiable dans le journal réseau d'un navigateur. */
+const RIEN = [
+  'Aucun formulaire, aucun champ, aucun envoi de fichier, aucun compte.',
+  "Aucun cookie, pas même pour se souvenir d'un choix. Ni stockage local, ni stockage de session.",
+  "Aucune mesure d'audience, aucune balise, aucun pixel, aucun outil de statistique.",
+  'Aucun bouton de réseau social.',
+  'Les polices, les images et les icônes sont servies par le site lui-même, jamais par un tiers.',
+];
+---
+<Base
+  title="Vie privée"
+  description="Ce site ne collecte aucune donnée personnelle : pas de formulaire, pas de cookie, pas de mesure d'audience. La seule requête vers un tiers est le plan d'accès, et vous seul la déclenchez."
+>
+  <main>
+    <LegalDoc
+      nom="Vie privée"
+      titre="Ce site ne vous suit pas"
+      lead="Pas de formulaire, pas de cookie, pas de mesure d'audience. La seule requête qui puisse partir vers un tiers est celle que vous demandez : le plan d'accès."
+      sections={SECTIONS}
+      maj={MAJ}
+    >
+      <Callout slot="aside" tone="success" title="Rien ne part sans votre geste">
+        Page chargée, aucune requête ne sort d'ici. La première requête vers un tiers est celle
+        que vous avez demandée.
+      </Callout>
+
+      <Fragment slot="rien">
+        <p>
+          Nous avons construit ce site pour qu'il n'ait rien à savoir de vous. Une personne qui
+          cherche une avocate en droit des étrangers ou en aide à la jeunesse ne doit apparaître
+          dans les journaux de personne.
+        </p>
+        <RuledList items={RIEN} />
+        <p>
+          Ce n'est pas une promesse, c'est vérifiable : ouvrez le journal réseau de votre
+          navigateur, page chargée, et vous ne verrez sortir aucune requête.
+        </p>
+      </Fragment>
+
+      <Fragment slot="carte">
+        <p>
+          La section « Contact et accès » propose un plan pour venir jusqu'à nous. Ce plan est
+          fourni par {CARTE.fournisseur} ({CARTE.societe}).
+        </p>
+        <p>
+          Tant que vous n'avez pas cliqué sur « Afficher le plan », rien ne part : le plan n'est
+          pas dans la page, et {CARTE.court} ne voit ni votre adresse IP, ni la page que vous
+          lisez, ni l'heure de votre visite.
+        </p>
+        <p>
+          Si vous l'affichez, ces trois choses lui sont transmises, et ses propres règles
+          s'appliquent. Votre choix n'est pas mémorisé : nous ne gardons rien sur votre machine,
+          pas même le souvenir d'avoir dit oui. Le plan repart donc éteint à la visite suivante.
+        </p>
+        <p>
+          Vous n'avez pas besoin du plan pour venir. L'adresse, l'arrêt de métro et l'arrêt de
+          tram sont écrits en toutes lettres
+          <a href={withBase('/#contact')}> sur la page de contact</a>.
+        </p>
+      </Fragment>
+
+      <Fragment slot="hebergeur">
+        <p>Nous ne sommes pas tout à fait à zéro, et nous préférons le dire.</p>
+        <p>
+          Le site est hébergé par {HEBERGEUR.nom} ({HEBERGEUR.societe}, {HEBERGEUR.lieu}). Comme
+          tout hébergeur, il enregistre des journaux techniques : adresse IP, date et heure, page
+          demandée, navigateur utilisé.
+        </p>
+        <p>
+          Ces journaux servent à livrer les pages et à parer les attaques. Nous n'y avons pas
+          accès, nous n'en tirons aucune statistique, et nous ne les rapprochons de personne.
+        </p>
+      </Fragment>
+
+      <Fragment slot="courriel">
+        <p>
+          Il n'y a pas de formulaire sur ce site : pour nous joindre, vous nous écrivez, à
+          <a href={`mailto:${CONTACT.email}`}> {CONTACT.email}</a> ou à l'adresse directe d'une
+          avocate. Nous recevons alors ce que vous nous envoyez — votre adresse, votre message,
+          les pièces que vous joignez.
+        </p>
+        <p>
+          Nous gardons ce message le temps de vous répondre. S'il devient une pièce de votre
+          dossier, il suit le sort du dossier. Il est couvert par le secret professionnel.
+        </p>
+        <p>
+          Un courriel voyage par des serveurs que nous ne maîtrisons pas. Écrivez-nous ce qu'il
+          faut pour convenir d'un rendez-vous ; le détail de votre situation se dit mieux au
+          cabinet.
+        </p>
+      </Fragment>
+
+      <Fragment slot="liens">
+        <p>
+          Ce site renvoie vers d'autres sites : l'Ordre, le Bureau d'aide juridique, des
+          associations. Un lien ne charge rien tant que vous ne cliquez pas.
+        </p>
+        <p>
+          Quand vous cliquez, le site que vous ouvrez apprend que vous venez d'ici, et applique
+          ses propres règles. Nous n'en répondons pas.
+        </p>
+      </Fragment>
+
+      <Fragment slot="dossier">
+        <p>
+          Cette page parle du site. Si vous nous confiez un dossier, nous traitons d'autres
+          données : votre identité, votre situation, vos pièces.
+        </p>
+        <p>
+          Nous les traitons pour exécuter la mission que vous nous confiez et pour tenir nos
+          obligations légales. Pour certaines missions, la loi du 18 septembre 2017 sur la
+          prévention du blanchiment nous oblige à vérifier votre identité. Nous ne pouvons pas y
+          renoncer, et nous vous dirons pourquoi nous vous la demandons.
+        </p>
+        <p>
+          Nous conservons le dossier le temps que ces obligations imposent — au plus tard jusqu'à
+          l'expiration du délai pendant lequel notre responsabilité peut être mise en cause, soit
+          dix ans après la fin de la mission. Ensuite, nous le détruisons.
+        </p>
+        <p>
+          Ces données sont couvertes par le secret professionnel. Nous ne les transmettons qu'à qui la procédure
+          l'exige : une juridiction, une administration, un confrère que vous acceptez.
+        </p>
+      </Fragment>
+
+      <Fragment slot="responsable">
+        <p>
+          Le responsable du traitement est le cabinet. Pour toute question sur vos données,
+          écrivez-nous.
+        </p>
+        <dl class="ident">
+          <div><dt>Responsable</dt><dd>{EDITEUR.nom}</dd></div>
+          <div><dt>Adresse</dt><dd>{CONTACT.adresse}</dd></div>
+          <div>
+            <dt>Courriel</dt>
+            <dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd>
+          </div>
+        </dl>
+        <p>
+          Nous n'avons pas désigné de délégué à la protection des données : notre activité ne
+          l'impose pas.
+        </p>
+      </Fragment>
+
+      <Fragment slot="droits">
+        <p>
+          Vous pouvez demander à voir les données que nous avons sur vous, les faire corriger, les
+          faire effacer, en limiter l'usage, vous opposer à leur traitement, ou en demander une
+          copie transmissible.
+        </p>
+        <p>Écrivez-nous. C'est gratuit, et nous répondons dans le mois.</p>
+        <p>
+          Deux limites, et elles ne dépendent pas de nous : le secret professionnel, et les délais
+          de conservation que la loi nous impose. Si l'une d'elles s'applique, nous vous disons
+          laquelle et pourquoi.
+        </p>
+      </Fragment>
+
+      <Fragment slot="plainte">
+        <p>
+          Vous pouvez introduire une réclamation auprès de l'{APD.nom}. Elle est indépendante du
+          cabinet.
+        </p>
+        <dl class="ident">
+          <div><dt>Autorité</dt><dd>{APD.nom}</dd></div>
+          <div><dt>Adresse</dt><dd>{APD.adresse}</dd></div>
+          <div>
+            <dt>Courriel</dt>
+            <dd><a href={`mailto:${APD.email}`}>{APD.email}</a></dd>
+          </div>
+          <div>
+            <dt>Site</dt>
+            <dd>
+              <a href={`https://${APD.url}`} target="_blank" rel="noopener">{APD.url}</a>
+            </dd>
+          </div>
+        </dl>
+      </Fragment>
+
+      <Fragment slot="changements">
+        <p>Cette page est datée. Si elle change, la date change avec elle.</p>
+        <p>
+          Nous n'y touchons pas sans raison : elle ne changera que si le site change. Les
+          <a href={withBase('/mentions-legales')}> mentions légales</a> disent le reste — qui nous
+          sommes, et sous quel titre nous exerçons.
+        </p>
+      </Fragment>
+    </LegalDoc>
+    <ContactBand />
+  </main>
+</Base>

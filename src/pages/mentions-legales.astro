@@ -1,0 +1,247 @@
+---
+import Base from '../layouts/Base.astro';
+import LegalDoc from '../components/LegalDoc.astro';
+import Callout from '../components/Callout.astro';
+import ContactBand from '../components/ContactBand.astro';
+import { withBase } from '../lib/base.js';
+import { CONTACT } from '../data/site.js';
+import { AVOCATES } from '../data/avocates.js';
+import {
+  MAJ,
+  EDITEUR,
+  ORDRE,
+  AVOCATS_BE,
+  TVA_TAUX,
+  HEBERGEUR,
+  CONCEPTION,
+} from '../data/legal.js';
+
+/* Les articles et le sommaire se déduisent de cette seule liste : le gabarit
+   pose le titre et l'ancre, la page ne fournit que le corps de chaque article.
+   Ajouter un article, c'est ajouter une ligne ici et le `Fragment` qui va avec. */
+const SECTIONS = [
+  { id: 'editeur', titre: 'Qui édite ce site' },
+  { id: 'independance', titre: 'Chaque avocate exerce en son nom propre' },
+  { id: 'titre', titre: "Notre titre, et l'Ordre dont nous relevons" },
+  { id: 'deontologie', titre: 'Les règles qui nous obligent' },
+  { id: 'honoraires', titre: 'Honoraires et TVA' },
+  { id: 'assurance', titre: 'Notre assurance professionnelle' },
+  { id: 'desaccord', titre: 'Si quelque chose ne va pas' },
+  { id: 'portee', titre: "Ce que ce site n'est pas" },
+  { id: 'propriete', titre: 'Les textes et les photographies sont protégés' },
+  { id: 'liens', titre: 'Les sites que nous citons' },
+  { id: 'donnees', titre: 'Vos données' },
+  { id: 'droit', titre: 'Le droit applicable' },
+  { id: 'technique', titre: 'Conception et hébergement' },
+];
+---
+<Base
+  title="Mentions légales"
+  description="Qui édite ce site, sous quel titre nous exerçons, et à qui vous adresser en cas de difficulté."
+>
+  <main>
+    <LegalDoc
+      nom="Mentions légales"
+      titre="Qui nous sommes, et sous quel titre nous exerçons"
+      lead="Vous avez le droit de savoir à qui vous parlez avant de nous confier quoi que ce soit. Tout est sur cette page."
+      sections={SECTIONS}
+      maj={MAJ}
+    >
+      <Callout slot="aside" tone="attention" title="Un courriel n'interrompt aucun délai">
+        Si vous avez reçu une décision, dites-le nous tout de suite. En droit des étrangers,
+        les délais de recours se comptent en jours.
+      </Callout>
+
+      <Fragment slot="editeur">
+        <p>Ce site est édité par le cabinet d'avocates Egidia, à Bruxelles.</p>
+        <dl class="ident">
+          <div><dt>Éditeur</dt><dd>{EDITEUR.nom}</dd></div>
+          {EDITEUR.entite && <div><dt>Forme</dt><dd>{EDITEUR.entite}</dd></div>}
+          {EDITEUR.bce && (
+            <div><dt>Numéro d'entreprise</dt><dd class="ref">{EDITEUR.bce}</dd></div>
+          )}
+          <div><dt>Adresse</dt><dd>{CONTACT.adresse}</dd></div>
+          <div>
+            <dt>Courriel</dt>
+            <dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd>
+          </div>
+        </dl>
+        <p>
+          Nous n'avons pas de numéro général. Chaque avocate a une ligne directe, indiquée sur
+          <a href={withBase('/#equipe')}> sa fiche</a>.
+        </p>
+      </Fragment>
+
+      <Fragment slot="independance">
+        <p>
+          Egidia réunit des avocates qui travaillent ensemble. Chacune exerce comme indépendante,
+          sous son propre numéro d'entreprise, et répond seule des dossiers qu'elle traite.
+        </p>
+        <p>
+          Voici, pour chacune, le numéro sous lequel elle facture. Le même numéro figure sur sa
+          fiche, dans l'encadré « En bref ».
+        </p>
+        <dl class="ident noms">
+          {AVOCATES.map((a) => (
+            <div>
+              <dt><a href={withBase(`/avocates/${a.slug}`)}>{a.nom}</a></dt>
+              <dd class="ref">{a.tva}</dd>
+            </div>
+          ))}
+        </dl>
+      </Fragment>
+
+      <Fragment slot="titre">
+        <p>
+          Nous portons toutes le titre d'avocate. Ce titre est protégé, et il nous a été accordé
+          en Belgique.
+        </p>
+        <p>
+          Nous sommes inscrites à l'{ORDRE.nom}. L'Ordre tient la liste des avocats inscrits et
+          contrôle notre exercice.
+        </p>
+        <p>
+          <a href={`https://${ORDRE.url}`} target="_blank" rel="noopener">{ORDRE.url}</a>
+        </p>
+      </Fragment>
+
+      <Fragment slot="deontologie">
+        <p>
+          Nous sommes soumises au code de déontologie de l'avocat, adopté par {AVOCATS_BE.nom}
+          — l'{AVOCATS_BE.glose} — et aux règlements de l'{ORDRE.nom}.
+        </p>
+        <p>Ces textes sont publics. Vous pouvez les lire.</p>
+        <p>
+          <a href={`https://${AVOCATS_BE.url}`} target="_blank" rel="noopener">{AVOCATS_BE.url}</a>
+        </p>
+        <p>
+          Le secret professionnel en fait partie, et il n'est pas négociable : ce que vous nous
+          dites ne sort pas du cabinet.
+        </p>
+        <p>
+          Une obligation va en sens inverse, et nous la disons aussi : la loi du 18 septembre 2017
+          sur la prévention du blanchiment nous impose, pour certaines missions, de vérifier votre
+          identité et celle du bénéficiaire effectif de l'opération. Nous vous demanderons alors
+          une pièce d'identité, et nous la conserverons.
+        </p>
+      </Fragment>
+
+      <Fragment slot="honoraires">
+        <p>
+          Nos prestations sont soumises à la TVA belge, au taux de {TVA_TAUX} — les prestations
+          d'avocat y sont assujetties depuis le 1er janvier 2014. Chaque avocate facture sous son
+          propre numéro de TVA.
+        </p>
+        <p>
+          Nous expliquons nos honoraires avant de commencer : le mode de calcul, ce qui est
+          compris, ce qui ne l'est pas. Une provision peut être demandée en début de mission.
+          <a href={withBase('/#honoraires')}> Voir nos honoraires</a>.
+        </p>
+        <p>
+          Toutes les avocates travaillent dans le cadre de l'aide juridique — le pro deo.
+          Si vos revenus sont sous les plafonds, l'État prend en charge tout ou partie de nos
+          honoraires.
+          <a href={withBase('/aide-juridique')}> Voir les documents à apporter</a>.
+        </p>
+      </Fragment>
+
+      <Fragment slot="assurance">
+        <p>
+          Chaque avocate est couverte en responsabilité professionnelle. La couverture passe par
+          la police collective souscrite par {AVOCATS_BE.nom} pour les avocats des barreaux
+          francophones et germanophone de Belgique.
+        </p>
+        <p>
+          Vous pouvez nous demander le nom de l'assureur et l'étendue de la couverture : nous
+          vous les donnons.
+        </p>
+      </Fragment>
+
+      <Fragment slot="desaccord">
+        <p>
+          Écrivez-nous d'abord. La plupart des difficultés se règlent en un échange, et il vaut
+          mieux nous dire tout de suite ce qui ne va pas.
+          <a href={`mailto:${CONTACT.email}`}> {CONTACT.email}</a>
+        </p>
+        <p>
+          Si cela ne suffit pas, vous pouvez saisir le bâtonnier de l'{ORDRE.nom}. Il connaît des
+          plaintes contre un avocat et des contestations d'honoraires.
+        </p>
+        <p>
+          Si vous nous avez consultées en dehors de toute activité professionnelle, vous pouvez
+          aussi saisir le Service de médiation pour le consommateur, à Bruxelles.
+        </p>
+      </Fragment>
+
+      <Fragment slot="portee">
+        <p>Ce site vous informe. Il ne vous conseille pas.</p>
+        <p>
+          Une information générale n'est pas un avis sur votre situation : deux dossiers qui se
+          ressemblent ne se défendent pas de la même façon.
+        </p>
+        <p>
+          Lire ce site ou nous écrire ne crée aucun mandat. Nous ne sommes votre avocate qu'à
+          partir du moment où nous avons accepté la mission et où nous vous l'avons confirmé.
+        </p>
+        <p>
+          Un courriel n'interrompt aucun délai. Un délai manqué se rattrape difficilement.
+        </p>
+      </Fragment>
+
+      <Fragment slot="propriete">
+        <p>
+          Les textes, les photographies et le logo de ce site sont protégés par le droit d'auteur.
+        </p>
+        <p>
+          Vous pouvez citer une page en indiquant la source et en pointant vers elle. Vous ne
+          pouvez reprendre ni les photographies, ni le logo.
+        </p>
+        <p>Pour tout autre usage, écrivez-nous : nous répondons.</p>
+      </Fragment>
+
+      <Fragment slot="liens">
+        <p>
+          Nous renvoyons vers des sites que nous jugeons utiles : l'Ordre, le Bureau d'aide
+          juridique, des associations, des services publics.
+        </p>
+        <p>
+          Nous ne les contrôlons pas et nous ne répondons pas de ce qu'ils publient. Un lien vers
+          un site n'est pas une caution.
+        </p>
+      </Fragment>
+
+      <Fragment slot="donnees">
+        <p>
+          Ce site ne collecte aucune donnée personnelle : pas de formulaire, pas de cookie, pas de
+          mesure d'audience.
+          <a href={withBase('/vie-privee')}> Voir comment nous traitons vos données</a>.
+        </p>
+      </Fragment>
+
+      <Fragment slot="droit">
+        <p>Le droit belge s'applique à ce site.</p>
+        <p>
+          En cas de litige, les tribunaux de Bruxelles sont compétents — sous réserve des règles
+          impératives qui vous protègent lorsque vous agissez comme consommateur.
+        </p>
+      </Fragment>
+
+      <Fragment slot="technique">
+        <p>
+          Le site a été conçu et réalisé par
+          <a href={`https://${CONCEPTION.url}`} target="_blank" rel="noopener"> {CONCEPTION.nom}</a>.
+        </p>
+        <p>
+          Il est hébergé par {HEBERGEUR.nom} ({HEBERGEUR.societe}, {HEBERGEUR.lieu}). L'hébergeur
+          voit passer les requêtes : la page
+          <a href={withBase('/vie-privee')}> Vie privée</a> dit ce qu'il en garde.
+        </p>
+        <p>
+          Une erreur sur cette page ? Écrivez-nous, nous la corrigeons.
+          <a href={`mailto:${CONTACT.email}`}> {CONTACT.email}</a>
+        </p>
+      </Fragment>
+    </LegalDoc>
+    <ContactBand />
+  </main>
+</Base>
