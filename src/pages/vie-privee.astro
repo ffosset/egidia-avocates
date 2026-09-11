@@ -21,7 +21,6 @@ const jsonLd = graphe(
 /* Les articles et le sommaire se déduisent de cette seule liste. */
 const SECTIONS = [
   { id: 'rien', titre: "Ce que ce site ne fait pas" },
-  { id: 'carte', titre: "Le plan d'accès, et lui seul" },
   { id: 'hebergeur', titre: "Ce que l'hébergeur enregistre" },
   { id: 'courriel', titre: 'Si vous nous écrivez' },
   { id: 'liens', titre: 'Quand vous suivez un lien' },
@@ -52,7 +51,7 @@ const RIEN = [
     <LegalDoc
       nom="Vie privée"
       titre="Ce site ne vous suit pas"
-      lead="Pas de formulaire, pas de cookie, pas de mesure d'audience. La seule requête qui puisse partir vers un tiers est celle que vous demandez : le plan d'accès."
+      lead="Nous respectons la privacité de nos clients. Pas de formulaire, pas de cookie, pas de mesure d'audience."
       sections={SECTIONS}
       maj={MAJ}
     >
@@ -68,13 +67,8 @@ const RIEN = [
           dans les journaux de personne.
         </p>
         <RuledList items={RIEN} />
-        <p>
-          Ce n'est pas une promesse, c'est vérifiable : ouvrez le journal réseau de votre
-          navigateur, page chargée, et vous ne verrez sortir aucune requête.
-        </p>
-      </Fragment>
 
-      <Fragment slot="carte">
+        <h3>Plan d'accès</h3>
         <p>
           La section « Contact et accès » propose un plan pour venir jusqu'à nous. Ce plan est
           fourni par {CARTE.fournisseur} ({CARTE.societe}).

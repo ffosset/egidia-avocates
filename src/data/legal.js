@@ -62,4 +62,4 @@ export const APD = {
   url: 'www.autoriteprotectiondonnees.be',
 };
 
-export const CONCEPTION = { nom: 'fosset.co', url: 'fosset.co' };
+export const CONCEPTION = { nom: 'Flora Fosset', url: 'fosset.co' };
