@@ -228,46 +228,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
       </Page>
     </section>
 
-    {/* 6 — LIENS UTILES : la boîte ne prend que ce qui se lit comme une
-        table. Le nom de la section et le nom de chaque groupe restent sur le
-        papier, au-dessus du registre ; seules les LIGNES de liens sont mises
-        en cellules — c'est là qu'un filet sert à quelque chose, puisqu'il
-        sépare deux entrées.
-
-        Le tout tient dans UN SEUL registre à deux colonnes, et c'est le point :
-        les noms de groupes forment la première rangée, les listes la seconde,
-        et les deux tombent donc forcément sur les mêmes verticales. Deux
-        grilles côte à côte auraient dérivé d'un pixel — celui du filet gauche
-        du registre.
-
-        La rangée des noms ne porte aucun filet : ni au-dessus (`noTop`), ni
-        entre les deux colonnes (voir `.groupe-nom`). Le premier trait de la
-        table est celui de la première ligne de liens.
-
-        Un groupe écrit donc ses DEUX enfants à la suite — son nom, puis sa
-        liste — et les place à la main dans le registre. C'est ce que le repli
-        exige : sous --lap le mode composé rend les cellules au flux, et
-        l'ordre du DOM est alors le seul à décider. Écrits rangée par rangée,
-        les deux noms se seraient retrouvés collés l'un à l'autre, loin des
-        listes qu'ils ouvrent. */}
-    <section id="liens" class="liens pile">
-      <div class="liens-head pile">
-        <Eyebrow>Liens utiles</Eyebrow>
-        <h2 class="section-title">Ressources externes</h2>
-      </div>
-      <RuledGrid columns="repeat(2, minmax(0, 1fr))" noTop class="pile-block">
-        {LIENS_ACCUEIL.map(([titre, liens], i) => (
-          <>
-            <h3 class="cell-h3 groupe-nom" style={`grid-column:${i + 1};grid-row:1`}>{titre}</h3>
-            <div class="groupe-liens" style={`grid-column:${i + 1};grid-row:2`}>
-              <LinkList items={liens} />
-            </div>
-          </>
-        ))}
-      </RuledGrid>
-    </section>
-
-    {/* 7 — CONTACT : registre à trois colonnes, la carte occupe deux */}
+    {/* 6 — CONTACT : registre à trois colonnes, la carte occupe deux */}
     <section id="contact" class="ruled-section">
       {/* La carte occupe deux colonnes : à 3 colonnes elle ferme la rangée,
           à 2 elle en fait une pleine, à 1 elle se réduit — aucune case vide. */}
@@ -358,6 +319,45 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
         <div class="map-cell">
           <MapEmbed lat={CONTACT.coords[0]} lon={CONTACT.coords[1]} label={CONTACT.adresse} />
         </div>
+      </RuledGrid>
+    </section>
+
+    {/* 7 — LIENS UTILES : la boîte ne prend que ce qui se lit comme une
+        table. Le nom de la section et le nom de chaque groupe restent sur le
+        papier, au-dessus du registre ; seules les LIGNES de liens sont mises
+        en cellules — c'est là qu'un filet sert à quelque chose, puisqu'il
+        sépare deux entrées.
+
+        Le tout tient dans UN SEUL registre à deux colonnes, et c'est le point :
+        les noms de groupes forment la première rangée, les listes la seconde,
+        et les deux tombent donc forcément sur les mêmes verticales. Deux
+        grilles côte à côte auraient dérivé d'un pixel — celui du filet gauche
+        du registre.
+
+        La rangée des noms ne porte aucun filet : ni au-dessus (`noTop`), ni
+        entre les deux colonnes (voir `.groupe-nom`). Le premier trait de la
+        table est celui de la première ligne de liens.
+
+        Un groupe écrit donc ses DEUX enfants à la suite — son nom, puis sa
+        liste — et les place à la main dans le registre. C'est ce que le repli
+        exige : sous --lap le mode composé rend les cellules au flux, et
+        l'ordre du DOM est alors le seul à décider. Écrits rangée par rangée,
+        les deux noms se seraient retrouvés collés l'un à l'autre, loin des
+        listes qu'ils ouvrent. */}
+    <section id="liens" class="liens pile">
+      <div class="liens-head pile">
+        <Eyebrow>Liens utiles</Eyebrow>
+        <h2 class="section-title">Ressources externes</h2>
+      </div>
+      <RuledGrid columns="repeat(2, minmax(0, 1fr))" noTop class="pile-block">
+        {LIENS_ACCUEIL.map(([titre, liens], i) => (
+          <>
+            <h3 class="cell-h3 groupe-nom" style={`grid-column:${i + 1};grid-row:1`}>{titre}</h3>
+            <div class="groupe-liens" style={`grid-column:${i + 1};grid-row:2`}>
+              <LinkList items={liens} />
+            </div>
+          </>
+        ))}
       </RuledGrid>
     </section>
   </main>
@@ -571,8 +571,9 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
      section qui suit un registre s'y colle, quel que soit l'ordre de la page.
      Une section qui suit `.hono` — qui ne ferme rien — n'est pas concernée et
      garde son filet à elle. `.liens` ferme, elle : son registre descend
-     jusqu'au bord bas de la section (voir la section 6), et sa dernière ligne
-     de liens porte donc le filet qui doit tomber sur celui du contact. */
+     jusqu'au bord bas de la section (voir la section 7), et sa dernière ligne
+     de liens porte donc le filet qui doit tomber sur celui de ce qui suivrait —
+     aujourd'hui rien, elle clôt la page, mais la règle tient si l'ordre bouge. */
   .matieres + section, .ruled-section + section, .liens + section { margin-top: -1px; }
 
   /* ---- Une section, une couleur ----
@@ -585,8 +586,8 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
   #matieres   { --section-surface: var(--surface-matieres); }
   #equipe     { --section-surface: var(--surface-equipe); }
   #honoraires { --section-surface: var(--surface-honoraires); }
-  #liens      { --section-surface: var(--surface-liens); }
   #contact    { --section-surface: var(--surface-contact); }
+  #liens      { --section-surface: var(--surface-liens); }
 
   /* La mesure appartient à la cellule (rem) : le label et le titre cassent
      sur la même verticale, et non sur deux `ch` de corps différents. */
@@ -727,11 +728,11 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
   .sub { max-width: none; }
   .filler { font-size: 26px; line-height: 1.3; max-width: 16ch; }
 
-  /* ---- 6. LIENS UTILES ---- */
+  /* ---- 7. LIENS UTILES ---- */
   /* La section garde son air au-dessus du registre — le nom de la section et
      ceux des groupes restent sur le papier, hors de la boîte — mais aucun
      dessous : la dernière ligne de liens ferme la section, et son filet bas
-     tombe sur celui du contact qui suit (voir « UNE frontière, UN filet »).
+     est le dernier trait de la page avant le pied (voir « UNE frontière, UN filet »).
      Le registre est donc POSÉ dans la section par le haut, et de bord à bord
      par le bas, comme les trois autres de l'accueil. */
   .liens { padding: var(--section-y) var(--page-margin) 0; border-top: var(--divider); }
@@ -763,7 +764,15 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
     border-bottom: var(--divider);
   }
 
-  /* ---- 7. CONTACT ---- */
+  /* ---- 6. CONTACT ---- */
+  /* Le même air au-dessus que les honoraires et les liens utiles : le registre
+     est POSÉ dans la section, à `--section-y` du filet de frontière. Il reste
+     ouvert par le haut (`noTop`), comme celui des liens : ses colonnes montent
+     du contenu vers l'air sans qu'un trait vienne les coiffer — le seul filet
+     horizontal au-dessus est celui de la frontière. Rien dessous : sa dernière
+     rangée ferme la section, et la suivante vient tomber sur ce filet
+     (« UNE frontière, UN filet »). */
+  #contact { padding-top: var(--section-y); }
   .cell-lead { max-width: 16ch; }
   .cell-h3 {
     font-family: var(--type-subtitle-family);
@@ -774,7 +783,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
   /* Même carré que sur les noms de matières — il remplace l'icône enveloppe
      qui ouvrait « Nous joindre » : les trois cellules du registre s'ouvrent
      maintenant du même geste, et non deux d'un côté et une de l'autre.
-     Les groupes de liens de la section 6 portent le même nom de rôle, donc le
+     Les groupes de liens de la section 7 portent le même nom de rôle, donc le
      même carré : sur l'accueil, tout ce qui ouvre une cellule filetée s'ouvre
      de ce geste-là. */
   .cell-h3::before {
