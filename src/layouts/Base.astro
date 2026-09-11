@@ -1,8 +1,5 @@
 ---
-import { getImage } from 'astro:assets';
 import { withBase } from '../lib/base.js';
-import { photo } from '../lib/photos.js';
-import { PHOTOS, ALT } from '../data/site.js';
 /* Les deux fichiers de police que TOUTE page lit dès la première ligne — le
    titre (Fira 700) et le texte courant (Source Sans). `?url` donne l'adresse
    empreintée, la même que celle que `fonts.css` résout : on préchauffe le
@@ -49,18 +46,18 @@ const chemin = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.
 const canonical = new URL(chemin, Astro.site);
 
 /* ---- L'image de partage (Open Graph) ----
-   Une seule pour tout le site, au format que les réseaux attendent :
-   1200 × 630, JPEG. En attendant l'image dessinée par le cabinet (à déposer
-   dans `assets/`, servie telle quelle), c'est la photographie de l'équipe,
-   recadrée au build. Absolue, comme tout ce qui sort du site. */
-const partage = await getImage({
-  src: photo(PHOTOS.equipe),
+   Une seule pour tout le site, dessinée par le cabinet : le blason et la
+   phrase sur un panneau, l'équipe à droite — 1200 × 630, JPEG, 116 Ko. Elle
+   vit dans `assets/` (le dossier public), donc servie telle quelle à une
+   adresse SANS empreinte : les réseaux mettent l'aperçu en cache par adresse,
+   et une adresse qui changerait à chaque build leur ferait tout recharger.
+   Absolue, comme tout ce qui sort du site. */
+const partage = {
+  url: new URL(withBase('/og.jpg'), Astro.site),
   width: 1200,
   height: 630,
-  fit: 'cover',
-  format: 'jpg',
-});
-const partageUrl = new URL(partage.src, Astro.site);
+  alt: "Les sept avocates du cabinet Egidia devant le Palais de justice de Bruxelles, à côté du blason et de la mention « Cabinet d'avocates · Droit des étrangers, de la famille, de l'aide sociale et de la jeunesse · Bruxelles »",
+};
 ---
 <!doctype html>
 <html lang="fr">
@@ -82,10 +79,10 @@ const partageUrl = new URL(partage.src, Astro.site);
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={partageUrl} />
-    <meta property="og:image:width" content={String(partage.attributes.width)} />
-    <meta property="og:image:height" content={String(partage.attributes.height)} />
-    <meta property="og:image:alt" content={ALT.equipe} />
+    <meta property="og:image" content={partage.url} />
+    <meta property="og:image:width" content={String(partage.width)} />
+    <meta property="og:image:height" content={String(partage.height)} />
+    <meta property="og:image:alt" content={partage.alt} />
     <meta name="twitter:card" content="summary_large_image" />
     {/* Les données structurées (schema.org). Ce n'est PAS un script au sens
         d'ARCHITECTURE « JavaScript : presque zéro » : le navigateur ne

@@ -184,7 +184,9 @@ cabinet. Ne rien inventer.
 `astro.config.mjs` fixe `publicDir: './assets'`. Le dossier `assets/` du design
 system **est** le dossier public, et il ne contient que ce qui doit être servi
 tel quel, à la racine : le logo et le favicon (`/logo-egidia.png`,
-`/favicon.svg`) — et, quand le cabinet l'aura fournie, l'image de partage.
+`/favicon.svg`) et l'image de partage (`/og.jpg`, 1200 × 630, celle que les
+réseaux montrent quand on colle un lien du site — à une adresse sans
+empreinte, parce qu'ils la mettent en cache par adresse).
 
 **Les photographies vivent dans `src/assets/photos/`, pas dans le dossier
 public.** C'est ce qui permet à Astro de les recoder au build : pour chaque
@@ -484,10 +486,6 @@ geste.
 - Liens utiles pour « Droit des MENA » — marqués `[Ajouter]` dans le PDF source.
 - Le domaine egidia-avocates.be est acheté mais pas encore raccordé ; la
   marche à suivre est dans « Référencement ».
-- Pas d'image de partage dessinée : `og:image` est la photo de l'équipe,
-  recadrée en 1200 × 630 au build. Quand le cabinet en fournit une, la déposer
-  dans `assets/` (servie telle quelle, à une adresse stable) et la brancher
-  dans `Base.astro`, à la place de `getImage`.
 - Pas de fiche d'établissement Google (Google Business Profile) : c'est elle
   qui place le cabinet sur le plan des résultats. À créer par le cabinet, avec
   l'adresse mot pour mot celle de `CONTACT.postale`.
