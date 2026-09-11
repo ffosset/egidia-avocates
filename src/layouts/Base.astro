@@ -1,5 +1,15 @@
 ---
+import { getImage } from 'astro:assets';
 import { withBase } from '../lib/base.js';
+import { photo } from '../lib/photos.js';
+import { PHOTOS, ALT } from '../data/site.js';
+/* Les deux fichiers de police que TOUTE page lit dès la première ligne — le
+   titre (Fira 700) et le texte courant (Source Sans). `?url` donne l'adresse
+   empreintée, la même que celle que `fonts.css` résout : on préchauffe le
+   fichier, on n'en ajoute pas un. Les autres graisses et `latin-ext` restent
+   à la demande. */
+import fira700 from '../fonts/fira-sans-extra-condensed-700-latin.woff2?url';
+import sourceSans from '../fonts/source-sans-3-latin.woff2?url';
 import '../styles/tokens.css';
 import '../styles/pile.css';
 import '../styles/pastille.css';
@@ -11,14 +21,46 @@ import SiteFooter from '../components/SiteFooter.astro';
 interface Props {
   title: string;
   description?: string;
+  /** Le graphe JSON-LD de la page, déjà sérialisé par `graphe()` (src/lib/schema.js). */
+  jsonLd?: string;
+  /** Une page qui ne doit pas être indexée (la 404) : ni canonique, ni plan du site. */
+  noindex?: boolean;
 }
 const {
   title,
-  description = "Cabinet bruxellois en droit des étrangers, de la famille, de l'aide sociale et de la jeunesse. Une relation fondée sur l'écoute et la transparence.",
+  description = "Cabinet d'avocates à Bruxelles en droit des étrangers, de la famille, de l'aide sociale et de la jeunesse. Consultations sur rendez-vous, aide juridique possible.",
+  jsonLd,
+  noindex = false,
 } = Astro.props;
 
-const fullTitle = title === 'Egidia' ? 'Egidia — cabinet d’avocates à Bruxelles' : `${title} — Egidia`;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+/* ---- Le titre de l'onglet, qui est aussi celui du résultat de recherche ----
+   Le séparateur est le point médian, jamais le tiret cadratin. La marque ferme
+   la marche : ce qu'on cherche vient en tête, et c'est la tête que Google
+   garde quand il coupe (autour de 60 signes). L'accueil est la seule page où
+   la marque ouvre, suivie de ce qu'on est et d'où l'on est. */
+const fullTitle = title === 'Egidia'
+  ? 'Egidia · Avocates à Bruxelles · Droit des étrangers, famille, jeunesse'
+  : `${title} · Egidia`;
+/* Le « / » final, toujours : c'est l'adresse que le serveur sert et que le
+   plan du site déclare (`build.format: 'directory'`). Au build, l'accueil
+   arrive sans lui ; une canonique qui diffère du plan du site d'un signe est
+   deux adresses pour Google. */
+const chemin = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const canonical = new URL(chemin, Astro.site);
+
+/* ---- L'image de partage (Open Graph) ----
+   Une seule pour tout le site, au format que les réseaux attendent :
+   1200 × 630, JPEG. En attendant l'image dessinée par le cabinet (à déposer
+   dans `assets/`, servie telle quelle), c'est la photographie de l'équipe,
+   recadrée au build. Absolue, comme tout ce qui sort du site. */
+const partage = await getImage({
+  src: photo(PHOTOS.equipe),
+  width: 1200,
+  height: 630,
+  fit: 'cover',
+  format: 'jpg',
+});
+const partageUrl = new URL(partage.src, Astro.site);
 ---
 <!doctype html>
 <html lang="fr">
@@ -27,13 +69,29 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    <link rel="icon" href={withBase("/logo.svg")} type="image/svg+xml" />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    {/* Le favicon n'est pas le blason réduit — à 16px, quatre profils et un
+        nom ne sont plus qu'un grain. C'est la seule silhouette du bouclier,
+        relevée sur le contour du logo et pleine de sauge obscur. */}
+    <link rel="icon" href={withBase("/favicon.svg")} type="image/svg+xml" />
+    <link rel="preload" href={fira700} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={sourceSans} as="font" type="font/woff2" crossorigin />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Egidia" />
     <meta property="og:locale" content="fr_BE" />
+    <meta property="og:url" content={canonical} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(withBase('/photos/equipe.jpg'), Astro.site)} />
+    <meta property="og:image" content={partageUrl} />
+    <meta property="og:image:width" content={String(partage.attributes.width)} />
+    <meta property="og:image:height" content={String(partage.attributes.height)} />
+    <meta property="og:image:alt" content={ALT.equipe} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {/* Les données structurées (schema.org). Ce n'est PAS un script au sens
+        d'ARCHITECTURE « JavaScript : presque zéro » : le navigateur ne
+        l'exécute pas, il l'ignore ; seuls les moteurs le lisent. `is:inline`
+        pour qu'Astro ne cherche pas à l'empaqueter. */}
+    {jsonLd && <script is:inline type="application/ld+json" set:html={jsonLd} />}
   </head>
   <body>
     <a href="#contenu" class="skip">Aller au contenu</a>

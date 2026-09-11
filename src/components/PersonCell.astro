@@ -14,13 +14,21 @@ interface Props {
   ratio?: string;
   edge?: 'left' | 'right' | 'both';
   href?: string;
+  /** La largeur de la cellule à l'écran (syntaxe `sizes`), pour que le portrait
+      ne soit pas téléchargé plus large qu'il ne s'affiche. Le défaut est le
+      registre de l'accueil : une colonne sur téléphone, deux sur tablette,
+      trois au-delà. */
+  sizes?: string;
 }
-const { name, photo, langues = [], ratio = '3 / 2', edge, href } = Astro.props;
+const {
+  name, photo, langues = [], ratio = '3 / 2', edge, href,
+  sizes = '(max-width: 760px) 100vw, (max-width: 1000px) 50vw, 33vw',
+} = Astro.props;
 const Tag = href ? 'a' : 'div';
 ---
 <Tag href={withBase(href)} class:list={['person', edge && `e-${edge}`, { clickable: !!href }]}>
   <span class="media">
-    <ArcImage src={photo} alt={name} ratio={ratio} corner="none" legend="Portrait à fournir" />
+    <ArcImage src={photo} alt={`Portrait de ${name}`} ratio={ratio} corner="none" legend="Portrait à fournir" sizes={sizes} />
   </span>
   <span class="band">
     <span class="name">{name}</span>

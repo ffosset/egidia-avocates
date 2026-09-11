@@ -7,6 +7,16 @@ import ContactBand from '../components/ContactBand.astro';
 import { withBase } from '../lib/base.js';
 import { CONTACT } from '../data/site.js';
 import { MAJ, EDITEUR, HEBERGEUR, CARTE, APD } from '../data/legal.js';
+import { pageDatee, cabinetRef, siteWeb, graphe } from '../lib/schema.js';
+
+/* La description sert deux fois : l'extrait du résultat de recherche et la
+   fiche `WebPage`. Une seule chaîne, pour qu'elles ne divergent pas. */
+const DESCRIPTION = "Ce site ne collecte aucune donnée personnelle : pas de formulaire, pas de cookie, pas de mesure d'audience. La seule requête vers un tiers est le plan d'accès, et vous seul la déclenchez.";
+const jsonLd = graphe(
+  pageDatee({ chemin: '/vie-privee/', nom: 'Vie privée', description: DESCRIPTION, dateModified: MAJ }),
+  siteWeb(),
+  cabinetRef(),
+);
 
 /* Les articles et le sommaire se déduisent de cette seule liste. */
 const SECTIONS = [
@@ -35,7 +45,8 @@ const RIEN = [
 ---
 <Base
   title="Vie privée"
-  description="Ce site ne collecte aucune donnée personnelle : pas de formulaire, pas de cookie, pas de mesure d'audience. La seule requête vers un tiers est le plan d'accès, et vous seul la déclenchez."
+  description={DESCRIPTION}
+  jsonLd={jsonLd}
 >
   <main>
     <LegalDoc

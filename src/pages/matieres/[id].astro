@@ -13,6 +13,7 @@ import PersonCell from '../../components/PersonCell.astro';
 import ContactBand from '../../components/ContactBand.astro';
 import { MATIERES } from '../../data/matieres.js';
 import { codesLangues, parNom } from '../../data/avocates.js';
+import { service, cabinetRef, graphe } from '../../lib/schema.js';
 
 export function getStaticPaths() {
   return MATIERES.map((m) => ({ params: { id: m.id }, props: { matiere: m } }));
@@ -20,8 +21,17 @@ export function getStaticPaths() {
 
 const { matiere: m } = Astro.props;
 const autres = MATIERES.filter((x) => x.id !== m.id);
+
+/* Le titre et la description du résultat de recherche. On cherche « avocat
+   droit des étrangers bruxelles », pas « droit des étrangers » : le titre dit
+   les trois. Le résumé, qui est une liste de mots-clés, ouvre sur la matière
+   et la ville pour que les deux apparaissent dans l'extrait. */
+/* Abaisse l'initiale, sauf d'un sigle : « Droit » → « droit », « CPAS » reste. */
+const minuscule = (t) => (/^[A-ZÀ-Ý][a-zà-ÿ]/.test(t) ? t.charAt(0).toLowerCase() + t.slice(1) : t);
+const titreSeo = m.titreSeo ?? `Avocates en ${minuscule(m.titre)} à Bruxelles`;
+const descriptionSeo = `${m.titre} à Bruxelles : ${minuscule(m.resume)}`;
 ---
-<Base title={m.titre} description={m.resume}>
+<Base title={titreSeo} description={descriptionSeo} jsonLd={graphe(service(m), cabinetRef())}>
   <main>
     {/* PAS de bande de héros : la page de matière est le MIROIR de la page
         d'avocate. Là-bas, la photographie ouvre la colonne de gauche et le
@@ -61,6 +71,7 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
                       langues={codesLangues(a?.langues)}
                       ratio="1 / 1"
                       href={a ? `/avocates/${a.slug}` : undefined}
+                      sizes="(max-width: 760px) 50vw, 25vw"
                     />
                   );
                 })}

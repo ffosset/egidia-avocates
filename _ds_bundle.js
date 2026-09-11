@@ -1098,7 +1098,7 @@ function SiteHeader({
   active,
   onNavigate,
   mark = 'wordmark',
-  logoSrc = '/assets/logo.svg',
+  logoSrc = '/assets/logo-egidia.png',
   style,
   ...rest
 }) {
@@ -2803,13 +2803,10 @@ function SiteFooter({
   }, /*#__PURE__*/React.createElement("span", {
     style: {
       display: 'inline-block',
-      background: 'var(--creme)',
-      borderRadius: 'var(--radius-md)',
-      padding: 'var(--space-3) var(--space-4)',
       width: 'fit-content'
     }
   }, /*#__PURE__*/React.createElement("img", {
-    src: "../../assets/logo.svg",
+    src: "../../assets/logo-egidia-blanc.png",
     alt: "Egidia",
     style: {
       height: 72,

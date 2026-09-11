@@ -11,7 +11,7 @@ function Demo(){
   const [t,setT]=React.useState('etrangers');
   return (
     <div className="stack">
-      <SiteHeader logoSrc="../../assets/logo.svg" links={[{id:'v',label:'Valeurs'},{id:'m',label:'Matières'},{id:'h',label:'Honoraires'},{id:'e',label:'Nos avocates'},{id:'c',label:'Contact'}]} active="m" style={{margin:'0 -28px'}} />
+      <SiteHeader logoSrc="../../assets/logo-egidia.png" links={[{id:'v',label:'Valeurs'},{id:'m',label:'Matières'},{id:'h',label:'Honoraires'},{id:'e',label:'Nos avocates'},{id:'c',label:'Contact'}]} active="m" style={{margin:'0 -28px'}} />
       <Breadcrumb items={[{label:'Accueil',href:'#'},{label:'Matières',href:'#'},{label:'Droit des étrangers'}]} />
       <Tabs items={[{id:'etrangers',label:'Étrangers'},{id:'jeunesse',label:'Jeunesse'},{id:'aide',label:'Aide sociale'}]} value={t} onChange={setT} />
       <Accordion defaultOpen={0} items={[

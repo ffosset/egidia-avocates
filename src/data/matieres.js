@@ -89,6 +89,10 @@ export const MATIERES = [
   {
     id: 'mena',
     titre: 'Droit des MENA',
+    // Le titre de l'onglet et du résultat de recherche. Personne ne cherche
+    // « MENA » sans savoir ce que c'est : le sigle seul ne ramène que les
+    // initiés, le développé ramène les tuteurs et les familles.
+    titreSeo: 'Droit des MENA · Mineurs étrangers non accompagnés à Bruxelles',
     nb: 2,
     resume:
       "Tutelle, détermination de l'âge, demande de séjour, hébergement, scolarité, regroupement familial.",

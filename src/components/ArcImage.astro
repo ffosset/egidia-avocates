@@ -1,7 +1,9 @@
 ---
-import { withBase } from '../lib/base.js';
+import { Picture } from 'astro:assets';
+import { photo } from '../lib/photos.js';
 /** L'arc du bouclier — le seul arrondi du système, réservé à la photographie. */
 interface Props {
+  /** Le chemin propre des données, `/photos/<nom>.jpg` — résolu par `photo()`. */
   src?: string;
   alt?: string;
   corner?: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | 'shield' | 'none';
@@ -15,6 +17,13 @@ interface Props {
   sweep?: string;
   class?: string;
   loading?: 'lazy' | 'eager';
+  /** La largeur que la photo OCCUPE à l'écran, en syntaxe `sizes` — c'est
+      d'elle que le navigateur déduit quelle largeur télécharger. Sans elle,
+      il suppose 100vw et prend la plus grande. À poser à chaque emploi. */
+  sizes?: string;
+  /** `high` pour LA photo qui ouvre la page (le LCP) : le navigateur la fait
+      partir avant les feuilles et les polices. Une seule par page. */
+  fetchpriority?: 'high' | 'low' | 'auto';
 }
 const {
   src,
@@ -26,12 +35,37 @@ const {
   sweep = '42% 52%',
   class: klass,
   loading = 'lazy',
+  sizes = '100vw',
+  fetchpriority,
 } = Astro.props;
 const style = [ratio ? `aspect-ratio:${ratio}` : 'height:100%', `--sweep:${sweep}`].join(';');
+
+/* ---- Plusieurs largeurs, deux formats modernes, le JPEG en repli ----
+   Le navigateur choisit dans `srcset` la première largeur qui couvre `sizes`
+   × la densité de son écran, et dans <picture> le premier format qu'il sait
+   lire : AVIF (le plus léger), sinon WebP, sinon le JPEG d'origine. On ne
+   propose jamais plus large que le fichier source — sharp n'agrandit pas, et
+   une entrée de srcset qui ment fausse le choix. Les largeurs sont l'échelle
+   commune du site : un portrait de cellule tombe sur 480 ou 800, le héros
+   sur 1200 ou 1600. */
+const image = photo(src);
+const LARGEURS = [400, 640, 800, 1200, 1600, 1900];
+const widths = image ? LARGEURS.filter((w) => w <= image.width) : [];
+if (image && widths.at(-1) !== image.width) widths.push(image.width);
 ---
-{src ? (
+{image ? (
   <div class:list={['arc', `c-${corner}`, klass]} style={style}>
-    <img src={withBase(src)} alt={alt} loading={loading} decoding="async" style={`object-position:${objectPosition}`} />
+    <Picture
+      src={image}
+      alt={alt}
+      widths={widths}
+      sizes={sizes}
+      formats={['avif', 'webp']}
+      loading={loading}
+      decoding="async"
+      fetchpriority={fetchpriority}
+      style={`object-position:${objectPosition}`}
+    />
   </div>
 ) : (
   <div class:list={['arc', `c-${corner}`, 'placeholder', klass]} style={style} role="img" aria-label={legend}>
@@ -41,6 +75,10 @@ const style = [ratio ? `aspect-ratio:${ratio}` : 'height:100%', `--sweep:${sweep
 
 <style>
   .arc { overflow: hidden; }
+  /* <picture> n'est qu'un aiguillage de formats : il n'a pas de boîte à lui.
+     `display: contents` le fait disparaître de la mise en page, et l'<img>
+     remplit le cadre comme avant. */
+  .arc picture { display: contents; }
   .arc img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
   .c-bottom-left  { border-bottom-left-radius: var(--sweep); }

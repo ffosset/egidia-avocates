@@ -30,7 +30,7 @@ Each has `<Name>.jsx`, `<Name>.d.ts` (props contract) and `<Name>.prompt.md` (wh
 - `PageRules`, `RuledGrid`, `PersonCell`, `ArcImage`, `Band` — the devices of the visual direction the cabinet supplied (`uploads/Screenshot 2026-08-26 at 10.56.14.png`, `… 10.56.21.png`, `… 11.28.53.png`). They are layout primitives rather than UI widgets, but leaving them uncomponentised would mean every page re-inventing the frame, the grid and the arc by hand — which is exactly how a design system loses its identity.
 
 ### `assets/`
-`logo.svg` — the real mark. `photos/` — `equipe.jpg`, `equipe-2.jpg`, `ambiance-terrasse.jpg`, and the seven portraits named `prénom-nom.jpg`.
+`logo-egidia.png` — the real mark, 480px wide, cut from the cabinet's file without the « cabinet d'avocates » tagline; `logo-egidia-blanc.png` — its cream version for dark surfaces, derived from the black-and-white file; `favicon.svg` — the shield alone, filled sauge, traced from the logo's outline. `photos/` — `equipe.jpg`, `equipe-2.jpg`, `ambiance-terrasse.jpg`, and the seven portraits named `prénom-nom.jpg`.
 
 ### `brand/`
 `contenu-site-web.txt` — the cabinet's final site copy, transcribed from the PDF. `fiches-avocates.txt` — the seven avocates' profiles, transcribed from the spreadsheet. **These two are the content source of truth**; the UI kit reads from a structured copy of them in `ui_kits/site_vitrine/Data.jsx`.

@@ -24,3 +24,17 @@ export function withBase(path) {
   if (path.startsWith(BASE)) return path;
   return BASE.replace(/\/$/, '') + path;
 }
+
+/**
+ * La même chose, en adresse ABSOLUE : `site` + base + chemin. C'est ce que
+ * réclament tout ce qui sort du site — canoniques, `og:image`, plan du site,
+ * données structurées — là où un chemin relatif ne veut plus rien dire.
+ * `SITE` vient de `site` dans astro.config.mjs ; sans lui, on rend le chemin
+ * préfixé tel quel plutôt que d'inventer une origine.
+ */
+const SITE = import.meta.env.SITE;
+
+export function absolu(path) {
+  const chemin = withBase(path);
+  return SITE ? new URL(chemin, SITE).href : chemin;
+}

@@ -2,7 +2,7 @@ import React from 'react';
 
 /* En-tête : mot-symbole à gauche, navigation en cellules filetées à droite.
    Aucun bouton d'action — l'en-tête ne fait que naviguer. */
-export function SiteHeader({ links = [], active, onNavigate, mark = 'wordmark', logoSrc = '/assets/logo.svg', style, ...rest }) {
+export function SiteHeader({ links = [], active, onNavigate, mark = 'wordmark', logoSrc = '/assets/logo-egidia.png', style, ...rest }) {
   const [hover, setHover] = React.useState(null);
   return (
     <header style={{ borderBottom: 'var(--divider)', background: 'var(--surface-page)', position: 'relative', zIndex: 6, ...style }} {...rest}>

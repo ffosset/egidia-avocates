@@ -9,7 +9,10 @@ import Icon from '../../components/Icon.astro';
 import ArcImage from '../../components/ArcImage.astro';
 import LinkList from '../../components/LinkList.astro';
 import ContactBand from '../../components/ContactBand.astro';
-import { AVOCATES } from '../../data/avocates.js';
+import { AVOCATES, telE164 } from '../../data/avocates.js';
+import { personne, cabinetRef, graphe } from '../../lib/schema.js';
+import { getImage } from 'astro:assets';
+import { photo } from '../../lib/photos.js';
 import { MATIERES } from '../../data/matieres.js';
 
 export function getStaticPaths() {
@@ -17,12 +20,24 @@ export function getStaticPaths() {
 }
 
 const { a } = Astro.props;
-const telHref = a.tel ? `tel:+32${a.tel.replace(/\D/g, '').slice(1)}` : null;
+const telHref = a.tel ? `tel:${telE164(a.tel)}` : null;
 const autres = AVOCATES.filter((x) => x.slug !== a.slug);
+
+/* « droit de la jeunesse, droit de la famille et droit des étrangers » — les
+   matières en une énumération, minuscule initiale, pour la description. */
+const matieres = a.motsCles.map((t) => t.charAt(0).toLowerCase() + t.slice(1));
+const enumeration = matieres.length > 1
+  ? `${matieres.slice(0, -1).join(', ')} et ${matieres.at(-1)}`
+  : matieres[0];
+/* Le portrait, à l'adresse absolue, pour la fiche `Person`. */
+const portrait = await getImage({ src: photo(a.photo), width: 1200, format: 'jpg' });
+const jsonLd = graphe(personne(a, { image: new URL(portrait.src, Astro.site).href }), cabinetRef());
+const descriptionSeo = `${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` depuis ${a.depuis}` : ''}, en ${enumeration}. Cabinet Egidia.`;
 ---
 <Base
-  title={a.nom}
-  description={`${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` depuis ${a.depuis}` : ''} — ${a.motsCles.join(', ')}.`}
+  title={`${a.nom} · Avocate à Bruxelles`}
+  description={descriptionSeo}
+  jsonLd={jsonLd}
 >
   <main>
     {/* PAS de bande de héros : la photographie ouvre simplement la colonne de
@@ -33,7 +48,16 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
       <div class="split">
         <div class="side">
           <div class="portrait">
-            <ArcImage src={a.photo} alt={a.nom} corner="bottom-right" sweep="46% 74%" loading="eager" />
+            {/* Le portrait ouvre la page : c'est lui le LCP, il part en premier. */}
+            <ArcImage
+              src={a.photo}
+              alt={`Portrait de ${a.nom}`}
+              corner="bottom-right"
+              sweep="46% 74%"
+              loading="eager"
+              fetchpriority="high"
+              sizes="(max-width: 1000px) 100vw, 45vw"
+            />
           </div>
           <div class="fiches">
             <Card padding="var(--space-6)">

@@ -16,8 +16,15 @@ import LinkList from '../components/LinkList.astro';
 import { MATIERES } from '../data/matieres.js';
 import { AVOCATES, codesLangues } from '../data/avocates.js';
 import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
+import { cabinet, siteWeb, services, graphe } from '../lib/schema.js';
+import { getImage } from 'astro:assets';
+import { photo } from '../lib/photos.js';
+
+/* La photographie de l'équipe, à l'adresse absolue, pour la fiche du cabinet. */
+const equipe = await getImage({ src: photo(PHOTOS.equipe), width: 1600, format: 'jpg' });
+const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), siteWeb(), services());
 ---
-<Base title="Egidia">
+<Base title="Egidia" jsonLd={jsonLd}>
   <main>
     {/* 1 — HERO : la photo occupe le cadre, le panneau de papier la recouvre,
         l'arc du bouclier balaie son bord de fuite. */}
@@ -25,12 +32,18 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
       {/* La photo ne prend que la partie droite : les sept avocates doivent
           toutes rester visibles à côté du panneau. */}
       <div class="hero-photo">
+        {/* LA photo de la page, et la plus grande chose qu'elle peint : c'est
+            elle que le navigateur doit faire partir en premier (`high`). Elle
+            couvre le flanc droit du héros — les deux tiers de l'écran — et
+            toute la largeur une fois le panneau passé dessus. */}
         <ArcImage
           src={PHOTOS.equipe}
           alt={ALT.equipe}
           corner="none"
           objectPosition="50% 100%"
           loading="eager"
+          fetchpriority="high"
+          sizes="(max-width: 1000px) 100vw, 65vw"
         />
       </div>
       {/* LE FLANC DU BOUCLIER, d'un seul côté. Le bouclier du système garde
@@ -57,15 +70,15 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
       <ArcPanel width="var(--hero-split)" sweep="13% 50%">
         <div class="hero-inner pile">
           {/* Le blason ouvre le héros : c'est la seule fois où la marque se
-              montre en entier (bouclier, nom, trois profils). L'en-tête, lui,
-              n'a que le nom. Le nom est déjà DANS l'image — l'alt le répète
-              une fois, sans le doubler d'un titre. */}
+              montre en entier (bouclier, nom, quatre profils). L'en-tête, lui, n'a que le nom. Le nom est déjà
+              DANS l'image — l'alt le répète une fois, sans le doubler d'un
+              titre. */}
           <img
             class="hero-logo"
             src={withBase('/logo-egidia.png')}
             alt="Egidia"
             width="480"
-            height="545"
+            height="552"
             loading="eager"
             decoding="async"
           />
@@ -119,7 +132,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
           );
         })}
         <div class="matiere-photo lap-span">
-          <ArcImage src={PHOTOS.ambiance} alt={ALT.ambiance} corner="none" />
+          <ArcImage src={PHOTOS.ambiance} alt={ALT.ambiance} corner="none" sizes="(max-width: 1000px) 100vw, 33vw" />
         </div>
       </RuledGrid>
     </section>
@@ -439,7 +452,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   /* Le blason n'est pas un titre : il se pose à la taille d'un sceau, pas d'une
      affiche. 96px de large sur un panneau de 320 à 520px : le bouclier reste
      un signe au-dessus du titre, et c'est le titre qui porte la phrase. Le
-     `height: auto` garde le rapport de l'image (480 × 545) quelle que soit la
+     `height: auto` garde le rapport de l'image (480 × 552) quelle que soit la
      largeur ; les attributs width/height du balisage réservent la place avant
      le chargement, rien de plus. */
   .hero-logo {

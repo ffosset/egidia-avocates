@@ -61,6 +61,11 @@ et uniquement pour l'appel de la carte d'accès :
 | `/aide-juridique` | aucun |
 | `/mentions-legales` | aucun |
 | `/vie-privee` | aucun |
+| `/404` | aucun |
+
+Les `<script type="application/ld+json">` que portent les pages (voir
+« Référencement ») ne comptent pas : le navigateur ne les exécute pas, il les
+ignore. Ce sont des données, lues par les seuls moteurs de recherche.
 
 `MapEmbed` est un `<iframe>` Google Maps que **le serveur ne rend pas** :
 aucune bibliothèque, aucun kilo-octet de carte à empaqueter, et surtout aucune
@@ -156,7 +161,14 @@ src/
     aide-juridique.astro     Documents à produire (pro deo)
     mentions-legales.astro   Éditeur, titre professionnel, déontologie
     vie-privee.astro         Ce que le site ne collecte pas — et le peu qu'il laisse
+    404.astro                Page d'égarement (noindex, hors plan du site)
+    robots.txt.ts            Généré au build, pointe le plan du site
+  lib/base.js                withBase() et absolu() — la base de déploiement
+  lib/schema.js              Les données structurées (JSON-LD), déduites de data/
 
+  assets/photos/             Les photographies, recodées au build (AVIF, WebP,
+                             plusieurs largeurs) — voir « Images »
+  lib/photos.js              photo('/photos/x.jpg') → le fichier de src/assets/
   fonts/                     Les quatre woff2 (variables, latin + latin-ext)
                              et leurs licences OFL
   styles/tokens.css          Importe les 7 fichiers de tokens à la racine,
@@ -170,9 +182,30 @@ cabinet. Ne rien inventer.
 ## Images
 
 `astro.config.mjs` fixe `publicDir: './assets'`. Le dossier `assets/` du design
-system **est** le dossier public : il ne contient que le logo et les
-photographies redimensionnées, servis à la racine (`/logo.svg`,
-`/photos/equipe.jpg`).
+system **est** le dossier public, et il ne contient que ce qui doit être servi
+tel quel, à la racine : le logo et le favicon (`/logo-egidia.png`,
+`/favicon.svg`) — et, quand le cabinet l'aura fournie, l'image de partage.
+
+**Les photographies vivent dans `src/assets/photos/`, pas dans le dossier
+public.** C'est ce qui permet à Astro de les recoder au build : pour chaque
+photo, `ArcImage` livre un `<picture>` en AVIF, WebP et JPEG de repli, en
+plusieurs largeurs (400 à 1900 px, jamais plus que le fichier source), et le
+navigateur ne télécharge que la largeur qu'il affiche — d'où l'attribut
+`sizes`, **à poser à chaque emploi** : il dit la part de l'écran que la photo
+occupe. L'équipe en héros pèse ainsi 85 Ko en AVIF à 1200 px là où le JPEG
+en pesait 320. Les dimensions intrinsèques sont écrites sur l'`<img>`, donc
+plus de saut de mise en page à l'arrivée de l'image.
+
+Les données (`src/data/`) continuent de désigner une photo par son chemin
+propre, `/photos/<nom>.jpg` : `src/lib/photos.js` fait le pont vers le fichier
+de `src/assets/`. Un chemin inconnu rend `undefined`, et `ArcImage` montre
+son cadre « à fournir » au lieu de casser le build.
+
+Deux photos ont droit à `fetchpriority="high"` — une par page, celle qui
+ouvre la page et la peint le plus : l'équipe sur l'accueil, le portrait sur la
+fiche d'avocate. Le navigateur les fait partir avant les feuilles de style.
+Les deux polices que toute page lit dès la première ligne (Fira 700 et
+Source Sans, latin) sont préchargées depuis `Base.astro`, pour la même raison.
 
 Les originaux pleine résolution sont dans `_originals/`, hors du dépôt
 (gitignoré) et hors du build. Les versions livrées suivent la spécification du
@@ -190,9 +223,10 @@ près que les six autres — l'objectif du téléphone n'a pas le recul du refle
 Les anciens originaux de téléphone dorment dans
 `_originals/anciens-portraits-telephone/`.
 
-**Les portraits debout sont conservés**, dans `assets/photos/debout/` (900×1125,
-4:5), au cas où le cabinet revienne dessus. Ils sont servis mais ne sont
-référencés nulle part. Pour revenir en debout, trois gestes : pointer `photo`
+**Les portraits debout sont conservés**, dans `src/assets/photos/debout/`
+(900×1125, 4:5), au cas où le cabinet revienne dessus. Ils ne sont référencés
+nulle part — et n'étant plus dans le dossier public, ils ne sont plus servis
+non plus tant qu'aucune page ne les demande. Pour revenir en debout, trois gestes : pointer `photo`
 dans `src/data/avocates.js` vers `/photos/debout/<slug>.jpg`, rendre à
 `PersonCell` son rapport `4 / 5`, et redonner à `.portrait` de la fiche sa
 hauteur fixe (`clamp(440px, 78vh, 820px)`, 380px sous `--lap`) et son arc
@@ -397,6 +431,44 @@ en forçant un nombre de colonnes, en masquant un portrait ou en ajoutant une
 cellule vide : ce serait sacrifier le repli continu 4 → 3 → 2 → 1, qui est le
 point de tout le dispositif.
 
+## Référencement
+
+Tout ce que le site dit aux moteurs dérive de `site` + `base` dans
+`astro.config.mjs` et des fichiers de `src/data/`. Rien n'est saisi deux fois.
+
+| Quoi | Où | Comment |
+| --- | --- | --- |
+| Titre et description | `Base.astro` | `Page · Egidia` — le point médian, **jamais le tiret cadratin**. Ce qu'on cherche vient en tête, la marque ferme. Chaque gabarit compose les siens : les matières disent « Avocates en … à Bruxelles », les avocates « Nom · Avocate à Bruxelles ». |
+| Canonique | `Base.astro` | Absolue, avec le « / » final du `format: 'directory'`. La 404 n'en a pas : elle porte `noindex`. |
+| Plan du site | `@astrojs/sitemap` | `sitemap-index.xml` + `sitemap-0.xml`, générés au build depuis les routes. La 404 en est exclue. |
+| `robots.txt` | `src/pages/robots.txt.ts` | Généré, pour que le `Sitemap:` suive le domaine. **Sur ffosset.github.io il n'est pas lu** — un robots.txt ne vaut qu'à la racine de l'origine, et une project page ne peut pas y écrire. Ce n'est pas bloquant : sans robots.txt, tout est permis. |
+| Données structurées | `src/lib/schema.js` | JSON-LD, un graphe par page. L'accueil porte le cabinet (`LegalService`), le site (`WebSite`) et les cinq matières (`Service`) ; chaque avocate sa `Person` ; chaque matière son `Service` ; et `Breadcrumb.astro` émet lui-même sa `BreadcrumbList`, depuis la même liste que le fil visible. Les entités se citent par `@id` stable (`/#cabinet`, `/avocates/<slug>/#personne`). |
+
+Une règle pour les données structurées : **on n'affirme que ce qui est vrai ET
+écrit sur la page.** Pas d'horaires (on reçoit sur rendez-vous), pas de
+fourchette de prix, pas de note. Google pénalise le balisage qui promet ce
+que la page ne montre pas.
+
+**Le jour où egidia-avocates.be est raccordé** (le domaine est acheté, pas
+encore relié) :
+
+1. `astro.config.mjs` : `site: 'https://www.egidia-avocates.be'`, supprimer
+   `base`.
+2. Déposer un fichier `CNAME` contenant `www.egidia-avocates.be` dans `assets/`
+   (le `publicDir`) : GitHub Pages le lit à la racine de `dist/`.
+3. DNS chez le registrar : `www` en CNAME vers `ffosset.github.io`, et l'apex
+   en A vers les quatre adresses de GitHub Pages — puis cocher « Enforce HTTPS »
+   dans Settings › Pages.
+4. `legal.js` : `HEBERGEUR` reste GitHub Pages (c'est toujours lui), rien à
+   changer là.
+5. Search Console : ajouter la propriété du domaine, y soumettre
+   `https://www.egidia-avocates.be/sitemap-index.xml`. GitHub redirige de
+   lui-même l'ancienne adresse github.io vers le domaine, ce qui transfère
+   l'indexation.
+
+Canoniques, plan du site, robots.txt et `@id` du JSON-LD suivent sans autre
+geste.
+
 ## Ce qui manque encore
 
 - `equipe-2.jpg` n'a jamais été fourni ; `PHOTOS.equipeAlt` retombe sur la photo
@@ -410,7 +482,15 @@ point de tout le dispositif.
   ligne directe (sa fiche affiche « Ligne directe à venir »).
 - LinkedIn absent pour Delplancke, Doyen, Ghymers et Vryens.
 - Liens utiles pour « Droit des MENA » — marqués `[Ajouter]` dans le PDF source.
-- Le domaine dans `astro.config.mjs` (`site`) est à confirmer.
+- Le domaine egidia-avocates.be est acheté mais pas encore raccordé ; la
+  marche à suivre est dans « Référencement ».
+- Pas d'image de partage dessinée : `og:image` est la photo de l'équipe,
+  recadrée en 1200 × 630 au build. Quand le cabinet en fournit une, la déposer
+  dans `assets/` (servie telle quelle, à une adresse stable) et la brancher
+  dans `Base.astro`, à la place de `getImage`.
+- Pas de fiche d'établissement Google (Google Business Profile) : c'est elle
+  qui place le cabinet sur le plan des résultats. À créer par le cabinet, avec
+  l'adresse mot pour mot celle de `CONTACT.postale`.
 - Trois faits manquent aux pages légales, et `src/data/legal.js` les tient à
   `null` en attendant — la page n'affiche alors rien plutôt qu'un chiffre
   inventé : la forme juridique commune du cabinet (s'il en a une) et son numéro

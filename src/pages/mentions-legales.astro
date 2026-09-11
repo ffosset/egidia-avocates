@@ -15,6 +15,16 @@ import {
   HEBERGEUR,
   CONCEPTION,
 } from '../data/legal.js';
+import { pageDatee, cabinetRef, siteWeb, graphe } from '../lib/schema.js';
+
+/* La description sert deux fois : l'extrait du résultat de recherche et la
+   fiche `WebPage`. Une seule chaîne, pour qu'elles ne divergent pas. */
+const DESCRIPTION = "Qui édite ce site, sous quel titre nous exerçons, et à qui vous adresser en cas de difficulté.";
+const jsonLd = graphe(
+  pageDatee({ chemin: '/mentions-legales/', nom: 'Mentions légales', description: DESCRIPTION, dateModified: MAJ }),
+  siteWeb(),
+  cabinetRef(),
+);
 
 /* Les articles et le sommaire se déduisent de cette seule liste : le gabarit
    pose le titre et l'ancre, la page ne fournit que le corps de chaque article.
@@ -37,7 +47,8 @@ const SECTIONS = [
 ---
 <Base
   title="Mentions légales"
-  description="Qui édite ce site, sous quel titre nous exerçons, et à qui vous adresser en cas de difficulté."
+  description={DESCRIPTION}
+  jsonLd={jsonLd}
 >
   <main>
     <LegalDoc

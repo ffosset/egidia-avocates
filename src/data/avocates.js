@@ -197,3 +197,7 @@ export const codesLangues = (langues) =>
 
 export const getAvocate = (slug) => AVOCATES.find((a) => a.slug === slug);
 export const parNom = (nom) => AVOCATES.find((a) => a.nom === nom);
+
+/** '0491 94 33 72' → '+32491943372' — la forme internationale d'un numéro
+    belge, pour `tel:` et pour les données structurées. `null` reste `null`. */
+export const telE164 = (tel) => (tel ? `+32${tel.replace(/\D/g, '').slice(1)}` : null);

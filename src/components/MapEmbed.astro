@@ -27,9 +27,10 @@
  *
  * ---- L'ÉCRAN D'APPEL EST DÉJÀ UN PLAN ----
  * Au repos, la cellule ne montre pas une phrase de mise en garde mais une IMAGE
- * du quartier : `/photos/plan.jpg`, un plan gris du quartier Louise exporté de
- * Mapbox par le cabinet et servi depuis le site lui-même — aucune requête ne
- * part vers un tiers pour l'afficher. Mapbox exige son crédit et celui
+ * du quartier : `/photos/plan.jpg` (dans `src/assets/photos/`, recodée et
+ * redimensionnée au build comme les photographies), un plan gris du quartier
+ * Louise exporté de Mapbox par le cabinet et servi depuis le site lui-même —
+ * aucune requête ne part vers un tiers pour l'afficher. Mapbox exige son crédit et celui
  * d'OpenStreetMap sur toute image statique : il est dans le coin.
  * `object-fit: cover` la fait remplir la cellule quelle que soit sa taille ;
  * l'adresse et le bouton se posent au milieu, sur un carton de papier. Le
@@ -58,12 +59,14 @@ interface Props {
   class?: string;
 }
 const { lat, lon, zoom = 15, label, query, tint = true, class: klass } = Astro.props;
+import { Picture } from 'astro:assets';
 import Button from './Button.astro';
-import { withBase } from '../lib/base.js';
+import { photo } from '../lib/photos.js';
 
-/* L'aperçu au repos. Chemin propre à la racine, base appliquée au rendu — comme
-   les photographies. */
-const apercu = withBase('/photos/plan.jpg');
+/* L'aperçu au repos. Chemin propre à la racine, résolu comme les
+   photographies (`photo()`) ; la cellule fait au plus la moitié de l'écran,
+   toute sa largeur une fois le registre empilé. */
+const apercu = photo('/photos/plan.jpg');
 
 /* Une adresse géocodée pose une épingle plus juste que des coordonnées
    approchées (voir ARCHITECTURE, « ce qui manque encore »). « (1er étage) »
@@ -85,7 +88,16 @@ const src = cle
       est — le plan du quartier et l'adresse. Le bouton, lui, ne s'allume que
       si le script tourne (classe `js`) : pas de commande morte. */}
   <div class="consent">
-    <img class="apercu" src={apercu} alt="" width="1600" height="630" loading="lazy" decoding="async" />
+    <Picture
+      class="apercu"
+      src={apercu}
+      alt="Plan du quartier Louise, à Bruxelles, autour de la rue de Livourne"
+      widths={[640, 1000, 1600]}
+      sizes="(max-width: 1000px) 100vw, 50vw"
+      formats={['avif', 'webp']}
+      loading="lazy"
+      decoding="async"
+    />
     <div class="carton">
       <p class="consent-lead">{label ?? 'Le plan du cabinet'}</p>
       {/* Le même bouton que « Trouver l'itinéraire » dans la cellule voisine :
@@ -211,6 +223,10 @@ const src = cle
   /* L'aperçu couvre la cellule, toujours — en largeur comme en hauteur.
      Même teinte de repos que le plan Google voilé : au clic, on ne change pas
      de papier, on n'ôte que le voile. */
+  /* <picture> n'est qu'un aiguillage de formats, sans boîte à lui ; c'est
+     l'<img> qui couvre. `:global` : l'élément vient d'un composant enfant et
+     ne porte pas la portée de cette feuille. */
+  .consent > :global(picture) { display: contents; }
   .apercu {
     position: absolute;
     inset: 0;

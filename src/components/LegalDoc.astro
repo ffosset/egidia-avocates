@@ -42,6 +42,10 @@ interface Props {
 }
 const { nom, titre, lead, sections, maj } = Astro.props;
 
+/* « 11 septembre 2026 » depuis '2026-09-11'. Midi UTC, pour qu'aucun fuseau
+   ne fasse basculer la date au jour d'avant. */
+const majLisible = new Intl.DateTimeFormat('fr-BE', { dateStyle: 'long' }).format(new Date(`${maj}T12:00:00Z`));
+
 /* Le corps de chaque article arrive par slot nommé — mais `slot[name]` doit
    être une chaîne littérale dans un gabarit Astro : on ne peut pas écrire
    `<slot name={s.id} />` dans une boucle. `Astro.slots.render` fait la même
@@ -81,7 +85,7 @@ const corps = await Promise.all(
         </section>
       ))}
 
-      <p class="maj">Dernière mise à jour : {maj}.</p>
+      <p class="maj">Dernière mise à jour : <time datetime={maj}>{majLisible}</time>.</p>
     </div>
   </div>
 </Page>

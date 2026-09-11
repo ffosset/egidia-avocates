@@ -1,10 +1,13 @@
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 import postcssCustomMedia from 'postcss-custom-media';
 
 // Le dossier `assets/` du design system EST le publicDir : il ne contient que
-// le logo et les photographies redimensionnées, servis à la racine du site
-// (`/logo.svg`, `/photos/equipe.jpg`). Les originaux pleine résolution vivent
-// dans `_originals/`, hors du build.
+// ce qui doit être servi à l'octet près, à la racine du site — le logo et le
+// favicon (`/logo-egidia.png`, `/favicon.svg`). Les photographies, elles,
+// vivent dans `src/assets/photos/` pour qu'Astro les recode au build (voir
+// ARCHITECTURE, « Images »). Les originaux pleine résolution vivent dans
+// `_originals/`, hors du build.
 
 /* ---- Le point de rupture, en un seul endroit ----
    La quasi-totalité de la mise en page se replie d'elle-même (`auto-fit` et
@@ -37,13 +40,21 @@ export default defineConfig({
   /* Publié en *project page* GitHub : le site vit sous un sous-chemin, pas à la
      racine du domaine. `base` doit donc être posé — et tout lien écrit à la main
      doit passer par `withBase()` (src/lib/base.js), qu'Astro n'applique pas seul.
-     Le jour où le cabinet confirme son domaine : remettre `site` à
-     https://www.egidia-avocates.be et supprimer `base`. `withBase()` redevient
-     alors une fonction identité, sans autre changement à faire. */
+
+     Le domaine egidia-avocates.be est acheté mais pas encore raccordé. Le jour
+     où il l'est : passer `site` à https://www.egidia-avocates.be, supprimer
+     `base`, et déposer un fichier `CNAME` dans `assets/` (voir ARCHITECTURE,
+     « Référencement »). `withBase()` redevient alors une fonction identité ;
+     canoniques, sitemap, robots.txt et données structurées suivent d'eux-mêmes,
+     tous dérivant de `site` + `base`. */
   site: 'https://ffosset.github.io',
   base: '/egidia-avocates',
   publicDir: './assets',
   build: { format: 'directory' },
+  /* Le plan du site (`sitemap-index.xml` + `sitemap-0.xml`) est généré au
+     build à partir des routes ; `robots.txt` (src/pages/robots.txt.ts) le
+     déclare. La page 404 en est exclue d'office par l'intégration. */
+  integrations: [sitemap()],
   // Astro ne lit pas PORT de lui-même : sans cette ligne, deux sessions de
   // développement se disputent le 4321. Le port reste 4321 par défaut.
   server: { port: Number(process.env.PORT) || 4321 },

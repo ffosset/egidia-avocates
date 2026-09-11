@@ -80,8 +80,8 @@ function SiteFooter({ onNavigate }) {
       <Page>
         <div style={{ display: 'grid', gridTemplateColumns: '3fr 3fr 3fr 3fr', gap: 'var(--space-7)' }}>
           <div style={col}>
-            <span style={{ display: 'inline-block', background: 'var(--creme)', borderRadius: 'var(--radius-md)', padding: 'var(--space-3) var(--space-4)', width: 'fit-content' }}>
-              <img src="../../assets/logo.svg" alt="Egidia" style={{ height: 72, width: 'auto', display: 'block' }} />
+            <span style={{ display: 'inline-block', width: 'fit-content' }}>
+              <img src="../../assets/logo-egidia-blanc.png" alt="Egidia" style={{ height: 72, width: 'auto', display: 'block' }} />
             </span>
             <div style={{ fontSize: 'var(--fs-body-sm)', color: 'var(--sable)', maxWidth: 300, lineHeight: 1.6 }}>Cabinet bruxellois en droit des étrangers, de la famille, de l'aide sociale et de la jeunesse.</div>
           </div>

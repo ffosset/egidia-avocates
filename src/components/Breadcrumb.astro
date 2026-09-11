@@ -1,9 +1,14 @@
 ---
 import { withBase } from '../lib/base.js';
+import { filAriane, graphe } from '../lib/schema.js';
 import Icon from './Icon.astro';
 interface Props { items: Array<{ label: string; href?: string }> }
 const { items } = Astro.props;
 ---
+{/* Le fil d'Ariane se déclare aussi aux moteurs (schema.org/BreadcrumbList),
+    depuis la MÊME liste : il ne peut pas dire une chose à l'écran et une autre
+    à Google. Le JSON-LD est accepté n'importe où dans le document. */}
+<script is:inline type="application/ld+json" set:html={graphe(filAriane(items))} />
 <nav aria-label="Fil d'Ariane" class="crumbs">
   {items.map((it, i) => {
     const last = i === items.length - 1;

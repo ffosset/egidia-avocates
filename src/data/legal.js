@@ -8,7 +8,10 @@
 
 // Datée à la main : une page légale qui ment sur sa date ne vaut rien, et une
 // date de build changerait à chaque déploiement sans qu'un mot ait bougé.
-export const MAJ = '2 septembre 2026';
+// En ISO, parce qu'elle sert deux fois — écrite en toutes lettres pour le
+// lecteur (`LegalDoc` la met en français), et telle quelle dans le `datetime`
+// de la balise <time> et dans les données structurées, que les machines lisent.
+export const MAJ = '2026-09-11';
 
 export const EDITEUR = {
   nom: "Cabinet d'avocates Egidia",

@@ -6,6 +6,10 @@ import { AVOCATES } from './avocates.js';
 
 export const CONTACT = {
   adresse: 'Rue de Livourne 13, 1060 Bruxelles (1er étage)',
+  // La même adresse, éclatée : c'est la forme que réclament les données
+  // structurées (schema.org/PostalAddress), et celle que Google compare à la
+  // fiche d'établissement. Elle doit rester mot pour mot celle du dessus.
+  postale: { rue: 'Rue de Livourne 13', codePostal: '1060', ville: 'Bruxelles', pays: 'BE' },
   acces: 'Accessible aux personnes à mobilité réduite',
   // Les arrêts, du plus proche au plus lointain. Chaque distance est celle de
   // la MARCHE — relevée sur le réseau piéton d'OpenStreetMap le 2 septembre
