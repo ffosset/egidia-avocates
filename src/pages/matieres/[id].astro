@@ -1,11 +1,9 @@
 ---
-import { withBase } from '../../lib/base.js';
 import Base from '../../layouts/Base.astro';
 import Page from '../../components/Page.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
-import Card from '../../components/Card.astro';
-import Icon from '../../components/Icon.astro';
+import Tag from '../../components/Tag.astro';
 import RuledGrid from '../../components/RuledGrid.astro';
 import RuledList from '../../components/RuledList.astro';
 import LinkList from '../../components/LinkList.astro';
@@ -53,7 +51,7 @@ const descriptionSeo = `${m.titre} à Bruxelles : ${minuscule(m.resume)}`;
 
           <div class="block">
             <Eyebrow>Ce que nous traitons</Eyebrow>
-            <div class="spaced"><RuledList items={m.traite} marker="check" /></div>
+            <div class="spaced"><RuledList items={m.traite} marker="check" rules={false} /></div>
           </div>
 
           {/* Ancre visée par le bouton de la bande de contact : « choisir une
@@ -78,11 +76,25 @@ const descriptionSeo = `${m.titre} à Bruxelles : ${minuscule(m.resume)}`;
               </RuledGrid>
             </div>
           </div>
+
+          {/* Le MIROIR de « Les autres avocates » sur la page d'avocate : les
+              mêmes pastilles, au même endroit — au pied de la colonne de
+              texte. */}
+          <div class="block">
+            <Eyebrow>Les autres matières</Eyebrow>
+            <div class="chips">
+              {autres.map((x) => (
+                <Tag href={`/matieres/${x.id}`}>{x.titre}</Tag>
+              ))}
+            </div>
+          </div>
         </div>
 
         <aside>
-          <div class="aplat" aria-hidden="true"></div>
-          <Card padding="var(--space-6)">
+          {/* Les liens utiles ne sont pas une carte posée SUR l'aplat : ils
+              sont écrits DANS l'aplat, sur le sable des honoraires, et c'est leur
+              nombre qui lui donne sa hauteur. */}
+          <div class="aplat">
             <Eyebrow>Liens utiles</Eyebrow>
             <div class="tight">
               {m.liens.length > 0 ? (
@@ -91,17 +103,7 @@ const descriptionSeo = `${m.titre} à Bruxelles : ${minuscule(m.resume)}`;
                 <p class="empty">Liens à compléter par le cabinet.</p>
               )}
             </div>
-          </Card>
-          <Card padding="var(--space-6)">
-            <Eyebrow>Autres matières</Eyebrow>
-            <div class="others">
-              {autres.map((x) => (
-                <a href={withBase(`/matieres/${x.id}`)} class="eg-inverse">
-                  {x.titre}<span class="eg-accent chev"><Icon name="arrow-right" size={18} /></span>
-                </a>
-              ))}
-            </div>
-          </Card>
+          </div>
         </aside>
       </div>
     </Page>
@@ -111,49 +113,83 @@ const descriptionSeo = `${m.titre} à Bruxelles : ${minuscule(m.resume)}`;
 
 <style>
   /* ---- L'APLAT ----
-     L'arc du bouclier, exactement celui du portrait de la page d'avocate
-     (`sweep: 78% 58%`), retourné : il ouvre la colonne de DROITE, donc son arc
-     tombe en bas à GAUCHE. Une seule différence, et elle est de nature : ce
-     n'est pas une photographie mais une couleur pleine — et la loi des marges
-     ne laisse franchir les filets qu'à la photographie. L'aplat s'arrête donc
-     PILE sur le filet : son débord latéral vaut UNE GOUTTIÈRE, exactement ce
-     qui sépare le contenu du filet (--content-inset = --page-margin + --gutter).
-     À droite il vient donc mourir sur le filet ; à gauche, une fois les colonnes
-     empilées, il meurt sur l'autre. Il ne peut pas les franchir.
+     L'arc du bouclier, celui du portrait de la page d'avocate, retourné : il
+     ouvre la colonne de DROITE, donc son arc tombe en bas à GAUCHE. Une seule
+     différence, et elle est de nature : ce n'est pas une photographie mais une
+     couleur pleine — et la loi des marges ne laisse franchir les filets qu'à la
+     photographie. L'aplat s'arrête donc PILE sur le filet : son débord latéral
+     vaut UNE GOUTTIÈRE, exactement ce qui sépare le contenu du filet
+     (--content-inset = --page-margin + --gutter). À gauche, au bureau, il
+     vient donc mourir sur la couture de la navigation ; empilé, sur le filet
+     de marge. À droite, debout, il fait exception — comme le portrait de la
+     page d'avocate, il va jusqu'au bord de la fenêtre (voir le débord, plus
+     bas) ; empilé, il meurt sur le filet.
 
-     Les cartes flottent sur lui au lieu de le remplir.
+     Ce n'est plus un fond sous des cartes : c'est un BLOC, dans le flux, et
+     les liens utiles sont écrits dedans. Sa hauteur n'est donc plus celle du
+     portrait, c'est celle de sa liste — une matière à trois liens porte un
+     aplat court, une matière à six un aplat long — plus la queue qu'il faut à
+     l'arc pour se refermer sous la dernière ligne sans la rogner.
 
-     Sa hauteur est celle du portrait, mais bornée par la colonne : sur une
-     matière sans liens l'aside est court, et un aplat de 78vh pendrait dans le
-     vide sous la dernière carte. `min()` le fait épouser le plus petit des
-     deux. */
-  aside {
-    --debord: var(--space-6);
-    position: relative;
-    /* Le débord du HAUT est un padding, pas un décalage négatif : l'aplat part
-       du bord supérieur de la colonne — donc de l'en-tête — et ce sont les
-       cartes qui descendent. Un `top` négatif aurait glissé l'aplat SOUS
-       l'en-tête, qui l'aurait mangé. */
-    padding-top: var(--debord);
-  }
+     Le SABLE des honoraires, pas le sauge : sur l'accueil, c'est la surface
+     que prend la section qui renvoie vers ces mêmes ressources, et un aplat
+     sombre de la hauteur d'une colonne pesait plus que la liste qu'il porte.
+     Les encres restent celles du papier ; seules deux cèdent, voir plus bas. */
   .aplat {
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: calc(-1 * var(--gutter));
-    right: calc(-1 * var(--gutter));
-    height: min(clamp(440px, 78vh, 820px), calc(100% + var(--debord)));
-    /* Le sauge obscur, pas le brun : c'est la couleur que le site donne à ses
-       grandes surfaces pleines — le pied de page en est une. En brun, l'aplat
-       reprenait l'encre du texte agrandie à la taille d'une colonne, et les
-       cartes posées dessus se lisaient comme un trou dans un paragraphe. */
-    background: var(--sauge-obscur);
-    border-bottom-left-radius: 78% 58%;
+    margin-inline: calc(-1 * var(--gutter));
+    /* Le pas contre les filets est celui d'une cellule de registre. En haut,
+       l'aplat touche l'en-tête et c'est l'étiquette qui descend ; en bas, la
+       QUEUE : l'arc mange le coin inférieur gauche, et il lui faut cette
+       hauteur pour passer sous la dernière adresse (voir le rayon). */
+    padding: var(--space-8) var(--cell-pad) var(--space-10);
+    background: var(--surface-honoraires);
+    /* Le rayon horizontal est celui du portrait (78 %). Le rayon vertical,
+       lui, ne suit plus la hauteur sans limite : sur une liste de six liens,
+       58 % d'un aplat de 900px auraient fait un arc de plus de 500px, et une
+       queue de 200px pour le refermer sous le texte. Plafonné à 300px, l'arc
+       garde sa courbe sur toute liste, et la queue de 128px suffit sur toute
+       colonne — jusqu'à la plus étroite (16rem, le plancher de la couture) :
+       la dernière adresse commence à --cell-pad plus la colonne du glyphe du
+       bord gauche, assez loin du sommet de l'arc pour rester dedans. */
+    border-bottom-left-radius: 78% min(58%, 300px);
+    /* ---- LES ENCRES SUR LE SABLE ----
+       Celles du papier, à deux exceptions près. L'étiquette du design system
+       (#7A6B5A) ne tient que 3,4:1 sur le sable — l'adresse écrite sous
+       chaque lien, en 16px, la lit aussi : les deux passent au brun moyen
+       (4,8:1), comme sur la bande de contact et pour la même raison. Et le
+       filet entre deux liens, qui EST du sable, s'y effacerait : c'est
+       l'encre que la section des honoraires donne à ses filets de marge
+       (`--line-page-rule-on-sable`). Le libellé garde le brun profond
+       (8,7:1), le glyphe le sauge. Le débord des lignes est le pas de
+       l'aplat : les filets vont d'un bord à l'autre. */
+    --text-label: var(--brun-moyen);
+    --links-bleed: var(--cell-pad);
+    --links-rule: var(--border-rule) solid var(--line-page-rule-on-sable);
+    /* Le lit du survol : le voile de caramel est à peine plus clair que le
+       sable (1,3:1) et ne se verrait pas. Comme sur la bande de contact, c'est
+       le papier de la page qui remonte sous la ligne. */
+    --survol-aplat: var(--surface-page);
   }
-  /* Une fois les colonnes empilées, l'aplat n'est plus une colonne debout : il
-     épouse simplement la pile de cartes, et garde son arc. */
-  @media (--lap) {
-    .aplat { height: calc(100% + var(--debord)); }
+  /* Empilé sous le corps, l'aplat n'est plus une colonne mais une BANDE, et
+     78 % de sa largeur font un arc qui remonterait sous la dernière adresse,
+     quelle que soit la queue. L'arc vit alors DANS la queue : son rayon
+     vertical vaut exactement le pas du bas, et la courbe ne peut plus toucher
+     le texte. La bande garde ses filets de marge — ce n'est pas une
+     photographie, elle ne les franchit pas — et son texte revient à
+     --content-inset, sur la verticale du titre : le pas intérieur vaut la
+     gouttière, et le débord des lignes le suit.
+
+     « Empilé » n'est pas un point de rupture : c'est `flex-wrap` qui décide,
+     quand les deux bases (38ch + 30ch) et la gouttière (96px) ne tiennent plus
+     dans la ligne, et la requête de conteneur pose la même condition, dans les
+     mêmes unités (voir `/aide-juridique`, où elle est expliquée). */
+  .split { container-type: inline-size; }
+  @container (max-width: calc(38ch + 30ch + 96px)) {
+    .aplat {
+      padding-inline: var(--gutter);
+      --links-bleed: var(--gutter);
+      border-bottom-left-radius: 78% var(--space-10);
+    }
   }
 
   /* Le fil d'Ariane n'est pas l'étiquette du titre (ce serait --stack-bind) :
@@ -194,8 +230,8 @@ const descriptionSeo = `${m.titre} à Bruxelles : ${minuscule(m.resume)}`;
   }
   /* L'aplat touche l'en-tête ; seul le TEXTE descend.
 
-     La colonne de droite ne porte que des cartes de liens : rien qui demande de
-     la largeur, et la colonne de texte en manquait. Les bases en `ch` montent
+     La colonne de droite ne porte que des liens : rien qui demande de la
+     largeur, et la colonne de texte en manquait. Les bases en `ch` montent
      avec la découpe — c'est leur SOMME qui décide du moment où le bloc passe
      dessous, et la relever fait empiler une centaine de pixels plus tôt : une
      colonne de 30ch de liens qu'on écrase n'a plus d'intérêt à rester debout. */
@@ -204,17 +240,76 @@ const descriptionSeo = `${m.titre} à Bruxelles : ${minuscule(m.resume)}`;
   @media (--lap) {
     .split > .corps { padding-top: var(--section-y-sm); }
   }
-  /* Là où la barre de navigation existe, la colonne de droite s'arrête sur la
-     couture de sa troisième cellule (voir --nav-seam-col dans `tokens.css`).
-     Elle ne se replie plus par proportion : c'est une largeur posée, et le
-     corps prend tout le reste. Sous --lap la barre devient un menu, il n'y a
-     plus de couture à suivre, et les bases en `ch` reprennent la main — y
+  /* ---- LA COUTURE ----
+     Là où la barre de navigation existe, la colonne de droite s'arrête sur la
+     couture de la troisième cellule de la barre (voir --nav-seam-col dans
+     `tokens.css`) : le bord gauche de « Honoraires » et le bord gauche de
+     l'aplat tombent sur la même verticale. Aucun filet ne la dessine — le
+     bord du sable suffit, et un trait de plus en aurait fait un cadre.
+
+     L'aplat déborde d'une gouttière : la colonne de droite commence donc une
+     gouttière APRÈS la couture, et le corps s'arrête PILE dessus, texte
+     rentré d'une gouttière — la loi des marges, la même distance que du
+     filet de marge au texte. Son registre d'avocates, lui, déborde de cette
+     gouttière des deux côtés : il va du filet de marge à la couture (voir
+     `.far`).
+
+     Sous --lap la barre devient un menu, il n'y a plus de couture à suivre :
+     la gouttière large revient, et les bases en `ch` reprennent la main — y
      compris pour décider du moment où le bloc passe dessous. */
   @media (--desk) {
-    .split > aside { flex: 0 0 var(--nav-seam-col); }
+    .split { column-gap: var(--gutter); }
+    .split > .corps { padding-right: var(--gutter); }
+    .split > aside  { flex: 0 0 calc(var(--nav-seam-col) - var(--gutter)); }
+    /* ---- LE DÉBORD À DROITE ----
+       Debout, l'aplat fait ce que fait le portrait de la page d'avocate, en
+       miroir : il part du bord de la FENÊTRE et franchit le filet de marge —
+       il ne s'arrête plus dessus. Le débord vaut exactement la distance du
+       bord de la fenêtre au début du contenu, centrage au-delà de --page-max
+       compris (le même calcul que `.portrait`) ; il ne peut donc pas dériver
+       du cadre. Le texte, lui, ne franchit rien : le pas de droite s'allonge
+       d'autant, et le libellé s'arrête où il s'arrêtait — à --cell-pad du
+       filet. Les filets entre deux liens, symétriques, vont donc de la
+       couture au filet de marge, comme un registre de l'accueil.
+
+       Sa surface est le sable du filet, qui s'y effacerait : comme la section
+       des honoraires, l'aplat passe au-dessus des filets pleins (6) et
+       redessine le sien dans l'encre qui se lit sur le sable, à --frame-inset
+       du bord — la position même du filet. Le voile (7) le traverse. */
+    .aplat {
+      --bleed: calc(max(0px, (100vw - var(--page-max)) / 2) + var(--content-inset));
+      margin-right: calc(-1 * var(--bleed));
+      padding-right: calc(var(--bleed) - var(--gutter) + var(--cell-pad));
+      position: relative;
+      z-index: 6;
+    }
+    .aplat::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: var(--frame-inset);
+      width: var(--border-rule);
+      background: var(--line-page-rule-on-sable);
+      pointer-events: none;
+    }
+    /* (La liste « Ce que nous traitons » n'a pas de filets : elle reste à
+       la mesure de son texte.) */
+    .far > .spaced { margin-inline: calc(-1 * var(--gutter)); }
   }
 
-  aside { display: grid; gap: var(--space-5); align-content: start; }
+  /* Empilées, les colonnes n'ont plus de couture entre elles, mais le
+     registre des avocates va toujours d'un filet à l'autre — ceux de la
+     marge, cette fois, comme les registres de l'accueil. « Empilé » n'est pas un point de rupture :
+     c'est `flex-wrap` qui décide, quand les deux bases (38ch + 30ch) et la
+     gouttière ne tiennent plus dans la ligne. La requête de conteneur pose la
+     même condition, dans les mêmes unités (voir `aide-juridique.astro`). */
+  .split { container-type: inline-size; }
+  @container (max-width: calc(38ch + 30ch + 96px)) {
+    .far > .spaced { margin-inline: calc(-1 * var(--gutter)); }
+  }
+
+  aside { display: grid; align-content: start; }
   .block { margin-top: var(--stack-loose); }
   .spaced { margin-top: var(--space-5); }
   /* Le registre des avocates n'ouvre pas une section colorée : il est posé au
@@ -224,19 +319,7 @@ const descriptionSeo = `${m.titre} à Bruxelles : ${minuscule(m.resume)}`;
   .far { margin-top: var(--space-9); --section-surface: var(--surface-page); }
   .tight { margin-top: var(--stack-tight); }
   .empty { margin: 0; font-size: 16px; color: var(--text-label); }
-
-  .others { margin-top: var(--space-3); }
-  .others a {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-3);
-    padding: var(--space-4);
-    margin: 0 calc(-1 * var(--space-4));
-    border-top: var(--divider);
-    font-size: var(--fs-body-sm);
-    text-decoration: none;
-    color: var(--text-body);
-  }
-  .chev { color: var(--sauge-obscur); }
-
+  /* Les pastilles des autres matières : la même rangée que sur la page
+     d'avocate, au même pas. */
+  .chips { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--stack-tight); }
 </style>
