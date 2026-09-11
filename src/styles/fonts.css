@@ -38,8 +38,8 @@
    s'affiche tout de suite dans la police de repli, et bascule à l'arrivée.
 
    Les chemins sont RELATIFS : c'est Vite qui les résout, les empreinte et leur
-   pose le `base` du site. Ne pas écrire `/egidia-avocates/…` à la main — ce
-   préfixe doit disparaître le jour où le cabinet confirme son domaine.
+   pose le `base` du site. Ne pas écrire de préfixe de déploiement à la main :
+   c'est ce qui a rendu la bascule vers www.egidia-avocates.be indolore.
 
    Licences : SIL Open Font License 1.1, texte intégral dans `src/fonts/`
    (OFL-Fira-Sans-Extra-Condensed.txt, OFL-Source-Sans-3.txt,

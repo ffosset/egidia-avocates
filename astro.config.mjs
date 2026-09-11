@@ -37,18 +37,16 @@ const injectBreakpoints = {
 };
 
 export default defineConfig({
-  /* Publié en *project page* GitHub : le site vit sous un sous-chemin, pas à la
-     racine du domaine. `base` doit donc être posé — et tout lien écrit à la main
-     doit passer par `withBase()` (src/lib/base.js), qu'Astro n'applique pas seul.
+  /* Le site vit à la racine de son propre domaine : pas de `base`. Tout lien
+     écrit à la main passe quand même par `withBase()` (src/lib/base.js), qui
+     est alors une fonction identité — c'est ce qui a permis la bascule depuis
+     la project page ffosset.github.io/egidia-avocates sans toucher aux pages.
 
-     Le domaine egidia-avocates.be est acheté mais pas encore raccordé. Le jour
-     où il l'est : passer `site` à https://www.egidia-avocates.be, supprimer
-     `base`, et déposer un fichier `CNAME` dans `assets/` (voir ARCHITECTURE,
-     « Référencement »). `withBase()` redevient alors une fonction identité ;
-     canoniques, sitemap, robots.txt et données structurées suivent d'eux-mêmes,
-     tous dérivant de `site` + `base`. */
-  site: 'https://ffosset.github.io',
-  base: '/egidia-avocates',
+     Canoniques, sitemap, robots.txt et données structurées dérivent tous de
+     `site`. Le fichier `assets/CNAME` (le publicDir) redit le domaine à
+     GitHub Pages à chaque publication, pour qu'un déploiement ne le perde pas.
+     L'ancienne adresse github.io est redirigée par GitHub lui-même. */
+  site: 'https://www.egidia-avocates.be',
   publicDir: './assets',
   build: { format: 'directory' },
   /* Le plan du site (`sitemap-index.xml` + `sitemap-0.xml`) est généré au

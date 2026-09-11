@@ -1,11 +1,13 @@
 /**
  * Préfixe un chemin interne par la base de déploiement.
  *
- * Le site est publié sur une *project page* GitHub — https://ffosset.github.io/
- * egidia-avocates/ — donc sous un sous-chemin, pas à la racine du domaine. Or
- * Astro ne réécrit PAS les `href="/…"` ni les `src="/…"` écrits à la main : il
- * ne touche qu'aux ressources qu'il empaquette lui-même. Sans ce préfixe, tous
- * les liens et toutes les photographies pointent une adresse qui n'existe pas.
+ * Aujourd'hui le site vit à la racine de www.egidia-avocates.be : la base vaut
+ * « / » et cette fonction rend le chemin inchangé. Elle reste en place parce
+ * qu'Astro ne réécrit PAS les `href="/…"` ni les `src="/…"` écrits à la main —
+ * il ne touche qu'aux ressources qu'il empaquette lui-même. Tant que le site a
+ * vécu en *project page* GitHub (ffosset.github.io/egidia-avocates/), c'est
+ * elle qui posait le sous-chemin ; le jour de la bascule, retirer `base` de
+ * astro.config.mjs a suffi. Garder l'habitude : tout chemin interne passe ici.
  *
  * Les données (`src/data/`) gardent des chemins propres, à la racine : elles
  * n'ont pas à connaître l'endroit où le site est hébergé. C'est au rendu que la
@@ -13,8 +15,7 @@
  *
  * Ne touche ni aux URL externes, ni à `mailto:`/`tel:`, ni aux ancres nues :
  * elles ne commencent pas par « / ». Idempotent, pour qu'un double appel reste
- * sans effet. Quand la base vaut « / » (domaine propre), la fonction rend le
- * chemin inchangé.
+ * sans effet.
  */
 const BASE = import.meta.env.BASE_URL || '/';
 
