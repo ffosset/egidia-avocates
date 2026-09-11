@@ -34,8 +34,8 @@ export const MATIERES = [
       ['Commissariat général aux réfugiés et aux apatrides (CGRA)', 'www.cgra.be'],
       ['Conseil du contentieux des étrangers (CCE)', 'www.rvv-cce.be'],
       ['Agentschap Integratie en Inburgering', 'www.agii.be'],
-      ['Myria — Centre fédéral Migration', 'www.myria.be'],
-      ["PAG-ASA — accompagnement des victimes de la traite des êtres humains", 'pag-asa.be'],
+      ['Myria · Centre fédéral Migration', 'www.myria.be'],
+      ["PAG-ASA · accompagnement des victimes de la traite des êtres humains", 'pag-asa.be'],
       ['Plate-forme Mineurs en exil', 'www.mineursenexil.be'],
     ],
   },
@@ -58,7 +58,7 @@ export const MATIERES = [
     avocates: ['Floriane Delplancke', 'Cécile Ghymers', 'Déborah Unger', 'Camille Vandeput'],
     liens: [
       ["Service d'Aide à la Jeunesse (SAJ)", 'aidealajeunesse.cfwb.be'],
-      ["Bruxelles-J — Centre d'information pour les jeunes", 'www.bruxelles-j.be'],
+      ["Bruxelles-J · Centre d'information pour les jeunes", 'www.bruxelles-j.be'],
       ['Service Droit des Jeunes (SDJ)', 'www.sdj.be'],
       ['Infor Jeunes Bruxelles', 'www.inforjeunesbruxelles.be'],
       ['Tes droits ton avocat', 'tesdroitstonavocat.be'],
@@ -81,7 +81,7 @@ export const MATIERES = [
     ],
     avocates: ['Margaux Doyen', 'Camille Vandeput', 'Marine Vryens'],
     liens: [
-      ['Social.Brussels — offre sociale et de santé à Bruxelles', 'social.brussels'],
+      ['Social.Brussels · offre sociale et de santé à Bruxelles', 'social.brussels'],
       ['CPAS de Bruxelles', 'cpasbxl.brussels'],
       ['Samusocial Bruxelles', 'samusocial.be'],
     ],

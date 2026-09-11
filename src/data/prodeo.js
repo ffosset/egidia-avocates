@@ -51,7 +51,7 @@ export const REVENUS = [
     titre: 'Mutualité',
     docs: [
       'Attestation de la mutuelle (3 derniers mois)',
-      "Prime de bien-être si en incapacité de travail depuis un an ou plus (versée en mai) — sinon document du pécule de vacances de l'année précédente",
+      "Prime de bien-être si en incapacité de travail depuis un an ou plus (versée en mai), sinon document du pécule de vacances de l'année précédente",
     ],
   },
   {
@@ -87,6 +87,6 @@ export const REVENUS = [
 export const LIENS_PRODEO = [
   ['Ordre français des avocats du barreau de Bruxelles', 'www.barreaudebruxelles.be'],
   ["Bureau d'aide juridique de Bruxelles", 'www.aidejuridiquebruxelles.be'],
-  ['Wikifin — assurance protection juridique', 'www.wikifin.be'],
-  ['Avocats.be — combien coûte un avocat', 'avocats.be/fr/tout-savoir/combien-ca-coute'],
+  ['Wikifin · assurance protection juridique', 'www.wikifin.be'],
+  ['Avocats.be · combien coûte un avocat', 'avocats.be/fr/tout-savoir/combien-ca-coute'],
 ];

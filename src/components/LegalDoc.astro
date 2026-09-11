@@ -61,7 +61,7 @@ const corps = await Promise.all(
       <div class="sticky">
         <Card tone="inset" padding="var(--space-6)">
           <Eyebrow>Sur cette page</Eyebrow>
-          <nav class="somm" aria-label={`Sommaire — ${nom}`}>
+          <nav class="somm" aria-label={`Sommaire · ${nom}`}>
             {sections.map((s) => (
               <a href={`#${s.id}`} class="eg-inverse"><span>{s.titre}</span></a>
             ))}
