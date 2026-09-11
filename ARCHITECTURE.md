@@ -191,10 +191,15 @@ empreinte, parce qu'ils la mettent en cache par adresse).
 **Les photographies vivent dans `src/assets/photos/`, pas dans le dossier
 public.** C'est ce qui permet à Astro de les recoder au build : pour chaque
 photo, `ArcImage` livre un `<picture>` en AVIF, WebP et JPEG de repli, en
-plusieurs largeurs (400 à 1900 px, jamais plus que le fichier source), et le
+plusieurs largeurs (400 à 3000 px, jamais plus que le fichier source), et le
 navigateur ne télécharge que la largeur qu'il affiche — d'où l'attribut
 `sizes`, **à poser à chaque emploi** : il dit la part de l'écran que la photo
-occupe. L'équipe en héros pèse ainsi 85 Ko en AVIF à 1200 px là où le JPEG
+PEINT, pas celle de son cadre — l'équipe en héros déborde de son cadre
+(`cover` dans un cadre plus haut qu'un 3:2, puis `scale(1.12)`) et couvre
+~84 % de la fenêtre à 1440 px : `sizes` dit 80vw. Sur un écran Retina cela
+demande 2400 px de large ; un fichier de 1600 s'y étirait de moitié et se
+lisait flou — c'est pourquoi la source de l'équipe fait 3000 px (voir plus
+bas). Elle pèse 236 Ko en AVIF à 2400 px, 140 à 1600, là où le JPEG de 1600
 en pesait 320. Les dimensions intrinsèques sont écrites sur l'`<img>`, donc
 plus de saut de mise en page à l'arrivée de l'image.
 
@@ -211,9 +216,17 @@ Source Sans, latin) sont préchargées depuis `Base.astro`, pour la même raison
 
 Les originaux pleine résolution sont dans `_originals/`, hors du dépôt
 (gitignoré) et hors du build. Les versions livrées suivent la spécification du
-design system — JPEG q82, vues larges 1600–1900px — à une exception près, qui
-est un choix du cabinet : **les sept portraits sont couchés, en 3:2, livrés en
-1500×1000.** Le design system les prévoyait debout (900px de large, 4:5 dans la
+design system — JPEG q82, vues larges 1600–1900px — à deux exceptions près.
+**L'équipe (`egidia-team.jpg`) fait 3000×2000, JPEG q90** : c'est LA photo qui
+s'étale sur un écran Retina, et la seule qui ait besoin des paliers 2400 et
+3000 du srcset. Le cabinet l'avait livrée retouchée mais en 1600 px seulement
+(`_originals/egidia-team.jpeg`) ; la version en place est tirée du cadre brut
+du reflex (`_originals/equipe.JPG`, 4608 px) auquel on a appliqué la courbe
+de tons de la retouche, ajustée canal par canal sur les pixels des deux
+fichiers — `_originals/egidia-team-4608.jpg` en garde la pleine résolution.
+Si le cabinet fournit un jour sa retouche en grand, elle remplace tout cela.
+La seconde exception est un choix du cabinet : **les sept portraits sont
+couchés, en 3:2, livrés en 1500×1000.** Le design system les prévoyait debout (900px de large, 4:5 dans la
 cellule-portrait) ; en septembre 2026 les avocates ont retenu les cadres
 horizontaux du reflex à la place des photos de téléphone. `PersonCell` et le
 portrait de la fiche suivent ce rapport — voir « Photographie et marque ».
@@ -443,7 +456,7 @@ Tout ce que le site dit aux moteurs dérive de `site` + `base` dans
 | Titre et description | `Base.astro` | `Page · Egidia` — le point médian, **jamais le tiret cadratin**. Ce qu'on cherche vient en tête, la marque ferme. Chaque gabarit compose les siens : les matières disent « Avocates en … à Bruxelles », les avocates « Nom · Avocate à Bruxelles ». |
 | Canonique | `Base.astro` | Absolue, avec le « / » final du `format: 'directory'`. La 404 n'en a pas : elle porte `noindex`. |
 | Plan du site | `@astrojs/sitemap` | `sitemap-index.xml` + `sitemap-0.xml`, générés au build depuis les routes. La 404 en est exclue. |
-| `robots.txt` | `src/pages/robots.txt.ts` | Généré, pour que le `Sitemap:` suive le domaine. **Sur ffosset.github.io il n'est pas lu** — un robots.txt ne vaut qu'à la racine de l'origine, et une project page ne peut pas y écrire. Ce n'est pas bloquant : sans robots.txt, tout est permis. |
+| `robots.txt` | `src/pages/robots.txt.ts` | Généré, pour que le `Sitemap:` suive le domaine. Un robots.txt ne vaut qu'à la racine de l'origine : à `www.egidia-avocates.be/robots.txt` il est lu (il ne pouvait pas l'être sur l'ancienne project page github.io). |
 | Données structurées | `src/lib/schema.js` | JSON-LD, un graphe par page. L'accueil porte le cabinet (`LegalService`), le site (`WebSite`) et les cinq matières (`Service`) ; chaque avocate sa `Person` ; chaque matière son `Service` ; et `Breadcrumb.astro` émet lui-même sa `BreadcrumbList`, depuis la même liste que le fil visible. Les entités se citent par `@id` stable (`/#cabinet`, `/avocates/<slug>/#personne`). |
 
 Une règle pour les données structurées : **on n'affirme que ce qui est vrai ET
@@ -451,25 +464,32 @@ Une règle pour les données structurées : **on n'affirme que ce qui est vrai E
 fourchette de prix, pas de note. Google pénalise le balisage qui promet ce
 que la page ne montre pas.
 
-**Le jour où egidia-avocates.be est raccordé** (le domaine est acheté, pas
-encore relié) :
+**Le domaine.** Le site vit à `https://www.egidia-avocates.be`, sur GitHub
+Pages, depuis le 11 septembre 2026. Ce qui tient l'ensemble :
 
-1. `astro.config.mjs` : `site: 'https://www.egidia-avocates.be'`, supprimer
-   `base`.
-2. Déposer un fichier `CNAME` contenant `www.egidia-avocates.be` dans `assets/`
-   (le `publicDir`) : GitHub Pages le lit à la racine de `dist/`.
-3. DNS chez le registrar : `www` en CNAME vers `ffosset.github.io`, et l'apex
-   en A vers les quatre adresses de GitHub Pages — puis cocher « Enforce HTTPS »
-   dans Settings › Pages.
-4. `legal.js` : `HEBERGEUR` reste GitHub Pages (c'est toujours lui), rien à
-   changer là.
-5. Search Console : ajouter la propriété du domaine, y soumettre
-   `https://www.egidia-avocates.be/sitemap-index.xml`. GitHub redirige de
-   lui-même l'ancienne adresse github.io vers le domaine, ce qui transfère
-   l'indexation.
+- `astro.config.mjs` : `site: 'https://www.egidia-avocates.be'`, pas de `base`.
+  `withBase()` est une fonction identité ; on continue de passer par elle.
+- `assets/CNAME` (le `publicDir`) contient `www.egidia-avocates.be` : GitHub
+  Pages le relit à chaque publication, un déploiement ne peut pas défaire le
+  domaine.
+- DNS chez Gandi (LiveDNS) : l'apex en A vers les quatre adresses de GitHub
+  Pages (`185.199.108–111.153`) et en AAAA vers les quatre `2606:50c0:800x::153`,
+  `www` en CNAME vers `ffosset.github.io.`, et un TXT
+  `_github-pages-challenge-ffosset` qui vérifie le domaine auprès du compte
+  GitHub. **Les enregistrements MX, SPF, DKIM et SRV de Gandi Mail restent
+  intacts** : c'est `info@egidia-avocates.be`.
+- GitHub redirige de lui-même l'apex vers `www`, et l'ancienne adresse
+  `ffosset.github.io/egidia-avocates/` vers le domaine.
+- `legal.js` : `HEBERGEUR` est GitHub Pages, ce qui reste vrai.
 
-Canoniques, plan du site, robots.txt et `@id` du JSON-LD suivent sans autre
-geste.
+Reste à faire côté cabinet, une fois : « Enforce HTTPS » dans Settings › Pages
+(disponible dès que le certificat est émis, dans l'heure qui suit le raccord) ;
+et dans la Search Console, une propriété *Domaine* `egidia-avocates.be` (TXT à
+poser chez Gandi, à côté du SPF) où soumettre
+`https://www.egidia-avocates.be/sitemap-index.xml`.
+
+Canoniques, plan du site, robots.txt et `@id` du JSON-LD dérivent tous de
+`site` : rien d'autre à toucher si le domaine changeait encore.
 
 ## Ce qui manque encore
 
@@ -484,8 +504,6 @@ geste.
   ligne directe (sa fiche affiche « Ligne directe à venir »).
 - LinkedIn absent pour Delplancke, Doyen, Ghymers et Vryens.
 - Liens utiles pour « Droit des MENA » — marqués `[Ajouter]` dans le PDF source.
-- Le domaine egidia-avocates.be est acheté mais pas encore raccordé ; la
-  marche à suivre est dans « Référencement ».
 - Pas de fiche d'établissement Google (Google Business Profile) : c'est elle
   qui place le cabinet sur le plan des résultats. À créer par le cabinet, avec
   l'adresse mot pour mot celle de `CONTACT.postale`.

@@ -35,7 +35,13 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
         {/* LA photo de la page, et la plus grande chose qu'elle peint : c'est
             elle que le navigateur doit faire partir en premier (`high`). Elle
             couvre le flanc droit du héros — les deux tiers de l'écran — et
-            toute la largeur une fois le panneau passé dessus. */}
+            toute la largeur une fois le panneau passé dessus.
+            `sizes` dit 80vw et non 65 : le cadre fait bien 62 % de la fenêtre,
+            mais le héros est plus haut que large pour un 3:2, donc `cover`
+            déborde en largeur, et le `scale(1.12)` en dessous ajoute encore un
+            cran. À 1440 px la photo peinte fait ~1215 px, soit 84 % — c'est
+            cette largeur-là, doublée sur Retina, que le navigateur doit
+            télécharger, sinon il étire un fichier trop petit. */}
         <ArcImage
           src={PHOTOS.equipe}
           alt={ALT.equipe}
@@ -43,7 +49,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
           objectPosition="50% 100%"
           loading="eager"
           fetchpriority="high"
-          sizes="(max-width: 1000px) 100vw, 65vw"
+          sizes="(max-width: 1000px) 100vw, 80vw"
         />
       </div>
       {/* LE FLANC DU BOUCLIER, d'un seul côté. Le bouclier du système garde

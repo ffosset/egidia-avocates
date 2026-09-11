@@ -47,9 +47,12 @@ const style = [ratio ? `aspect-ratio:${ratio}` : 'height:100%', `--sweep:${sweep
    propose jamais plus large que le fichier source — sharp n'agrandit pas, et
    une entrée de srcset qui ment fausse le choix. Les largeurs sont l'échelle
    commune du site : un portrait de cellule tombe sur 480 ou 800, le héros
-   sur 1200 ou 1600. */
+   sur 1200 ou 1600 — et, sur un écran Retina, sur 2400 ou 3000 : à deux
+   colonnes il peint jusqu'à 85 % de la fenêtre en pixels d'écran doublés,
+   ce qu'un fichier de 1600 ne couvre qu'en s'étirant de moitié, flou. Seule
+   une source qui atteint ces largeurs les reçoit (le filtre ci-dessous). */
 const image = photo(src);
-const LARGEURS = [400, 640, 800, 1200, 1600, 1900];
+const LARGEURS = [400, 640, 800, 1200, 1600, 1900, 2400, 3000];
 const widths = image ? LARGEURS.filter((w) => w <= image.width) : [];
 if (image && widths.at(-1) !== image.width) widths.push(image.width);
 ---
