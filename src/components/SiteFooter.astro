@@ -1,7 +1,7 @@
 ---
 import Page from './Page.astro';
 import Eyebrow from './Eyebrow.astro';
-import { CONTACT, nomArret } from '../data/site.js';
+import { CONTACT } from '../data/site.js';
 import { MATIERES } from '../data/matieres.js';
 import { withBase } from '../lib/base.js';
 ---
@@ -12,7 +12,7 @@ import { withBase } from '../lib/base.js';
         {/* Le blason ramène à l'accueil, en haut de page : même cible que le
             nom dans l'en-tête. */}
         <a href={withBase("/")} class="blason" aria-label="Egidia — accueil">
-          <img src={withBase("/logo-egidia-blanc.png")} alt="" width="480" height="545" />
+          <img src={withBase("/logo-egidia-blanc.png")} alt="" width="480" height="621" />
         </a>
         <div class="blurb">
           Cabinet bruxellois en droit des étrangers, de la famille, de l'aide sociale et de la jeunesse.
@@ -35,18 +35,12 @@ import { withBase } from '../lib/base.js';
       <div class="col">
         <Eyebrow>Contact</Eyebrow>
         <!-- Le courriel d'abord : c'est par lui qu'on écrit au cabinet. L'adresse
-             et son arrêt viennent ensuite, et ces deux-là se lisent ensemble —
-             elles se serrent donc l'une contre l'autre. -->
+             vient ensuite. Les arrêts et les distances de marche appartiennent
+             à la section « Nous trouver », qui a la place de les aligner et
+             le bouton qui va avec. -->
         <div class="liste">
           <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
-          <div class="lieu">
-            <span class="plain">{CONTACT.adresse}</span>
-            {/* Le pied ne porte QUE les noms d'arrêt : les distances de
-                marche appartiennent à la section « Nous trouver », qui a la
-                place de les aligner et le bouton qui va avec. Ici, elles
-                allongeraient une ligne déjà à l'étroit dans sa colonne. */}
-            <span class="plain">{CONTACT.transports.map(nomArret).join(' · ')}</span>
-          </div>
+          <span class="plain">{CONTACT.adresse}</span>
         </div>
       </div>
     </div>
@@ -133,16 +127,12 @@ import { withBase } from '../lib/base.js';
      où un bloc commence et où il continue. */
   .col { display: grid; gap: var(--space-4); align-content: start; }
   .liste { display: grid; gap: var(--space-2); align-content: start; }
-  /* L'adresse et son arrêt disent une seule chose — où l'on vient. Quatre pixels
-     les séparent, seize les séparent du courriel : le rapport de un à quatre se
-     voit, là où deux écarts voisins ne se verraient pas. */
-  .lieu { display: grid; gap: var(--space-1); margin-top: var(--space-2); }
-  .lieu .plain { line-height: 1.45; }
 
   /* Le blason se pose à nu sur le sauge obscur, sans puce crème dessous :
-     c'est sa version en tons de crème (`logo-egidia-blanc.png`, dérivée de la
-     couleur : brun -> crème pleine, caramel -> crème voilée, sauge -> crème
-     plus voilée) qui est faite pour les surfaces sombres. */
+     c'est sa version en tons de crème (`logo-egidia-blanc.png`, dérivée du
+     logo noir et blanc du cabinet : l'encre noire -> crème pleine, les gris
+     -> crème voilée, du plus sombre au plus clair) qui est faite pour les
+     surfaces sombres. */
   .blason { display: block; width: fit-content; }
   .blason img { height: 72px; width: auto; display: block; }
 
