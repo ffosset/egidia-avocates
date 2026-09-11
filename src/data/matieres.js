@@ -9,7 +9,7 @@ export const MATIERES = [
     resume:
       "Séjour, asile, regroupement familial, recours contre un ordre de quitter le territoire, nationalité.",
     intro:
-      "En droit des étrangers, les délais de recours sont très courts et un délai manqué se rattrape difficilement. Consultez-nous dès la réception d'une décision. Nous vous accompagnons devant les autorités administratives comme devant les juridictions de recours.",
+      "Le droit des étrangers régit l'entrée, le séjour et la protection internationale des personnes non ressortissantes du territoire belge. Notre cabinet accompagne les personnes confrontées à un refus de séjour, à un ordre de quitter le territoire ou engagées dans une procédure d'asile, et les représente devant l'Office des étrangers, le CGRA et le Conseil du contentieux des étrangers.",
     traite: [
       "Demande d'asile",
       'Regroupement familial',
@@ -46,7 +46,7 @@ export const MATIERES = [
     resume:
       "Suivi par le SAJ, suivi par le Tribunal de la Jeunesse et le SPJ, mineurs en danger, mineurs en conflit avec la loi, audition à la police.",
     intro:
-      "Quand un enfant est en danger ou qu'un fait qualifié infraction lui est reproché, il a droit à sa propre défense. Nous représentons l'enfant, et nous accompagnons les parents dans les procédures qui les concernent.",
+      "Le droit de la jeunesse concerne la protection des mineurs, qu'ils soient considérés comme étant en danger ou en conflit avec la loi. Notre cabinet représente les mineurs et leurs familles devant le service d'aide à la jeunesse (aide volontaire) ainsi que devant le tribunal de la jeunesse et le service de protection de la jeunesse (aide contrainte), mais aussi devant les forces de l'ordre, en cas d'audition à la police, en veillant au respect de leurs droits tout au long de la procédure.",
     traite: [
       "Mesures d'aide et de protection",
       'Placement et retour en famille',
@@ -71,7 +71,7 @@ export const MATIERES = [
     resume:
       "CPAS : revenu d'intégration, refus ou suspension d'aide, récupération d'indus, aide médicale urgente, questions d'accueil.",
     intro:
-      "Un refus du CPAS est une décision administrative, pas un verdict : elle se conteste devant le tribunal du travail. Beaucoup y renoncent faute de le savoir.",
+      "Le droit de l'aide sociale préserve le droit de vivre une vie conforme à la dignité humaine de toute personne présente sur le territoire belge. Notre cabinet assiste les personnes dont l'aide a été refusée ou supprimée par un CPAS et les représente devant les juridictions du travail, y compris lorsque cette question croise une problématique de séjour.",
     traite: [
       "Revenu d'intégration",
       "Refus ou suspension d'aide",
@@ -93,7 +93,7 @@ export const MATIERES = [
     resume:
       "Tutelle, détermination de l'âge, demande de séjour, hébergement, scolarité, regroupement familial.",
     intro:
-      "Arriver seul et mineur dans un pays inconnu, c'est affronter deux procédures à la fois : celle du séjour et celle de la protection. Nous assurons le lien entre les deux.",
+      "Le droit des mineurs étrangers non accompagnés (MENA) régit la prise en charge, la tutelle et le séjour des mineurs isolés arrivés sur le territoire belge. Notre cabinet accompagne ces jeunes dans leurs démarches de séjour, en lien avec leur tuteur, et les représente devant l'Office des étrangers et le CGRA lorsqu'une demande de protection internationale est introduite.",
     traite: [
       "Signalement et désignation d'un tuteur",
       "Contestation des décisions en matière de détermination de l'âge",
@@ -111,7 +111,8 @@ export const MATIERES = [
     nb: 2,
     resume:
       "Séparation, divorce, hébergement des enfants, pensions alimentaires, violences intrafamiliales, filiation, refus de mariage, rectification d'un acte d'état civil.",
-    intro: 'Notre rôle est de préserver votre sécurité et celle de vos enfants.',
+    intro:
+      "Le droit de la famille couvre les relations entre ex-conjoints (mariés ou non), parents et enfants, suite à une séparation, un divorce ou en cas de désaccord sur l'autorité parentale, l'hébergement et les contributions alimentaires. Il couvre également tout ce qui touche à l'état civil des personnes (établissement / contestation de filiation, refus de mariage / cohabitation / reconnaissance, rectification d'un acte d'état civil, nationalité, etc.). Notre cabinet accompagne les personnes dans ces procédures devant le tribunal de la famille.",
     traite: [
       'Divorce et séparation',
       'Hébergement des enfants',
