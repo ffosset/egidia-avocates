@@ -694,6 +694,23 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
   }
   /* Dans le panneau, la mesure est déjà donnée par la colonne. */
   .hono-panneau .body { max-width: none; }
+  /* Sur une colonne, le panneau n'est plus une colonne posée à côté du propos :
+     c'est un aplat, et il va d'un filet de marge à l'autre comme la bande des
+     valeurs. Son texte reste à --content-inset du bord — la loi des marges —
+     donc le pas intérieur vaut la gouttière, et non --cell-pad : la ligne du
+     panneau tombe sur celle du propos au-dessus.
+
+     « Une colonne » n'est pas un point de rupture : c'est `auto-fit` qui
+     décide, quand deux pistes de 400px et l'écart (--space-8, 64px) ne
+     tiennent plus dans la grille. La requête pose la même condition, sur les
+     mêmes nombres (voir `.hono-grid`). */
+  .hono-grid { container-type: inline-size; }
+  @container (width < calc(2 * 400px + 64px)) {
+    .hono-panneau {
+      margin-inline: calc(-1 * var(--gutter));
+      padding-inline: var(--gutter);
+    }
+  }
 
   .body { font-size: var(--fs-body); line-height: 1.6; }
 
