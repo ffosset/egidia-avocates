@@ -2,6 +2,7 @@
 // Source de vérité : brand/contenu-site-web.txt.
 
 import { MATIERES } from './matieres.js';
+import { AVOCATES } from './avocates.js';
 
 export const CONTACT = {
   adresse: 'Rue de Livourne 13, 1060 Bruxelles (1er étage)',
@@ -71,17 +72,22 @@ export const LIENS_ACCUEIL = [
 ];
 
 // L'ordre suit celui des sections de l'accueil.
-// « Matières » porte en plus la liste de ses matières : l'intitulé reste un
+// « Matières » et « Équipe » portent en plus leur liste : l'intitulé reste un
 // lien vers la section de l'accueil — le déroulant n'est qu'un raccourci vers
-// chaque matière, jamais le seul chemin. La liste se déduit de `matieres.js`,
-// pour qu'une matière ajoutée là apparaisse ici sans qu'on y pense.
+// chaque matière ou chaque avocate, jamais le seul chemin. Les listes se
+// déduisent de `matieres.js` et `avocates.js`, pour qu'une entrée ajoutée là
+// apparaisse ici sans qu'on y pense.
 export const NAV = [
   {
     href: '/#matieres',
     label: 'Matières',
     enfants: MATIERES.map((m) => ({ href: `/matieres/${m.id}`, label: m.titre })),
   },
-  { href: '/#equipe', label: 'Équipe' },
+  {
+    href: '/#equipe',
+    label: 'Équipe',
+    enfants: AVOCATES.map((a) => ({ href: `/avocates/${a.slug}`, label: a.nom })),
+  },
   { href: '/#honoraires', label: 'Honoraires' },
   { href: '/#contact', label: 'Contact' },
 ];

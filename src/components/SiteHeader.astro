@@ -14,9 +14,10 @@ import { withBase } from '../lib/base.js';
       sépare le mot-symbole de « Matières » est le trait même où commence la
       photographie du héros, juste en dessous.
 
-    « Matières » porte en plus un déroulant : les cinq matières y pendent sous
-    la cellule. L'intitulé reste un LIEN vers la section de l'accueil — le
-    déroulant est un raccourci, jamais un passage obligé.
+    « Matières » et « Équipe » portent en plus un déroulant : les cinq
+    matières, les sept avocates y pendent sous la cellule. L'intitulé reste un
+    LIEN vers la section de l'accueil — le déroulant est un raccourci, jamais
+    un passage obligé.
 
     Sous 1000px la barre disparaît dans un menu. Il repose sur `<details>` :
     il s'ouvre et se ferme sans JavaScript. */
@@ -152,17 +153,17 @@ import Icon from './Icon.astro';
      cellule ne repeint que son encre. */
   .cells a:focus-visible { color: var(--survol-encre); }
 
-  /* ---- Le déroulant des matières ----
-     « Matières » RESTE un lien : il mène à la section de l'accueil, comme
-     avant. Le déroulant ne fait que raccourcir le chemin vers une matière
-     précise — il ne capture pas le clic, et rien n'y est accessible seulement
-     par lui. Il s'ouvre au survol et au clavier (`:focus-within`), sans
+  /* ---- Les déroulants (matières, avocates) ----
+     « Matières » et « Équipe » RESTENT des liens : ils mènent à leur section
+     de l'accueil, comme avant. Le déroulant ne fait que raccourcir le chemin
+     vers une matière ou une avocate précise — il ne capture pas le clic, et
+     rien n'y est accessible seulement par lui. Il s'ouvre au survol et au clavier (`:focus-within`), sans
      JavaScript.
 
      Le panneau reprend la boîte de la cellule : il déborde d'un filet à
      gauche pour retomber pile sur celui de la cellule, et pend sous le filet
      bas de l'en-tête. Ses intitulés gardent leur casse — ce sont des titres de
-     matières, pas des étiquettes de barre. */
+     matières et des noms, pas des étiquettes de barre. */
   .chevron {
     display: flex;
     transition: transform var(--dur-fast) var(--ease-standard);
@@ -273,7 +274,8 @@ import Icon from './Icon.astro';
     .drawer a:hover { color: var(--survol-encre); }
   }
   /* Sous le point de rupture il n'y a pas de déroulant : les matières se
-     rangent sous « Matières », en retrait et dans leur casse propre. */
+     rangent sous « Matières », les avocates sous « Équipe », en retrait et
+     dans leur casse propre. */
   .drawer a.enfant {
     padding-left: calc(var(--gutter) + var(--space-5));
     font-weight: var(--fw-medium);
