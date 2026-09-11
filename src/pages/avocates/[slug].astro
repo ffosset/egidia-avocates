@@ -170,6 +170,10 @@ const descriptionSeo = `${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` 
     margin-left: calc(-1 * var(--bleed));
     width: calc(100% + var(--bleed));
     aspect-ratio: 3 / 2;
+    /* PAR-DESSUS le filet plein (z-index 5), comme les photographies de
+       l'accueil : le filet ne le raye pas, seul son voile (7) le traverse. */
+    position: relative;
+    z-index: 6;
   }
   /* Une fois les colonnes empilées, le portrait n'est plus une colonne mais un
      bandeau : il traverse alors la fenêtre D'UN BORD À L'AUTRE, et non plus du
