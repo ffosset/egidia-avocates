@@ -158,7 +158,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
           <Eyebrow>Équipe</Eyebrow>
           <h2 class="section-title">Nos avocates</h2>
         </RuledCell>
-        <RuledCell align="center" minHeight={280}>
+        <RuledCell align="center" minHeight={280} class="sub-cell">
           <p class="sub">
             Une avocate pour suivre votre dossier. Cliquez sur un nom pour lire son parcours,
             ses publications, et la contacter directement.
@@ -868,5 +868,13 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
        titre ferré à gauche casse au fer, comme tous les autres titres de la
        page. */
     .band-title { font-size: var(--fs-h2); white-space: normal; }
+    /* Le mode d'emploi de l'équipe tombe : au téléphone, le titre est suivi
+       directement des portraits. La phrase disait comment lire un registre
+       à quatre colonnes ; sur une colonne, il n'y a rien à expliquer, et sa
+       cellule de 280px repoussait les portraits d'un écran entier. C'est la
+       CELLULE qu'on retire, pas le paragraphe : une cellule vide garderait
+       sa hauteur et son filet. La classe est posée sur un composant, donc
+       hors de la portée de cette feuille : `:global`, ancré sur la section. */
+    .ruled-section :global(.sub-cell) { display: none; }
   }
 </style>
