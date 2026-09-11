@@ -745,7 +745,10 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   /* Le bouton se pose sous les arrêts, à la même mesure qu'eux, et respire du
      pas de la pile — jamais collé à la dernière ligne. */
   .cell-cta { max-width: var(--cell-measure); margin-top: var(--space-6); }
-  .map-cell { grid-column: span 2; border-bottom: var(--divider); }
+  /* La cellule est déjà étirée à la hauteur de la rangée par la grille ; en
+     grille elle-même, elle étire le plan à son tour — sinon il garde ses
+     320px de plancher et laisse du papier nu sous lui. */
+  .map-cell { display: grid; grid-column: span 2; border-bottom: var(--divider); }
   /* À une seule colonne, `span 2` fabriquerait une colonne implicite et
      casserait la grille : on le retire. Requête de CONTENEUR — la mesure est
      celle du registre, pas celle de l'écran. */

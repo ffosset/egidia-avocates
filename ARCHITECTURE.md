@@ -91,9 +91,19 @@ commerces). Quatre décisions :
    le repli.
 
 Trois états, donc, et le script est le seul à pouvoir les franchir : au repos
-(aucune requête) → chargé (le voile garde la molette) → manipulable. Sans
-JavaScript, l'écran d'appel reste ce qu'il est — l'adresse, sous un intitulé
-qui dit ce qui manque : on ne perd que le plan.
+(aucune requête) → chargé (le voile garde la molette) → manipulable.
+
+**L'écran d'appel est déjà un plan.** Au repos, la cellule ne porte pas une
+phrase de mise en garde mais une image du quartier — `assets/photos/plan.jpg`,
+un plan gris du quartier Louise exporté de Mapbox par le cabinet et servi
+depuis le site lui-même : l'afficher n'envoie rien à personne. Le crédit
+« © Mapbox © OpenStreetMap » que Mapbox exige sur toute image statique est
+dans le coin. `object-fit: cover` la fait remplir la cellule, en largeur comme
+en hauteur, quelle que soit sa taille.
+L'adresse et le bouton tiennent au milieu, sur un carton de papier sans filet.
+Le plan interactif, lui, reste celui de Google — au clic. Sans JavaScript,
+l'écran d'appel reste ce qu'il est — le plan et l'adresse : on ne perd que
+l'interactif.
 
 **Le plan montre les commerces, et c'est assumé.** Restaurants et hôtels
 appartiennent au fond de Google, qui n'offre AUCUN moyen de les retirer :

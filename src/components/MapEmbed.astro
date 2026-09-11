@@ -25,6 +25,16 @@
  * Le consentement n'est PAS mémorisé : ni cookie, ni `localStorage`. Le site ne
  * garde rien sur la machine du visiteur — pas même le souvenir d'avoir dit oui.
  *
+ * ---- L'ÉCRAN D'APPEL EST DÉJÀ UN PLAN ----
+ * Au repos, la cellule ne montre pas une phrase de mise en garde mais une IMAGE
+ * du quartier : `/photos/plan.jpg`, un plan gris du quartier Louise exporté de
+ * Mapbox par le cabinet et servi depuis le site lui-même — aucune requête ne
+ * part vers un tiers pour l'afficher. Mapbox exige son crédit et celui
+ * d'OpenStreetMap sur toute image statique : il est dans le coin.
+ * `object-fit: cover` la fait remplir la cellule quelle que soit sa taille ;
+ * l'adresse et le bouton se posent au milieu, sur un carton de papier. Le
+ * plan interactif, lui, reste celui de Google, au clic.
+ *
  * ---- LE STYLE EST UNE TEINTE, PAS UN EFFACEMENT ----
  * La teinte est légère et les libellés restent lisibles ; dès que la carte est
  * activée, elle retombe presque à ses vraies couleurs — au moment où l'on s'en
@@ -49,6 +59,11 @@ interface Props {
 }
 const { lat, lon, zoom = 15, label, query, tint = true, class: klass } = Astro.props;
 import Button from './Button.astro';
+import { withBase } from '../lib/base.js';
+
+/* L'aperçu au repos. Chemin propre à la racine, base appliquée au rendu — comme
+   les photographies. */
+const apercu = withBase('/photos/plan.jpg');
 
 /* Une adresse géocodée pose une épingle plus juste que des coordonnées
    approchées (voir ARCHITECTURE, « ce qui manque encore »). « (1er étage) »
@@ -67,18 +82,21 @@ const src = cle
   data-title={label ? `Carte : ${label}` : 'Carte du cabinet'}
 >
   {/* L'écran d'appel. Il tient tout seul : sans script, il reste ce qu'il
-      est — l'adresse, sous un intitulé qui dit ce qui manque. Le bouton et
-      sa phrase, eux, ne s'allument que si le script tourne (classe `js`) :
-      pas de commande morte. */}
+      est — le plan du quartier et l'adresse. Le bouton, lui, ne s'allume que
+      si le script tourne (classe `js`) : pas de commande morte. */}
   <div class="consent">
-    <p class="consent-lead">{label ?? 'Le plan du cabinet'}</p>
-    <p class="note">
-      Le plan est hébergé par Google. L'afficher lui transmet votre adresse IP.
-      Rien n'est envoyé tant que vous ne l'avez pas demandé.
-    </p>
-    {/* Le même bouton que « Trouver l'itinéraire » dans la cellule voisine :
-        `secondary`, le cadre nu — l'appel du site reste d'écrire au cabinet. */}
-    <Button variant="secondary" class="load" data-load>Afficher le plan</Button>
+    <img class="apercu" src={apercu} alt="" width="1600" height="630" loading="lazy" decoding="async" />
+    <div class="carton">
+      <p class="consent-lead">{label ?? 'Le plan du cabinet'}</p>
+      {/* Le même bouton que « Trouver l'itinéraire » dans la cellule voisine :
+          `secondary`, le cadre nu — l'appel du site reste d'écrire au cabinet. */}
+      <Button variant="secondary" class="load" data-load>Afficher le plan</Button>
+    </div>
+    {/* L'attribution que les conditions de Mapbox exigent. */}
+    <small class="credit">
+      © <a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noopener">Mapbox</a>
+      © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>
+    </small>
   </div>
 
   {/* Le voile : posé une fois le plan chargé, il rend la molette à la page.
@@ -169,37 +187,60 @@ const src = cle
     position: absolute;
     inset: 0;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
     padding: var(--cell-pad);
     background: var(--surface-inset);
   }
   .map-wrap.loaded .consent { display: none; }
 
+  /* L'aperçu couvre la cellule, toujours — en largeur comme en hauteur.
+     Même teinte de repos que le plan Google voilé : au clic, on ne change pas
+     de papier, on n'ôte que le voile. */
+  .apercu {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: sepia(0.24) saturate(0.72) hue-rotate(-6deg) brightness(1.02) contrast(1.02);
+  }
+  /* Le carton : du papier posé au milieu du plan, sans filet — le seul cadre
+     de l'écran est celui du bouton. L'adresse et le bouton n'ont pas à se
+     battre avec les noms de rue. */
+  .carton {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 34rem;
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface-page);
+  }
   .consent-lead {
     margin: 0;
-    max-width: 34rem;
     font-size: 16px;
     color: var(--text-body);
   }
-  .note {
-    margin: var(--stack-tight) 0 0;
-    max-width: 34rem;
-    font-size: var(--fs-label);
-    line-height: 1.5;
-    color: var(--text-label, var(--text-muted));
+  .credit {
+    position: absolute;
+    right: var(--space-2);
+    bottom: var(--space-1);
+    padding: 0 var(--space-1);
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    background: color-mix(in srgb, var(--surface-page) 80%, transparent);
   }
-  /* Ni la phrase ni le bouton n'ont de sens sans script : ils ne s'allument
-     qu'une fois la classe posée. */
-  .consent .note, .consent .load { display: none; }
-  .map-wrap.js .note { display: block; }
-  .map-wrap.js .load { display: inline-flex; }
+  .credit a { color: inherit; }
 
-  /* Le bouton est celui du site (`Button`, `secondary`) : ici on ne pose que
-     sa place. `.consent .load` bat le `.btn` du composant, sinon le
+  /* Le bouton n'a pas de sens sans script : il ne s'allume qu'une fois la
+     classe posée. `.consent .load` bat le `.btn` du composant, sinon le
      `display: none` de repos et l'`inline-flex` du bouton seraient à égalité. */
+  .consent .load { display: none; }
+  .map-wrap.js .load { display: inline-flex; }
   .load { flex-shrink: 0; margin-top: var(--stack-tight); }
 
   /* ---- Le voile ---- */
