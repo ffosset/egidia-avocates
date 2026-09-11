@@ -97,7 +97,18 @@ export const NAV = [
   {
     href: '/#equipe',
     label: 'Équipe',
-    enfants: AVOCATES.map((a) => ({ href: `/avocates/${a.slug}`, label: a.nom })),
+    // Le déroulant est trié par nom de famille, mais l'œil lit le bord gauche
+    // d'une liste — le prénom. Le nom est donc rendu en `fort`, pour que la
+    // clé de tri se voie. Il commence après la dernière espace : les prénoms
+    // composés restent entiers.
+    enfants: AVOCATES.map((a) => {
+      const coupe = a.nom.lastIndexOf(' ');
+      return {
+        href: `/avocates/${a.slug}`,
+        label: a.nom.slice(0, coupe),
+        fort: a.nom.slice(coupe + 1),
+      };
+    }),
   },
   { href: '/#honoraires', label: 'Honoraires' },
   { href: '/#contact', label: 'Contact' },

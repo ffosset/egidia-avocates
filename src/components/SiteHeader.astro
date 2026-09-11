@@ -38,7 +38,9 @@ import Icon from './Icon.astro';
           {l.enfants && (
             <div class="sub">
               {l.enfants.map((c) => (
-                <a href={withBase(c.href)} class="eg-survol">{c.label}</a>
+                <a href={withBase(c.href)} class="eg-survol">
+                  <span>{c.label}{c.fort && <> <b>{c.fort}</b></>}</span>
+                </a>
               ))}
             </div>
           )}
@@ -57,7 +59,9 @@ import Icon from './Icon.astro';
           <>
             <a href={withBase(l.href)} class="eg-survol">{l.label}</a>
             {l.enfants?.map((c) => (
-              <a href={withBase(c.href)} class="eg-survol enfant">{c.label}</a>
+              <a href={withBase(c.href)} class="eg-survol enfant">
+                <span>{c.label}{c.fort && <> <b>{c.fort}</b></>}</span>
+              </a>
             ))}
           </>
         ))}
@@ -227,6 +231,24 @@ import Icon from './Icon.astro';
     text-transform: none;
   }
   .sub a:first-child { border-top: 0; }
+  /* La clé de tri mise en avant : le nom de famille des avocates, pour qu'une
+     liste triée sur lui se lise comme telle (voir `NAV`). Un cran de graisse
+     ne suffisait pas à l'œil — il prend DEUX axes : le prénom recule au
+     régulier, le nom monte au demi-gras ET à l'encre des titres, quand le lien
+     est en encre atténuée. Au survol, tout le nom prend le caramel, comme
+     avant : le `<b>` hérite. Le `<span>` qui enveloppe l'intitulé n'est pas
+     décoratif : le lien est une boîte flexible à `gap`, et deux mots posés
+     directement dedans seraient deux items — l'espace entre eux deviendrait
+     le `gap`. */
+  .sub a:has(b),
+  .drawer a:has(b) { font-weight: var(--fw-regular); }
+  .sub b,
+  .drawer b {
+    font-weight: var(--fw-semibold);
+    color: var(--text-heading);
+  }
+  .sub a:focus-visible b,
+  .drawer a:focus-visible b { color: inherit; }
 
   /* ---- Le menu, sous le point de rupture ---- */
   .menu { display: none; }
@@ -295,6 +317,8 @@ import Icon from './Icon.astro';
     .cells a:hover,
     .menu > summary:hover,
     .drawer a:hover { color: var(--survol-encre); }
+    .sub a:hover b,
+    .drawer a:hover b { color: inherit; }
   }
   /* Sous le point de rupture il n'y a pas de déroulant : les matières se
      rangent sous « Matières », les avocates sous « Équipe », en retrait et
