@@ -157,4 +157,43 @@ const partage = {
     }
     html { scroll-behavior: auto; }
   }
+
+  /* ---- SUR LE PAPIER ----
+     Ce qu'on imprime ici, c'est la fiche d'une avocate qu'on emporte au
+     rendez-vous, ou l'adresse et les accès du cabinet. Une feuille n'a ni
+     survol, ni menu, ni défilement : tout ce qui n'existe que pour l'écran en
+     sort — l'en-tête et son menu, le pied de page, les filets de marge (qui
+     sont `fixed`, donc se répéteraient sur CHAQUE feuille), le sommaire
+     collant des pages légales, le bouton qui charge le plan.
+
+     Les aplats tombent : encre noire sur blanc, et le panneau sauge de l'aide
+     juridique, dont le texte est crème, redevient lisible — c'est la raison du
+     `color` forcé, pas un goût. Les photographies restent, sauf celle du
+     héros, qui ne dit rien qu'on emporte.
+
+     Un lien imprimé ne se clique pas : les adresses sortantes s'écrivent après
+     le libellé. `LinkList` écrit déjà la sienne en clair, on ne la double pas ;
+     `mailto:` et `tel:` montrent déjà l'adresse et le numéro. */
+  @media print {
+    *, *::before, *::after {
+      background: transparent !important;
+      color: #000 !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+    html { overflow-x: visible; }
+    header, footer, .skip, .frame, .sticky, .hero-photo, .load, .veil { display: none !important; }
+    #contenu { padding: 0; }
+    a { text-decoration: none; }
+    a[href^="http"]:not([href*="egidia-avocates.be"])::after {
+      content: " (" attr(href) ")";
+      font-size: 0.85em;
+      overflow-wrap: anywhere;
+    }
+    .links a::after { content: none; }
+    h1, h2, h3 { break-after: avoid; }
+    li, .row, .block, .card, .cell, picture, img { break-inside: avoid; }
+    /* Le cadre du plan n'a pas été chargé : l'aperçu servi par le site suffit. */
+    iframe { display: none; }
+  }
 </style>
