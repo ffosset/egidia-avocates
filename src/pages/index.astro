@@ -620,6 +620,24 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
      `auto-fit` sur une piste de 400px minimum — donc pas de point de rupture de
      plus à tenir : dès que deux colonnes ne tiennent plus, il n'y en a qu'une. */
   .hono { padding: var(--section-y) 0; border-top: var(--divider); }
+  /* La surface de la section est le sable même des filets : ils s'y effacent.
+     La section passe donc PAR-DESSUS les filets pleins (z-index 6), comme un
+     aplat, et les redessine dans une encre qui se lit sur le sable — même
+     calcul que `PageRules`, la section faisant la largeur de la fenêtre. Le
+     voile (7) la traverse aussi, à 8 % de sable sur du sable : invisible. */
+  .hono { position: relative; z-index: 6; }
+  .hono::before,
+  .hono::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--line-page-rule-on-sable);
+    pointer-events: none;
+  }
+  .hono::before { left:  calc(max(0px, (100% - var(--page-max)) / 2) + var(--page-margin)); }
+  .hono::after  { right: calc(max(0px, (100% - var(--page-max)) / 2) + var(--page-margin)); }
   /* Le titre, le texte et le renvoi cassent tous sur la même verticale : la
      mesure est portée par la colonne, une seule fois (voir RuledCell). */
   .hono-propos {
