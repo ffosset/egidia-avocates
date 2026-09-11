@@ -1,12 +1,14 @@
 ---
 /** Liste éditoriale : filet fin et tiret caramel, jamais de disque coloré.
     `marker="check"` remplace le tiret par la coche caramel des papiers à
-    fournir (voir `/aide-juridique`) : même glyphe, même couleur, même taille. */
+    fournir (voir `/aide-juridique`) : même glyphe, même couleur, même taille.
+    `rules={false}` retire les filets : la liste n'est plus un registre, c'est
+    une simple énumération, et ses lignes se resserrent d'un cran. */
 import Icon from './Icon.astro';
-interface Props { items: string[]; columns?: number; marker?: 'dash' | 'check' }
-const { items, columns = 1, marker = 'dash' } = Astro.props;
+interface Props { items: string[]; columns?: number; marker?: 'dash' | 'check'; rules?: boolean }
+const { items, columns = 1, marker = 'dash', rules = true } = Astro.props;
 ---
-<ul style={`grid-template-columns:repeat(${columns},1fr)`}>
+<ul class:list={{ plain: !rules }} style={`grid-template-columns:repeat(${columns},1fr)`}>
   {items.map((it) => (
     <li>
       {marker === 'check' ? (
@@ -20,9 +22,16 @@ const { items, columns = 1, marker = 'dash' } = Astro.props;
 </ul>
 
 <style>
+  /* ---- LE DÉBORD ----
+     Le même que celui de `LinkList` : un filet doit traverser TOUT ce qui le
+     contient. Là où la liste vit entre deux filets verticaux — la colonne de
+     texte des pages intérieures, au bureau — le contenant pose `--list-bleed`
+     et les lignes vont d'un filet à l'autre ; le padding reprend la même
+     valeur, et le texte ne bouge pas. Sans rien de posé, la liste fait la
+     largeur de son texte, comme avant. */
   ul {
     list-style: none;
-    margin: 0;
+    margin: 0 calc(-1 * var(--list-bleed, 0px));
     padding: 0;
     display: grid;
     column-gap: var(--space-7);
@@ -31,11 +40,15 @@ const { items, columns = 1, marker = 'dash' } = Astro.props;
     display: flex;
     gap: var(--space-4);
     align-items: baseline;
-    padding: var(--space-4) 0;
+    padding: var(--space-4) var(--list-bleed, 0px);
     border-top: var(--divider);
     font-size: var(--fs-body);
     line-height: 1.5;
   }
+  /* Sans filets, le pas d'une ligne à l'autre n'a plus à faire place à un
+     trait : il tombe au plus serré de la pile — huit pixels de part et
+     d'autre, seize entre deux lignes. */
+  .plain li { border-top: 0; padding-block: var(--space-2); }
   .dash {
     width: 14px;
     height: 1px;
