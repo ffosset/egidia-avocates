@@ -51,6 +51,14 @@ const { avocate, equipeHref = '/#equipe' } = Astro.props;
        15px semi-gras est du texte courant, il en faut 4,5. Le brun moyen, lui,
        monte à 6,2:1 et reste dans la palette. */
     --text-label: var(--brun-moyen);
+    /* Le lit du survol est le voile de caramel — la couleur même de la bande.
+       « Nous trouver » s'y couchait donc sans que rien ne change : un bouton
+       qui prend le fond de son conteneur n'a pas de survol. Comme sur le
+       panneau des honoraires, le conteneur repose le lit : sur le voile, le
+       premier cran n'est pas un caramel plus franc (l'encre n'y tiendrait pas,
+       voir `tokens.css`), c'est le papier de la page qui remonte sous le
+       bouton. */
+    --survol-aplat: var(--surface-page);
   }
   /* Deux colonnes égales tant qu'elles tiennent, puis empilées — le point de
      bascule est donné par la mesure du texte (en ch), pas par un pixel deviné. */
