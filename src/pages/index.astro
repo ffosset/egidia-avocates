@@ -238,7 +238,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
           du haut. Aucune ne porte `align` : les quatre partent du HAUT, comme
           les trois titres qu'elles portent. Le centrage n'avait de sens que
           tant qu'un lien était posé au pied de la cellule. */}
-      <RuledGrid min={320} maxCols={3} noTop>
+      <RuledGrid min={320} maxCols={3} noTop class="contact-grid">
         <RuledCell minHeight={320}>
           <Eyebrow>Contact</Eyebrow>
           <h2 class="section-title cell-lead">Les consultations ont lieu uniquement sur rendez-vous</h2>
@@ -765,14 +765,34 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
   }
 
   /* ---- 6. CONTACT ---- */
-  /* Le même air au-dessus que les honoraires et les liens utiles : le registre
-     est POSÉ dans la section, à `--section-y` du filet de frontière. Il reste
-     ouvert par le haut (`noTop`), comme celui des liens : ses colonnes montent
-     du contenu vers l'air sans qu'un trait vienne les coiffer — le seul filet
-     horizontal au-dessus est celui de la frontière. Rien dessous : sa dernière
-     rangée ferme la section, et la suivante vient tomber sur ce filet
-     (« UNE frontière, UN filet »). */
-  #contact { padding-top: var(--section-y); }
+  /* Le même air au-dessus que les honoraires et les liens utiles — mais les
+     colonnes le TRAVERSENT : les filets verticaux montent jusqu'au filet de
+     frontière, seul trait horizontal au-dessus du registre (`noTop`). L'air
+     n'est donc pas un padding de la section, qui laisserait les filets en
+     suspens : il est celui du registre lui-même. Son filet gauche est une
+     bordure, il enveloppe ce padding tout seul. Les filets de droite, eux,
+     sont ceux des cellules, et une cellule ne monte pas plus haut que son
+     contenu : chacune prolonge donc son filet vers le haut, d'exactement l'air
+     du registre. Toutes le font, pas seulement la première rangée — laquelle
+     dépend du nombre de colonnes — et c'est sans effet : une cellule de
+     rangée basse redessine le filet de la cellule au-dessus, au même pixel,
+     puisqu'elles partagent leur bord de colonne. La carte, qui n'est pas une
+     RuledCell, le fait comme les autres. Rien dessous : la dernière rangée
+     ferme la section (« UNE frontière, UN filet »). */
+  /* `:global` : la classe est posée sur la racine de RuledGrid, que la portée
+     d'Astro ne franchit pas (même raison que `.sub-cell`). */
+  #contact :global(.contact-grid) { padding-top: var(--section-y); }
+  #contact :global(.contact-grid > *) { position: relative; }
+  #contact :global(.contact-grid > *)::after {
+    content: '';
+    position: absolute;
+    top: calc(-1 * var(--section-y));
+    bottom: 0;
+    right: -1px;
+    width: 1px;
+    background: var(--line-page-rule);
+    pointer-events: none;
+  }
   .cell-lead { max-width: 16ch; }
   .cell-h3 {
     font-family: var(--type-subtitle-family);
