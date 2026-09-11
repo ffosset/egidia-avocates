@@ -237,16 +237,15 @@
      va nulle part n'a pas besoin d'être découpé, il fond. */
   --survol-aplat: var(--caramel-voile);
 
-  /* L'ENCRE — le nom passe au brun profond. Sur le voile il tient à 12:1, et
-     sur le caramel plein du bandeau des portraits — le seul endroit où le lit
-     monte d'un cran de plus — encore à 4,3:1, le maximum que la palette
-     permette sur une valeur aussi moyenne. */
+  /* L'ENCRE — le nom passe au brun profond. Sur le voile il tient à 12:1,
+     partout : le bandeau des portraits se couche dans le même voile que les
+     cellules du registre. */
   --survol-encre: var(--brun-profond);
 
-  /* LA MARQUE — le point chaud, là où le caramel devient une SURFACE : le
-     bandeau des portraits, la teinte posée sur la photographie. Le caramel
-     plein, celui que le balayage étalait autrefois sur toute la cellule,
-     réduit à ce qui le porte. */
+  /* LA MARQUE — le point chaud, là où le caramel devient une SURFACE : la
+     teinte posée sur la photographie des portraits. Le caramel plein, celui
+     que le balayage étalait autrefois sur toute la cellule, réduit à ce qui
+     le porte. */
   --survol-marque: var(--caramel);
 
   /* LE CARRÉ — le même point chaud, mais posé EN PETIT SUR LE VOILE, et c'est

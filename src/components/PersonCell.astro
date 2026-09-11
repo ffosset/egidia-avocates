@@ -104,13 +104,15 @@ const Tag = href ? 'a' : 'div';
      fois — c'est la seule surface du site où le lit prend deux formes, parce
      qu'elle est la seule à être faite de deux matières.
 
-     LE BANDEAU s'allume en caramel plein. Il est nu au repos, comme toute
-     surface du site avant qu'on la touche ; sous le doigt il devient le point
-     chaud du geste — la même marque que la teinte posée sur la photographie
-     juste au-dessus, pour que les deux matières ne s'allument qu'une fois.
+     LE BANDEAU se couche dans le même voile que les cellules du registre des
+     matières. Il est nu au repos, comme toute surface du site avant qu'on la
+     touche ; sous le doigt il prend le lit de tout le monde, pas un cran de
+     plus — une avocate survolée s'allume comme une matière survolée, et les
+     deux registres de l'accueil répondent d'une seule voix.
 
-     LA PHOTOGRAPHIE reçoit le même caramel en `multiply` — elle n'a pas de
-     fond à repeindre, elle EST le fond. `multiply` teinte au lieu de couvrir :
+     LA PHOTOGRAPHIE reçoit le caramel plein en `multiply` — elle n'a pas de
+     fond à repeindre, elle EST le fond. Le voile y serait invisible ; c'est la
+     marque, le point chaud du geste, qui la teinte. `multiply` teinte au lieu de couvrir :
      les valeurs du portrait passent sous la couleur au lieu d'être effacées, et
      le visage reste un visage. À .3, la teinte se voit sans que la
      photographie cesse d'être une photographie ; c'est ce qui restait de mieux
@@ -145,7 +147,7 @@ const Tag = href ? 'a' : 'div';
      le nom, elle lui survivrait et laisserait un brun moyen sur le caramel. La
      flèche suit, par `currentColor`. */
   .clickable:focus-visible .band {
-    background: var(--survol-marque);
+    background: var(--survol-aplat);
     color: var(--survol-encre);
   }
   .clickable:focus-visible .media::after { opacity: .3; }
@@ -158,7 +160,7 @@ const Tag = href ? 'a' : 'div';
      qu'on l'a touché (voir `styles/survol.css`). */
   @media (hover: hover) {
     .clickable:hover .band {
-      background: var(--survol-marque);
+      background: var(--survol-aplat);
       color: var(--survol-encre);
     }
     .clickable:hover .media::after { opacity: .3; }
