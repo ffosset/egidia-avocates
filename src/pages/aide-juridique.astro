@@ -146,6 +146,32 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
   @media (--lap) {
     .aplat { height: calc(100% + var(--debord)); }
   }
+  /* Empilé sous le corps, l'aplat n'est plus une colonne : c'est une bande,
+     et il fait comme la photo du registre de l'accueil — il franchit les
+     filets et va d'un bord à l'autre de l'écran. La colonne commence à
+     --content-inset du bord ; c'est cette distance qu'il rend.
+
+     « Empilé » n'est pas un point de rupture : c'est `flex-wrap` qui décide,
+     quand les deux bases (38ch + 30ch) et la gouttière ne tiennent plus dans
+     la ligne. La requête de conteneur pose EXACTEMENT la même condition, dans
+     les mêmes unités — les `ch` s'y résolvent sur la fonte du conteneur, qui
+     est celle des colonnes — et bascule donc au même pixel. Un `@media` à un
+     nombre deviné aurait fait déborder l'aplat sur le corps tant que les
+     colonnes se tiennent encore côte à côte (elles le font jusque vers 870px,
+     bien sous --lap). Les trois nombres sont ceux de `.split` ci-dessous. */
+  .split { container-type: inline-size; }
+  @container (max-width: calc(38ch + 30ch + 96px)) {
+    .aplat {
+      left: calc(-1 * var(--content-inset));
+      right: calc(-1 * var(--content-inset));
+    }
+    /* Devenu un aplat pleine largeur, il rejoint la bande sauge et le pied de
+       page au-dessus des filets pleins (6, voir `PageRules`) : ce sont les
+       filets voilés (7) qui le traversent. `isolation` garde l'aplat sous sa
+       carte : son z-index négatif se résout dans la colonne, pas dans la
+       page. */
+    aside { isolation: isolate; z-index: 6; }
+  }
 
   /* Le fil d'Ariane n'est pas l'étiquette du titre (ce serait --stack-bind) :
      c'est un bloc distinct qui le précède. */

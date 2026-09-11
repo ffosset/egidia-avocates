@@ -498,9 +498,11 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
   }
 
   /* ---- 2. VALEURS ---- */
-  /* Le titre de la bande tient sur UNE ligne, toujours : c'est une phrase, et
-     une phrase cassée en deux cesse d'être lue d'un trait. `nowrap` scelle la
-     ligne ; la taille garantit qu'elle rentre, donc rien ne déborde.
+  /* Le titre de la bande, centré, tient sur UNE ligne : c'est une phrase, et
+     une phrase centrée cassée en deux cesse d'être lue d'un trait. `nowrap`
+     scelle la ligne ; la taille garantit qu'elle rentre, donc rien ne déborde.
+     (Sous --lap la bande est ferrée à gauche et le titre casse comme les
+     autres, au cran de section — voir en bas de feuille.)
 
      La ligne mesure 11,0em en Fira Extra Condensed — mais 13,8em en Arial, le
      repli le plus large que la pile puisse encore servir, et qui s'affiche
@@ -834,5 +836,19 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
        qu'un titre a toujours au-dessus de lui — celui que la rangée du haut
        lui donnait gratuitement. */
     .groupe-liens + .groupe-nom { padding-top: var(--stack-loose); }
+    /* La bande des valeurs cesse d'être centrée : au téléphone tout le reste
+       de la page est appuyé à gauche, et un bloc centré au milieu se lisait
+       comme une citation. La mesure de 34rem tombe avec — la colonne fait
+       moins que ça, et là où elle fait plus (tablette), la copie prend toute
+       la largeur entre les filets, comme chaque autre paragraphe. `Band` pose
+       son centrage en style inline sur la section : on ne le combat pas, on
+       le reprend sur ses deux enfants. */
+    .band-title, .band-copy { max-width: none; text-align: left; }
+    /* Appuyé à gauche, le titre reprend le cran de section et casse comme
+       le h1 du héros au-dessus de lui : la règle « une ligne, toujours »
+       valait pour une phrase centrée, où une casse ne tombe nulle part. Un
+       titre ferré à gauche casse au fer, comme tous les autres titres de la
+       page. */
+    .band-title { font-size: var(--fs-h2); white-space: normal; }
   }
 </style>
