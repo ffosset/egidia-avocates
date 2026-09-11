@@ -150,10 +150,13 @@
 :root {
   --line-page-rule: var(--line-rule);
   /* Le même filet, voilé : celui qui traverse les aplats et les photographies
-     (voir `PageRules`). Même encre à 8 % : bien sous le filet crème du pied
-     (26 %), pour qu'il reste un souffle sur la sauge. Il ne change rien là où il
-     recouvre le filet plein, et ne fasse qu'effleurer ce qu'il traverse. */
-  --line-page-veil: color-mix(in srgb, var(--line-rule) 8%, transparent);
+     (voir `PageRules`). Une encre CLAIRE, pas le sable : le voile ne se voit
+     que sur ce qu'il traverse — la sauge, les photographies — et 8 % de sable
+     n'y laissaient rien, surtout au téléphone où ces surfaces font toute la
+     largeur et la plus grande part du défilement. La crème à 22 % s'y lit
+     comme un fil ; sur le papier, qui EST crème, elle tombe sur le filet plein
+     et ne l'éclaircit qu'à peine. */
+  --line-page-veil: color-mix(in srgb, var(--creme) 22%, transparent);
   /* Le filet de marge là où le papier EST sable (les honoraires) : la même
      encre s'y effacerait. C'est le gris translucide du design system qu'on
      reprend, celui que `--line-page-rule` remplace à la racine : sur le sable
