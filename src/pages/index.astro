@@ -133,9 +133,8 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
         </RuledCell>
         <RuledCell align="center" minHeight={280}>
           <p class="sub">
-            Une seule interlocutrice pour votre dossier : celle que vous rencontrez est celle
-            qui plaide. Cliquez sur un nom pour lire son parcours, ses publications, et la
-            contacter directement.
+            Une avocate pour suivre votre dossier. Cliquez sur un nom pour lire son parcours,
+            ses publications, et la contacter directement.
           </p>
         </RuledCell>
       </RuledGrid>
@@ -259,14 +258,24 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
 
         <RuledCell minHeight={320}>
           <h3 class="cell-h3">Nous joindre</h3>
+          {/* Deux chemins, et l'ordre dit lequel est le bon : on joint UNE
+              avocate, jamais « le cabinet ». L'adresse générale vient en
+              second, en retrait, et dit elle-même à quoi elle ne sert pas —
+              un dossier qui y arrive n'est suivi par personne. */}
           <div class="lines">
             <span class="line">
-              <span class="ico"><Icon name="mail" size={18} /></span>
-              <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+              <span class="ico"><Icon name="phone" size={18} /></span>
+              <span>
+                Pour un dossier, contactez directement l'avocate concernée :
+                ses coordonnées sont sur <a href="#equipe">sa fiche</a>.
+              </span>
             </span>
             <span class="line muted-line">
-              <span class="ico"><Icon name="phone" size={18} /></span>
-              Ligne directe de chaque avocate : voir sa fiche.
+              <span class="ico"><Icon name="mail" size={18} /></span>
+              <span>
+                <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+                (uniquement pour des questions sur le cabinet)
+              </span>
             </span>
           </div>
         </RuledCell>
@@ -303,8 +312,8 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
           </div>
           {/* Le bouton clôt la cellule : on lit d'abord les arrêts, on ne part
               chercher un itinéraire qu'ensuite. `secondary` — le cadre nu — car
-              cette cellule n'est pas l'appel du site : l'appel, c'est écrire au
-              cabinet. */}
+              cette cellule n'est pas l'appel du site : l'appel, c'est joindre
+              son avocate. */}
           <div class="cell-cta">
             <Button href={CONTACT.itineraire} variant="secondary" icon="route" iconPosition="left" target="_blank" rel="noopener">
               Trouver l'itinéraire

@@ -46,7 +46,9 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
             <div class="spaced"><RuledList items={m.traite} marker="check" /></div>
           </div>
 
-          <div class="block far">
+          {/* Ancre visée par le bouton de la bande de contact : « choisir une
+              avocate », ici, c'est en choisir une parmi celles de la matière. */}
+          <div class="block far" id="avocates">
             <Eyebrow>Avocates spécialisées</Eyebrow>
             <div class="spaced">
               <RuledGrid min={200}>
@@ -92,7 +94,7 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
         </aside>
       </div>
     </Page>
-    <ContactBand />
+    <ContactBand equipeHref="#avocates" />
   </main>
 </Base>
 

@@ -2,7 +2,21 @@
 import Page from './Page.astro';
 import Eyebrow from './Eyebrow.astro';
 import Button from './Button.astro';
-import { CONTACT } from '../data/site.js';
+
+/**
+ * La bande ne mène JAMAIS à l'adresse générale : un rendez-vous, c'est un
+ * dossier, et un dossier se prend avec une avocate. Le bouton principal
+ * change donc selon la page :
+ *   - sur une fiche, `avocate` est passée et le bouton lui écrit ;
+ *   - ailleurs, il mène à un choix d'avocates — `equipeHref` permet à une page
+ *     de viser sa propre liste (la matière, ses avocates), à défaut l'équipe
+ *     de l'accueil.
+ */
+interface Props {
+  avocate?: { nom: string; email: string };
+  equipeHref?: string;
+}
+const { avocate, equipeHref = '/#equipe' } = Astro.props;
 ---
 <section class="contact-band">
   <Page>
@@ -10,10 +24,14 @@ import { CONTACT } from '../data/site.js';
       <div>
         <Eyebrow>Une question sur votre situation ?</Eyebrow>
         <h2>Les consultations ont lieu uniquement sur rendez-vous.</h2>
-        <p>Contactez-nous par téléphone ou par e-mail pour convenir d'une date.</p>
+        <p>Le rendez-vous se prend directement avec l'avocate qui suivra votre dossier, par téléphone ou par e-mail.</p>
       </div>
       <div class="actions">
-        <Button href={`mailto:${CONTACT.email}`} icon="mail" iconPosition="left">Écrire au cabinet</Button>
+        {avocate ? (
+          <Button href={`mailto:${avocate.email}`} icon="mail" iconPosition="left">Écrire à {avocate.nom}</Button>
+        ) : (
+          <Button href={equipeHref} icon="users" iconPosition="left">Choisir une avocate</Button>
+        )}
         <Button href="/#contact" variant="secondary">Nous trouver</Button>
       </div>
     </div>
