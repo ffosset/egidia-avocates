@@ -48,6 +48,7 @@ interface Props {
   class?: string;
 }
 const { lat, lon, zoom = 15, label, query, tint = true, class: klass } = Astro.props;
+import Button from './Button.astro';
 
 /* Une adresse géocodée pose une épingle plus juste que des coordonnées
    approchées (voir ARCHITECTURE, « ce qui manque encore »). « (1er étage) »
@@ -75,7 +76,9 @@ const src = cle
       Le plan est hébergé par Google. L'afficher lui transmet votre adresse IP.
       Rien n'est envoyé tant que vous ne l'avez pas demandé.
     </p>
-    <button class="load" type="button" data-load>Afficher le plan</button>
+    {/* Le même bouton que « Trouver l'itinéraire » dans la cellule voisine :
+        `secondary`, le cadre nu — l'appel du site reste d'écrire au cabinet. */}
+    <Button variant="secondary" class="load" data-load>Afficher le plan</Button>
   </div>
 
   {/* Le voile : posé une fois le plan chargé, il rend la molette à la page.
@@ -190,30 +193,14 @@ const src = cle
   }
   /* Ni la phrase ni le bouton n'ont de sens sans script : ils ne s'allument
      qu'une fois la classe posée. */
-  .note, .load { display: none; }
+  .consent .note, .consent .load { display: none; }
   .map-wrap.js .note { display: block; }
   .map-wrap.js .load { display: inline-flex; }
 
-  .load {
-    align-items: center;
-    min-height: var(--tap-min);
-    margin-top: var(--stack-tight);
-    padding: var(--space-3) var(--space-5);
-    border: 1px solid var(--line-strong);
-    background: var(--surface-page);
-    font-family: var(--font-body);
-    font-size: var(--fs-label);
-    font-weight: var(--fw-semibold);
-    letter-spacing: var(--ls-label);
-    text-transform: uppercase;
-    color: var(--text-heading);
-    cursor: pointer;
-    transition: var(--transition-control);
-  }
-  .load:focus-visible { background: var(--brun-profond); color: var(--creme); }
-  @media (hover: hover) {
-    .load:hover { background: var(--brun-profond); color: var(--creme); }
-  }
+  /* Le bouton est celui du site (`Button`, `secondary`) : ici on ne pose que
+     sa place. `.consent .load` bat le `.btn` du composant, sinon le
+     `display: none` de repos et l'`inline-flex` du bouton seraient à égalité. */
+  .load { flex-shrink: 0; margin-top: var(--stack-tight); }
 
   /* ---- Le voile ---- */
   .veil {

@@ -16,6 +16,8 @@ interface Props {
   target?: string;
   rel?: string;
   class?: string;
+  /** Tout autre attribut (`data-*`, `aria-*`) passe tel quel à l'élément. */
+  [key: `data-${string}` | `aria-${string}`]: string | undefined;
 }
 import Icon from './Icon.astro';
 
@@ -32,6 +34,7 @@ const {
   target,
   rel,
   class: klass,
+  ...rest
 } = Astro.props;
 
 const Tag = href ? 'a' : 'button';
@@ -47,6 +50,7 @@ const iconSize = size === 'lg' ? 20 : 18;
   rel={href ? rel : undefined}
   disabled={!href && disabled ? true : undefined}
   aria-disabled={disabled ? 'true' : undefined}
+  {...rest}
   class:list={[
     'btn',
     `v-${variant}`,
