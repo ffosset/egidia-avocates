@@ -9,8 +9,11 @@ import { withBase } from '../lib/base.js';
   <Page>
     <div class="cols">
       <div class="col">
-        <!-- Le blason est pour surfaces claires : sur brun profond il va dans une puce crème. -->
-        <span class="chip"><img src={withBase("/logo.svg")} alt="Egidia" width="72" height="84" /></span>
+        {/* Le blason ramène à l'accueil, en haut de page : même cible que le
+            nom dans l'en-tête. */}
+        <a href={withBase("/")} class="blason" aria-label="Egidia — accueil">
+          <img src={withBase("/logo-egidia-blanc.png")} alt="" width="480" height="545" />
+        </a>
         <div class="blurb">
           Cabinet bruxellois en droit des étrangers, de la famille, de l'aide sociale et de la jeunesse.
         </div>
@@ -132,14 +135,12 @@ import { withBase } from '../lib/base.js';
   .lieu { display: grid; gap: var(--space-1); margin-top: var(--space-2); }
   .lieu .plain { line-height: 1.45; }
 
-  /* La puce crème n'a pas de rayon : le système n'en pose nulle part. */
-  .chip {
-    display: inline-block;
-    background: var(--creme);
-    padding: var(--space-3) var(--space-4);
-    width: fit-content;
-  }
-  .chip img { height: 72px; width: auto; display: block; }
+  /* Le blason se pose à nu sur le sauge obscur, sans puce crème dessous :
+     c'est sa version en tons de crème (`logo-egidia-blanc.png`, dérivée de la
+     couleur : brun -> crème pleine, caramel -> crème voilée, sauge -> crème
+     plus voilée) qui est faite pour les surfaces sombres. */
+  .blason { display: block; width: fit-content; }
+  .blason img { height: 72px; width: auto; display: block; }
 
   .blurb { font-size: var(--fs-body-sm); color: var(--sable-clair); max-width: 360px; line-height: 1.6; }
   .col a { color: var(--caramel-voile); font-size: var(--fs-body-sm); text-decoration: none; }

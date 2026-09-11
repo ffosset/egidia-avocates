@@ -56,12 +56,24 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
           Écart assumé par rapport au défaut du composant. */}
       <ArcPanel width="var(--hero-split)" sweep="13% 50%">
         <div class="hero-inner pile">
-          <h1>Chaque personne a droit à être écoutée, conseillée et défendue</h1>
+          {/* Le blason ouvre le héros : c'est la seule fois où la marque se
+              montre en entier (bouclier, nom, trois profils). L'en-tête, lui,
+              n'a que le nom. Le nom est déjà DANS l'image — l'alt le répète
+              une fois, sans le doubler d'un titre. */}
+          <img
+            class="hero-logo"
+            src={withBase('/logo-egidia.png')}
+            alt="Egidia"
+            width="480"
+            height="545"
+            loading="eager"
+            decoding="async"
+          />
+          <h1>Chaque personne a le droit d’être écoutée, conseillée et défendue</h1>
           <p>
             Egidia est un cabinet bruxellois en droit des étrangers, de la famille, de l'aide
             sociale et de la jeunesse. Une relation fondée sur l'écoute et la transparence.
           </p>
-          <div class="cta"><Button href="#services" variant="secondary">Voir nos domaines</Button></div>
         </div>
       </ArcPanel>
     </section>
@@ -387,14 +399,23 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     color: var(--brun-moyen);
     max-width: var(--hero-measure);
   }
-  /* .cta ne porte PAS `pile-block` — écart assumé au motif. Le bouton du héros
-     n'ouvre pas un bloc à part : il achève la phrase du chapô (« voici qui nous
-     sommes, voilà où regarder »). Il prend donc le pas courant de la pile,
-     --stack, et non --stack-loose. Le héros n'a que trois éléments ; à 48px le
-     bouton se détachait et le titre et le chapô se lisaient comme un couple
-     avec un intrus dessous. À 32px, les trois pas (16 / 32) montent
-     régulièrement et les trois éléments tiennent ensemble. L'écart reste nommé
-     par la pile, jamais écrit ici. */
+  /* Le blason n'est pas un titre : il se pose à la taille d'un sceau, pas d'une
+     affiche. 96px de large sur un panneau de 320 à 520px : le bouclier reste
+     un signe au-dessus du titre, et c'est le titre qui porte la phrase. Le
+     `height: auto` garde le rapport de l'image (480 × 545) quelle que soit la
+     largeur ; les attributs width/height du balisage réservent la place avant
+     le chargement, rien de plus. */
+  .hero-logo {
+    display: block;
+    width: 96px;
+    height: auto;
+  }
+  /* Écart assumé à la pile : elle met 48px d'air au-dessus d'un titre, parce
+     qu'un titre ouvre d'ordinaire un bloc. Ici le blason n'est pas un bloc
+     avant le titre — il en est le sceau. Les trois éléments (blason, titre,
+     chapô) sont UN objet, et se tiennent au même pas : celui qui lie déjà le
+     titre à son chapô. */
+  .hero-inner > .hero-logo + h1 { margin-top: var(--stack-tight); }
 
   /* ---- 2. VALEURS ---- */
   /* Le titre de la bande tient sur UNE ligne, toujours : c'est une phrase, et
