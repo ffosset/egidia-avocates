@@ -82,6 +82,13 @@ const iconSize = size === 'lg' ? 20 : 18;
     transition: var(--transition-control), transform var(--dur-instant) var(--ease-standard);
   }
   .btn.full { display: flex; width: 100%; }
+  /* Au téléphone, tout bouton est `full` : il prend toute la largeur que son
+     conteneur lui laisse, entre les marges. Un bouton dimensionné à son
+     libellé y flottait, seul à gauche d'une colonne qu'il ne remplissait pas,
+     et sa cible tactile s'arrêtait là où le libellé s'arrête. */
+  @media (--lap) {
+    .btn { display: flex; width: 100%; }
+  }
   .btn:active { transform: scale(var(--press-scale)); }
 
   .s-lg { height: var(--control-h); padding: 0 var(--space-6); font-size: var(--fs-body); }

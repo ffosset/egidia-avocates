@@ -355,7 +355,14 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
      et ne se voit pas ici : c'est le même voile. */
   .situation[open] > summary,
   .situation[open] > .reponse { background: var(--survol-aplat); }
-  .situation[open] > summary { color: var(--text-heading); }
+  /* L'intitulé choisi passe en demi-gras : le lit dit « celle-ci est la
+     vôtre », le poids le redit pour qui parcourt la colonne des neuf noms
+     sans regarder les fonds. Demi-gras et non gras — c'est du texte de corps,
+     et le gras y est réservé aux titres. */
+  .situation[open] > summary {
+    color: var(--text-heading);
+    font-weight: var(--fw-semibold);
+  }
 
   /* Le chevron ne suit PAS le décalage de trois pixels : il porte déjà une
      transformation à lui, celle qui dit ouvert/fermé, et `transform` est une
@@ -383,6 +390,25 @@ import { GENERAUX, REVENUS, LIENS_PRODEO } from '../data/prodeo.js';
     font-size: var(--fs-body-sm);
     line-height: 1.5;
     color: var(--text-muted);
+  }
+
+  /* Empilé, le sélecteur de situation perd son cadre et devient un registre :
+     ses lignes vont d'un filet de marge à l'autre, comme les cellules de
+     l'accueil. Sur une colonne, le cadre fort ne cernait plus rien — la boîte
+     faisait la largeur du texte, et son trait redisait les filets à une
+     gouttière près. Les lignes gardent leur --cell-pad, qui est ce qu'une
+     cellule de registre prend contre un filet. Chaque ligne porte son filet
+     du haut, la boîte ferme la dernière ; le lit de la situation choisie va
+     lui aussi de filet à filet. Même condition que l'aplat (voir plus haut) :
+     c'est l'empilement qui décide, pas un point de rupture. Placé APRÈS les
+     règles du cadre, qu'il doit défaire. */
+  @container (max-width: calc(38ch + 30ch + 96px)) {
+    .choix {
+      border: none;
+      border-bottom: var(--divider);
+      margin-inline: calc(-1 * var(--gutter));
+    }
+    .situation { border-top: var(--divider); }
   }
 
   /* ---- LA COCHE ----

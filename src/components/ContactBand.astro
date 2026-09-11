@@ -61,12 +61,16 @@ const { avocate, equipeHref = '/#equipe' } = Astro.props;
     --survol-aplat: var(--surface-page);
   }
   /* Deux colonnes égales tant qu'elles tiennent, puis empilées — le point de
-     bascule est donné par la mesure du texte (en ch), pas par un pixel deviné. */
+     bascule est donné par la mesure du texte (en ch), pas par un pixel deviné.
+     Les deux écarts ne sont pas le même : entre les colonnes, une gouttière
+     large ; entre les rangées, une fois empilées, le pas d'un bloc de boutons
+     sous son texte (`.pile-block`, voir pile.css) — 96px de blanc entre la
+     phrase et ses deux boutons les détachaient d'elle. */
   .split {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-9);
+    gap: var(--stack-loose) var(--space-9);
   }
   .split > * { flex: 1 1 26ch; }
   h2 {
@@ -75,8 +79,11 @@ const { avocate, equipeHref = '/#equipe' } = Astro.props;
     font-size: var(--fs-h3);
     font-weight: var(--fw-bold);
   }
+  /* Pas de marge sous la phrase : c'est le `gap` de `.split` qui espace, et le
+     24px que `tokens/base.css` pose sous tout <p> s'y ajoutait — et décalait
+     la colonne de texte d'un demi-cran vers le haut face aux boutons. */
   p {
-    margin-top: var(--stack-tight);
+    margin: var(--stack-tight) 0 0;
     font-size: var(--fs-body-sm);
     color: var(--brun-moyen);
   }
@@ -115,9 +122,12 @@ const { avocate, equipeHref = '/#equipe' } = Astro.props;
   /* Plus bas, les deux boutons cessent de tenir côte à côte : la paire fait
      deux fois ~13rem plus l'écart, et la bande garde ses marges de page. Ils
      passent alors l'un sous l'autre — la piste reste `1fr`, donc ils gardent
-     la même largeur, empilés comme alignés. */
+     la même largeur, empilés comme alignés. Et cette largeur est celle de la
+     bande entre ses marges : la grille cesse d'être dimensionnée au contenu,
+     et les boutons, qui prennent toute leur piste au téléphone (voir
+     `Button`), vont d'un bord du texte à l'autre. */
   @container band (width < 34rem) {
-    .split > .actions { grid-auto-flow: row; }
+    .split > .actions { grid-auto-flow: row; width: 100%; }
   }
 
 </style>
