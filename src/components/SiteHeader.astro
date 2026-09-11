@@ -20,7 +20,11 @@ import { withBase } from '../lib/base.js';
     un passage obligé.
 
     Sous 1000px la barre disparaît dans un menu. Il repose sur `<details>` :
-    il s'ouvre et se ferme sans JavaScript. */
+    il s'ouvre et se ferme sans JavaScript. Ouvert, il prend TOUT L'ÉCRAN :
+    l'en-tête devient la page — papier, filets de marge — et les quatre
+    entrées remplissent ce qui reste sous la barre. « Matières » et « Équipe »
+    y sont des groupes, fermés par défaut, qu'un appui déplie et replie :
+    au doigt, l'intitulé bascule, il ne mène pas à la section. */
 import { NAV } from '../data/site.js';
 import Icon from './Icon.astro';
 ---
@@ -55,15 +59,25 @@ import Icon from './Icon.astro';
         <span>Menu</span>
       </summary>
       <nav class="drawer" aria-label="Navigation principale">
-        {NAV.map((l) => (
-          <>
-            <a href={withBase(l.href)} class="eg-survol">{l.label}</a>
-            {l.enfants?.map((c) => (
+        {NAV.map((l) => l.enfants ? (
+          /* Un groupe : fermé par défaut, la ligne entière l'ouvre et le
+             referme. Ici l'intitulé n'est PAS un lien — au doigt, une ligne
+             qui mène quelque part ET déplie autre chose est un piège ; on
+             choisit de déplier. La section de l'accueil reste à portée du
+             pouce : elle est sur la page, sous le menu. */
+          <details class="groupe">
+            <summary class="eg-survol">
+              <span>{l.label}</span>
+              <span class="chevron"><Icon name="chevron-down" size={20} /></span>
+            </summary>
+            {l.enfants.map((c) => (
               <a href={withBase(c.href)} class="eg-survol enfant">
                 <span>{c.label}{c.fort && <> <b>{c.fort}</b></>}</span>
               </a>
             ))}
-          </>
+          </details>
+        ) : (
+          <a href={withBase(l.href)} class="eg-survol">{l.label}</a>
         ))}
       </nav>
     </details>
@@ -83,8 +97,8 @@ import Icon from './Icon.astro';
        recouvrent — et donc par-dessus les filets de marge (5), que le héros
        recouvre lui-même pour dégager sa photographie. Les filets doivent
        pourtant traverser l'en-tête, pour dessiner les deux bords verticaux de
-       la boîte : l'en-tête les redessine (voir `header::before / ::after`),
-       et le tiroir porte les siens en bordures. */
+       la boîte : l'en-tête les redessine (voir `header::before / ::after`) —
+       et, menu ouvert, sur toute la hauteur de l'écran. */
     z-index: 7;
     /* La hauteur de la barre glisse avec le cadre, comme les marges. */
     --bar-h: clamp(64px, 5vw, 88px);
@@ -109,7 +123,6 @@ import Icon from './Icon.astro';
   header::after  { right: calc(max(0px, (100% - var(--page-max)) / 2) + var(--page-margin)); }
 
   .bar {
-    position: relative; /* ancre du tiroir */
     max-width: var(--page-max);
     margin-inline: auto;
     /* Les cellules s'arrêtent sur les filets de marge, jamais sur le bord de
@@ -278,24 +291,37 @@ import Icon from './Icon.astro';
   .menu:not([open]) .i-close,
   .menu[open] .i-open { display: none; }
 
-  /* Le tiroir se pose PAR-DESSUS la page, il ne la pousse pas. Il tient dans
-     la même boîte que la barre : les filets de marge en font les deux bords. */
+  /* Le tiroir prend TOUT L'ÉCRAN sous la barre — la page ne se voit plus, il
+     n'y a rien à pousser. Il est `fixed` et non `absolute` : son bloc
+     conteneur est la fenêtre, jamais la barre, et il descend jusqu'au bord
+     bas quoi qu'il arrive. Son bord haut est celui de la barre ouverte (voir
+     `header:has(.menu[open])`) : la gouttière, le filet, la barre.
+
+     Seize intitulés ne tiennent pas dans la hauteur d'un téléphone : le
+     tiroir défile lui-même, et `overscroll-behavior` retient le geste au bord
+     de la liste au lieu de le passer à la page. (La page est de toute façon
+     verrouillée — voir `html:has(...)`, plus bas.)
+
+     Ses filets ne s'écrivent plus en bordure : ce sont ceux de l'en-tête
+     (`header::before / ::after`), qui traversent tout l'écran par-dessus lui.
+     Les filets horizontaux, eux, vont d'un bord à l'autre, comme tous les
+     filets de section du site ; le texte, lui, commence à --content-inset et
+     ne touche jamais un filet de marge. */
   .drawer {
-    position: absolute;
-    top: 100%;
-    left: var(--page-margin);
-    right: var(--page-margin);
+    position: fixed;
+    top: calc(var(--gutter) + var(--border-rule) + var(--bar-h));
+    inset-inline: 0;
+    bottom: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     background: var(--surface-page);
-    border-bottom: var(--divider);
-    /* Ses deux bords tombent pile sur les filets de marge, que l'en-tête
-       recouvre désormais : il les porte donc lui-même, au pixel près. */
-    border-inline: var(--divider);
   }
-  .drawer a {
+  .drawer a,
+  .drawer summary {
     display: flex;
     align-items: center;
     min-height: var(--tap-min);
-    padding: var(--space-4) var(--gutter);
+    padding: var(--space-4) var(--content-inset);
     border-top: var(--divider);
     font-family: var(--font-body);
     font-size: var(--fs-label);
@@ -306,7 +332,26 @@ import Icon from './Icon.astro';
     color: var(--text-muted);
     transition: var(--transition-control);
   }
-  .drawer a:focus-visible { color: var(--survol-encre); }
+  .drawer a:focus-visible,
+  .drawer summary:focus-visible { color: var(--survol-encre); }
+
+  /* ---- Les groupes (matières, avocates) ----
+     Ce que le déroulant fait au survol sur la barre, le groupe le fait au
+     doigt : un `<details>` par groupe, FERMÉ par défaut — le menu s'ouvre sur
+     ses quatre entrées, pas sur seize lignes. La ligne entière est le
+     `<summary>` : l'intitulé à gauche, le chevron à droite, qui se retourne
+     à l'ouverture. Ouvert, l'intitulé prend l'encre des titres : c'est lui
+     qui tient les lignes qui pendent dessous. Pas de `name` : les deux
+     groupes s'ouvrent et se ferment chacun pour soi. */
+  .drawer summary {
+    justify-content: space-between;
+    gap: var(--space-4);
+    cursor: pointer;
+    list-style: none; /* pas de triangle */
+  }
+  .drawer summary::-webkit-details-marker { display: none; }
+  .groupe[open] > summary { color: var(--text-heading); }
+  .groupe[open] .chevron { transform: rotate(180deg); }
 
   /* ---- LES SURVOLS DE L'EN-TÊTE ----
      Ils ne s'écrivent que là où un pointeur survole. Au doigt, `:hover` est
@@ -316,15 +361,16 @@ import Icon from './Icon.astro';
   @media (hover: hover) {
     .cells a:hover,
     .menu > summary:hover,
-    .drawer a:hover { color: var(--survol-encre); }
+    .drawer a:hover,
+    .drawer summary:hover { color: var(--survol-encre); }
     .sub a:hover b,
     .drawer a:hover b { color: inherit; }
   }
-  /* Sous le point de rupture il n'y a pas de déroulant : les matières se
-     rangent sous « Matières », les avocates sous « Équipe », en retrait et
-     dans leur casse propre. */
+  /* Les lignes d'un groupe : en retrait sous leur intitulé, et dans leur
+     casse propre — ce sont des titres de matières et des noms, pas des
+     étiquettes de barre. */
   .drawer a.enfant {
-    padding-left: calc(var(--gutter) + var(--space-5));
+    padding-left: calc(var(--content-inset) + var(--space-5));
     font-weight: var(--fw-medium);
     letter-spacing: normal;
     text-transform: none;
@@ -338,6 +384,45 @@ import Icon from './Icon.astro';
     .bar { grid-template-columns: 1fr auto; }
     .cells { display: none; }
     .menu { display: flex; }
+
+    /* ---- Le menu ouvert prend tout l'écran ----
+       L'en-tête se cloue à la fenêtre et la remplit : c'est lui, le papier
+       sous le menu, et ses deux filets de marge (`::before / ::after`, de
+       `top: 0` à `bottom: 0`) courent désormais sur toute la hauteur — le
+       menu est une page du site, avec le cadre de toutes les pages.
+
+       RIEN NE BOUGE SOUS LE DOIGT. Fermée, la boîte flotte d'une gouttière
+       sous le haut de la page ; ouverte, elle garde exactement cette place :
+       la gouttière devient une marge intérieure, peinte en papier, et c'est la
+       barre qui porte le filet du haut à la place de l'en-tête. Le bouton
+       qu'on vient de toucher est toujours là où on l'a touché, et devient la
+       croix qui referme. Le filet du bas de l'en-tête, lui, n'a plus de sens
+       au bord de l'écran : c'est le filet haut du premier intitulé qui ferme
+       la barre, au même pixel qu'avant.
+
+       Ce n'est posé que sous le point de rupture : au-dessus, le `<details>`
+       est caché mais peut être resté `open` — un menu ouvert sur un téléphone
+       que l'on tourne, une fenêtre que l'on élargit — et l'en-tête ne doit
+       pas se clouer à un écran où la barre existe. */
+    header:has(.menu[open]) {
+      position: fixed;
+      inset: 0;
+      margin-top: 0;
+      padding-top: var(--gutter);
+      border-top: 0;
+      border-bottom: 0;
+    }
+    header:has(.menu[open]) .bar { border-top: var(--divider); }
+
+    /* La page derrière ne défile plus : le tiroir a son propre défilement,
+       et un pouce qui glisse hors de la liste ne doit pas emporter la page
+       qu'on ne voit pas. `overflow: hidden` sur la racine se propage à la
+       fenêtre et la fige — c'est ce que `Base.astro` s'interdit en régime
+       normal (il casse `position: sticky`), mais rien de sticky n'est visible
+       sous un menu qui couvre tout, et la position de défilement est rendue
+       intacte à la fermeture. Le crochet est `[data-menu]`, unique au site,
+       et non `.menu` : `:global` ne porte pas la portée du composant. */
+    :global(html:has([data-menu][open])) { overflow: hidden; }
   }
 </style>
 

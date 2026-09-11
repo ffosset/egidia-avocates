@@ -282,10 +282,21 @@ tiennent plus — aucun mot n'est jamais coupé.
 ### Le menu de la barre étroite n'a pas besoin de JavaScript
 
 Sous `--lap`, la barre disparaît dans un menu bâti sur `<details>`/`<summary>` :
-il s'ouvre et se ferme sans script, au clavier comme à la souris, et le tiroir se
-pose **par-dessus** la page au lieu de la pousser. Le script de `SiteHeader`
-n'ajoute que deux conforts — refermer après un lien d'ancre, refermer sur Échap —
-et le menu reste utilisable s'il ne s'exécute pas.
+il s'ouvre et se ferme sans script, au clavier comme à la souris. Ouvert, il
+prend **tout l'écran** : l'en-tête se cloue à la fenêtre (`header:has(.menu[open])`)
+et devient la page — papier, filets de marge sur toute la hauteur — la barre
+reste en haut, sans bouger d'un pixel (le bouton touché devient la croix), et le
+tiroir remplit ce qui reste, d'un bord à l'autre, avec son propre défilement.
+« Matières » et « Équipe » y sont des `<details>` imbriqués, **fermés par
+défaut** : le menu s'ouvre sur ses quatre entrées, et un appui sur la ligne
+déplie ou replie ses matières, ses avocates — sans script, comme le sélecteur
+de `/aide-juridique`. Au doigt l'intitulé bascule, il ne mène pas à la section
+de l'accueil (celle-ci reste sur la page, sous le menu). La page derrière est
+figée (`html:has([data-menu][open]) { overflow: hidden }`) et
+retrouve sa position à la fermeture. Le tout n'est posé que sous `--lap` : un
+`<details>` resté `open` quand la fenêtre s'élargit ne doit pas clouer l'en-tête.
+Le script de `SiteHeader` n'ajoute que deux conforts — refermer après un lien
+d'ancre, refermer sur Échap — et le menu reste utilisable s'il ne s'exécute pas.
 
 ### `RuledGrid` : deux modes
 
