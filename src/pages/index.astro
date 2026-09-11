@@ -168,7 +168,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
         <div class="hono-grid">
           <div class="pile hono-propos">
             <Eyebrow>Honoraires</Eyebrow>
-            <h2 class="hono-titre">Combien ça coûte ?</h2>
+            <h2 class="hono-titre">Combien ça coûte ?</h2>
             <p class="body">
               Nos honoraires varient selon la nature de l'affaire, sa complexité et votre
               situation. Nous les fixons avec modération et nous vous les expliquons clairement.
@@ -260,17 +260,17 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
           <h3 class="cell-h3">Nous joindre</h3>
           {/* Deux chemins, et l'ordre dit lequel est le bon : on joint UNE
               avocate, jamais « le cabinet ». L'adresse générale vient en
-              second, en retrait, et dit elle-même à quoi elle ne sert pas —
+              second et dit elle-même à quoi elle ne sert pas —
               un dossier qui y arrive n'est suivi par personne. */}
           <div class="lines">
             <span class="line">
               <span class="ico"><Icon name="phone" size={18} /></span>
               <span>
-                Pour un dossier, contactez directement l'avocate concernée :
-                ses coordonnées sont sur <a href="#equipe">sa fiche</a>.
+                Pour un dossier, contactez directement
+                <a href="#equipe">l'avocate concernée</a>.
               </span>
             </span>
-            <span class="line muted-line">
+            <span class="line">
               <span class="ico"><Icon name="mail" size={18} /></span>
               <span>
                 <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
@@ -287,7 +287,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
               <span class="ico"><Icon name="map-pin" size={18} /></span>
               {CONTACT.adresse}
             </span>
-            <span class="line muted-line">
+            <span class="line">
               <span class="ico"><Icon name="accessibility" size={18} /></span>
               {CONTACT.acces}
             </span>
@@ -526,9 +526,11 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
 
      Le sélecteur porte sur ce qui PRÉCÈDE, pas sur une section nommée : toute
      section qui suit un registre s'y colle, quel que soit l'ordre de la page.
-     Une section qui suit `.hono` ou `.liens` — qui ne ferment rien — n'est pas
-     concernée et garde son filet à elle. */
-  .matieres + section, .ruled-section + section { margin-top: -1px; }
+     Une section qui suit `.hono` — qui ne ferme rien — n'est pas concernée et
+     garde son filet à elle. `.liens` ferme, elle : son registre descend
+     jusqu'au bord bas de la section (voir la section 6), et sa dernière ligne
+     de liens porte donc le filet qui doit tomber sur celui du contact. */
+  .matieres + section, .ruled-section + section, .liens + section { margin-top: -1px; }
 
   /* ---- Une section, une couleur ----
      La section est pleine largeur : lui poser un fond peint AUSSI la gouttière,
@@ -662,10 +664,13 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   .filler { font-size: 26px; line-height: 1.3; max-width: 16ch; }
 
   /* ---- 6. LIENS UTILES ---- */
-  /* La section garde son air : le registre ne la remplit pas, il est POSÉ
-     dedans. C'est la seule de l'accueil dans ce cas — les trois autres sont un
-     registre de bord à bord. */
-  .liens { padding: var(--section-y) var(--page-margin); border-top: var(--divider); }
+  /* La section garde son air au-dessus du registre — le nom de la section et
+     ceux des groupes restent sur le papier, hors de la boîte — mais aucun
+     dessous : la dernière ligne de liens ferme la section, et son filet bas
+     tombe sur celui du contact qui suit (voir « UNE frontière, UN filet »).
+     Le registre est donc POSÉ dans la section par le haut, et de bord à bord
+     par le bas, comme les trois autres de l'accueil. */
+  .liens { padding: var(--section-y) var(--page-margin) 0; border-top: var(--divider); }
 
   /* UNE seule verticale gouverne la section, et c'est celle du texte de la
      première colonne : le nom de la section, le nom du groupe et l'intitulé
@@ -763,7 +768,6 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
      Les 3px rattrapent la demi-différence entre la hauteur de ligne (27px) et
      le glyphe (18px), moins ce que le trait laisse d'air en haut. */
   .ico { flex: 0 0 auto; margin-top: 3px; color: var(--text-label); }
-  .muted-line { color: var(--text-muted); }
   /* Le bouton se pose sous les arrêts, à la même mesure qu'eux, et respire du
      pas de la pile — jamais collé à la dernière ligne. */
   .cell-cta { max-width: var(--cell-measure); margin-top: var(--space-6); }
