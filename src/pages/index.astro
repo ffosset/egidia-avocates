@@ -98,10 +98,10 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
 
     {/* 3 — MATIÈRES : le filet gauche du registre tombe sur le filet de marge ;
         seule la photographie franchit le filet de droite. */}
-    <section id="services" class="matieres">
+    <section id="matieres" class="matieres">
       <RuledGrid columns="minmax(0, 1fr) minmax(0, 1fr) var(--photo-track)" noTop>
         <RuledCell align="center">
-          <Eyebrow>Services</Eyebrow>
+          <Eyebrow>Matières</Eyebrow>
           <h2 class="grid-title">Nos matières préférentielles</h2>
         </RuledCell>
         {MATIERES.map((m, i) => {
@@ -111,7 +111,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
             <RuledCell
               title={m.titre}
               lead={m.resume}
-              href={`/services/${m.id}`}
+              href={`/matieres/${m.id}`}
               style={`grid-column:${col};grid-row:${Math.floor(n / 2) + 1}`}
             >
               <span class="count pile-foot"><span class="eg-pastille">{m.nb} avocates</span></span>
@@ -500,7 +500,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
      aucune dérive possible entre l'intérieur du registre et la bande de marge. */
   .matieres, .ruled-section, .hono, .liens { background: var(--section-surface); }
 
-  #services   { --section-surface: var(--surface-services); }
+  #matieres   { --section-surface: var(--surface-matieres); }
   #equipe     { --section-surface: var(--surface-equipe); }
   #honoraires { --section-surface: var(--surface-honoraires); }
   #liens      { --section-surface: var(--surface-liens); }

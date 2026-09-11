@@ -71,15 +71,15 @@ export const LIENS_ACCUEIL = [
 ];
 
 // L'ordre suit celui des sections de l'accueil.
-// « Services » porte en plus la liste de ses matières : l'intitulé reste un
+// « Matières » porte en plus la liste de ses matières : l'intitulé reste un
 // lien vers la section de l'accueil — le déroulant n'est qu'un raccourci vers
 // chaque matière, jamais le seul chemin. La liste se déduit de `matieres.js`,
 // pour qu'une matière ajoutée là apparaisse ici sans qu'on y pense.
 export const NAV = [
   {
-    href: '/#services',
-    label: 'Services',
-    enfants: MATIERES.map((m) => ({ href: `/services/${m.id}`, label: m.titre })),
+    href: '/#matieres',
+    label: 'Matières',
+    enfants: MATIERES.map((m) => ({ href: `/matieres/${m.id}`, label: m.titre })),
   },
   { href: '/#equipe', label: 'Équipe' },
   { href: '/#honoraires', label: 'Honoraires' },

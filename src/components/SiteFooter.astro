@@ -19,9 +19,9 @@ import { withBase } from '../lib/base.js';
         </div>
       </div>
       <div class="col">
-        <Eyebrow>Services</Eyebrow>
+        <Eyebrow>Matières</Eyebrow>
         <div class="liste">
-          {MATIERES.map((m) => <a href={withBase(`/services/${m.id}`)}>{m.titre}</a>)}
+          {MATIERES.map((m) => <a href={withBase(`/matieres/${m.id}`)}>{m.titre}</a>)}
         </div>
       </div>
       <div class="col">

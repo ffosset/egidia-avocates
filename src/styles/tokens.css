@@ -159,7 +159,7 @@
    Ces cinq valeurs sont propres au site : elles ne viennent pas du design
    system, d'où leur place ici et non dans `tokens/colors.css`. */
 :root {
-  --surface-services:   #FAF7F5;
+  --surface-matieres:   #FAF7F5;
   --surface-equipe:     #FFFFFF;
   --surface-honoraires: #D9D1C4;
   --surface-liens:      #FFFFFF;
@@ -180,7 +180,7 @@
    Le brun moyen achève de l'y poser.
 
    Une seule définition pour tous les endroits qui portent ce rôle : le registre
-   des services (`RuledCell`), les cellules-portraits (`PersonCell`), les
+   des matières (`RuledCell`), les cellules-portraits (`PersonCell`), les
    colonnes de liens et les cellules de contact de l'accueil. La taille est
    FIXE : ces titres sont courts et vivent dans des cellules qui, elles, sont
    déjà fluides.

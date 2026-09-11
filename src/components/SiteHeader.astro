@@ -11,10 +11,10 @@ import { withBase } from '../lib/base.js';
     - ses cellules s'arrêtent exactement sur les deux filets de marge — la
       dernière (« Contact ») ferme la boîte sur le filet de droite ;
     - la première cellule tombe sur --hero-split, la couture : le filet qui
-      sépare le mot-symbole de « Services » est le trait même où commence la
+      sépare le mot-symbole de « Matières » est le trait même où commence la
       photographie du héros, juste en dessous.
 
-    « Services » porte en plus un déroulant : les cinq matières y pendent sous
+    « Matières » porte en plus un déroulant : les cinq matières y pendent sous
     la cellule. L'intitulé reste un LIEN vers la section de l'accueil — le
     déroulant est un raccourci, jamais un passage obligé.
 
@@ -153,7 +153,7 @@ import Icon from './Icon.astro';
   .cells a:focus-visible { color: var(--survol-encre); }
 
   /* ---- Le déroulant des matières ----
-     « Services » RESTE un lien : il mène à la section de l'accueil, comme
+     « Matières » RESTE un lien : il mène à la section de l'accueil, comme
      avant. Le déroulant ne fait que raccourcir le chemin vers une matière
      précise — il ne capture pas le clic, et rien n'y est accessible seulement
      par lui. Il s'ouvre au survol et au clavier (`:focus-within`), sans
@@ -273,7 +273,7 @@ import Icon from './Icon.astro';
     .drawer a:hover { color: var(--survol-encre); }
   }
   /* Sous le point de rupture il n'y a pas de déroulant : les matières se
-     rangent sous « Services », en retrait et dans leur casse propre. */
+     rangent sous « Matières », en retrait et dans leur casse propre. */
   .drawer a.enfant {
     padding-left: calc(var(--gutter) + var(--space-5));
     font-weight: var(--fw-medium);

@@ -56,7 +56,7 @@ et uniquement pour l'appel de la carte d'accès :
 | Route | JS livré |
 | --- | --- |
 | `/` | moins d'1 Ko (l'appel de la carte et son voile) |
-| `/services/[id]` | aucun |
+| `/matieres/[id]` | aucun |
 | `/avocates/[slug]` | aucun |
 | `/aide-juridique` | aucun |
 | `/mentions-legales` | aucun |
@@ -230,7 +230,7 @@ Une seule verticale gouverne le haut du site — `--hero-split`, **la couture** 
 | --- | --- |
 | `ArcPanel` du héros | sa largeur : le bord où le papier cède la place à la photo |
 | `.hero-photo` | son bord gauche, à 76 % de la couture |
-| `SiteHeader` | le filet entre le mot-symbole et « Services » |
+| `SiteHeader` | le filet entre le mot-symbole et « Matières » |
 
 Le premier filet de la navigation et le bord de la photographie sont donc **le
 même trait**, l'un au-dessus de l'autre. La valeur vit dans
@@ -299,10 +299,10 @@ Le registre des matières ne retombe pas d'un coup sur une colonne. Il a trois
 
 | | ≥1000px | ~620–1000px | <620px |
 | --- | --- | --- | --- |
-| services | 2 colonnes | 2 colonnes | 1 colonne |
+| matières | 2 colonnes | 2 colonnes | 1 colonne |
 | photo d'ambiance | 3e piste, à côté | pleine largeur, en bas | pleine largeur, en bas |
 
-Le passage sous `--lap` ne fait donc que déplacer la photo ; les services gardent
+Le passage sous `--lap` ne fait donc que déplacer la photo ; les matières gardent
 leurs deux colonnes jusqu'à ce qu'une cellule ne tienne plus dans 300px
 (`--lap-min: 300px`, `--lap-max: 2` sur `.matieres`). L'enfant qui doit fermer le
 registre sur toute sa largeur porte la classe `lap-span` — c'est la seule

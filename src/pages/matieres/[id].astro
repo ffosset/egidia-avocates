@@ -34,7 +34,7 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
           <div class="fil">
             <Breadcrumb items={[
               { label: 'Accueil', href: '/' },
-              { label: 'Services', href: '/#services' },
+              { label: 'Matières', href: '/#matieres' },
               { label: m.titre },
             ]} />
           </div>
@@ -80,10 +80,10 @@ const autres = MATIERES.filter((x) => x.id !== m.id);
             </div>
           </Card>
           <Card padding="var(--space-6)">
-            <Eyebrow>Autres services</Eyebrow>
+            <Eyebrow>Autres matières</Eyebrow>
             <div class="others">
               {autres.map((x) => (
-                <a href={withBase(`/services/${x.id}`)} class="eg-inverse">
+                <a href={withBase(`/matieres/${x.id}`)} class="eg-inverse">
                   {x.titre}<span class="eg-accent chev"><Icon name="arrow-right" size={18} /></span>
                 </a>
               ))}
