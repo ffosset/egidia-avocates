@@ -90,6 +90,10 @@ import { withBase } from '../lib/base.js';
     color: var(--text-on-dark);
     padding-top: var(--space-8);
     padding-bottom: var(--space-7);
+    /* PAR-DESSUS les filets de marge (z-index 5) : l'aplat les recouvre, le
+       pied ferme le site sans être traversé, comme la bande des valeurs. */
+    position: relative;
+    z-index: 6;
     /* Les étiquettes de colonne sont des `Eyebrow`, et `.eg-label` lit
        `--text-label` : c'est le TOKEN qu'on retourne, pas la classe. Une règle
        écrite ici ne les atteindrait pas — la portée d'Astro ne franchit pas la

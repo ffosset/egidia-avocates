@@ -12,7 +12,10 @@ const { tone = 'sage', align = 'center', id } = Astro.props;
 </section>
 
 <style>
-  .band { padding: var(--section-y) 0; }
+  /* La bande passe PAR-DESSUS les filets de marge (z-index 5) : l'aplat les
+     recouvre, et ils ne traversent pas la sauge. Le tiroir de l'en-tête (4)
+     ne descend jamais jusqu'ici, il reste sous le héros. */
+  .band { padding: var(--section-y) 0; position: relative; z-index: 6; }
   .inner {
     max-width: var(--page-max);
     margin: 0 auto;

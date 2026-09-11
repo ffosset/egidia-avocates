@@ -346,6 +346,27 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
     display: grid;
     min-height: clamp(520px, 62vh, 720px);
     overflow: hidden;
+    /* PAR-DESSUS les filets de marge (z-index 5) : la photographie n'est pas
+       traversée. Le filet de droite tombe sur elle, et celui de gauche sur le
+       panneau — c'est le panneau qui le redessine (voir `.hero::before`),
+       puisqu'un même filet ne peut pas passer sous la photo et sur le papier
+       qui la recouvre. */
+    z-index: 6;
+  }
+  /* Le filet de gauche, redessiné dans le héros : même calcul que `PageRules`
+     (le héros fait la largeur de la fenêtre, le `100%` se résout pareil), et
+     au-dessus du panneau (2), en dessous de rien d'autre. Il ne peut pas tomber
+     sur la photo — elle commence à 76 % de la couture, lui à --page-margin. */
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(max(0px, (100% - var(--page-max)) / 2) + var(--page-margin));
+    width: 1px;
+    background: var(--line-page-rule);
+    z-index: 3;
+    pointer-events: none;
   }
   /* Écart assumé au composant : `ArcPanel` se pose en absolu par défaut. Ici il
      est la seule chose en flux — la photo, elle, reste absolue et remplit le
@@ -542,6 +563,10 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
      de trois mots. L'enveloppe prend l'écart, la pastille garde sa boîte. */
   .count { color: var(--text-label); }
   .matiere-photo { grid-column: 3; grid-row: 1 / span 3; border-bottom: var(--divider); }
+  /* PAR-DESSUS le filet de droite (z-index 5) qu'elle est seule à franchir :
+     la photographie le franchit sans être traversée. Les filets du registre
+     sont des bordures de cellules, rien ne passe au-dessus d'elle. */
+  .matiere-photo { position: relative; z-index: 6; }
 
   /* ---- 4. HONORAIRES ----
      La section a quitté le registre : ni filets, ni cellules. Deux blocs sur la
@@ -734,7 +759,11 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
      sur les filets à toutes les largeurs, au lieu de les franchir (seule la
      photographie a le droit de les franchir). */
   @media (--lap) {
-    .hero { min-height: 0; }
+    /* Le panneau redevient un bloc sous la photo : les vrais filets peuvent
+       traverser son texte, et c'est la photo seule qui passe au-dessus d'eux.
+       Le héros cesse donc d'être un contexte, et le filet redessiné se tait. */
+    .hero { min-height: 0; z-index: auto; }
+    .hero::before { display: none; }
     /* Un rapport, pas une hauteur fixe : à 380 px la photo devenait un bandeau
        de plus en plus écrasé à mesure que la largeur montait vers 1000 px, et
        la coupe mangeait les têtes puis les pieds. Le 5/3 rejoue EXACTEMENT le
@@ -743,7 +772,7 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
        rien : une seule photographie, deux mises en page.
        `width` est posée explicitement : avec `aspect-ratio`, une largeur `auto`
        se déduirait de la hauteur et déborderait du téléphone. */
-    .hero-photo { position: static; left: auto; width: 100%; height: auto; aspect-ratio: 5 / 3; }
+    .hero-photo { position: relative; left: auto; width: 100%; height: auto; aspect-ratio: 5 / 3; z-index: 6; }
     /* Pleine largeur, plus de panneau par-dessus : le recadrage du héros
        large n'a plus lieu d'être, la photo se suffit. */
     .hero-photo :global(img) { transform: none; }

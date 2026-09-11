@@ -75,14 +75,34 @@ import Icon from './Icon.astro';
     border-bottom: var(--divider);
     background: var(--surface-page);
     position: relative;
-    /* SOUS les filets de marge (z-index 5) : ils traversent l'en-tête au lieu
-       de s'y interrompre, et dessinent ainsi les deux bords verticaux de la
-       boîte. Au-dessus du panneau du héros (2), pour que le menu ouvert le
-       recouvre. */
-    z-index: 4;
+    /* PAR-DESSUS le héros (6), pour que le sous-menu et le tiroir ouverts le
+       recouvrent — et donc par-dessus les filets de marge (5), que le héros
+       recouvre lui-même pour dégager sa photographie. Les filets doivent
+       pourtant traverser l'en-tête, pour dessiner les deux bords verticaux de
+       la boîte : l'en-tête les redessine (voir `header::before / ::after`),
+       et le tiroir porte les siens en bordures. */
+    z-index: 7;
     /* La hauteur de la barre glisse avec le cadre, comme les marges. */
     --bar-h: clamp(64px, 5vw, 88px);
   }
+
+  /* Les deux filets de marge, redessinés sur la hauteur de la boîte : même
+     calcul que `PageRules` — l'en-tête fait la largeur de la fenêtre, le
+     `100%` se résout sur le même bloc. Au-dessus de la barre, comme les vrais
+     filets l'étaient. */
+  header::before,
+  header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--line-page-rule);
+    z-index: 1;
+    pointer-events: none;
+  }
+  header::before { left:  calc(max(0px, (100% - var(--page-max)) / 2) + var(--page-margin)); }
+  header::after  { right: calc(max(0px, (100% - var(--page-max)) / 2) + var(--page-margin)); }
 
   .bar {
     position: relative; /* ancre du tiroir */
@@ -245,6 +265,9 @@ import Icon from './Icon.astro';
     right: var(--page-margin);
     background: var(--surface-page);
     border-bottom: var(--divider);
+    /* Ses deux bords tombent pile sur les filets de marge, que l'en-tête
+       recouvre désormais : il les porte donc lui-même, au pixel près. */
+    border-inline: var(--divider);
   }
   .drawer a {
     display: flex;
