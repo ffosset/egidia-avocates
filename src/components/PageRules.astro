@@ -7,9 +7,22 @@
 
     Le filet enveloppe est un conteneur `fixed` : les pourcentages s'y
     résolvent sur le bloc initial, qui exclut la barre de défilement. `100vw`
-    l'aurait incluse et décalé les filets d'un demi-scrollbar sous Windows. */
+    l'aurait incluse et décalé les filets d'un demi-scrollbar sous Windows.
+
+    Deux cadres, pas un. Le premier (z-index 5) porte les filets pleins, sous
+    tout ce qui est plein : la photographie du héros, celle du registre, la
+    bande sauge, le pied de page passent au-dessus (6) pour ne pas être rayés.
+    Le second (7) porte les mêmes filets, mais VOILÉS : ils traversent bien ces
+    aplats et ces photos, à peine, pour que le cadre du site ne s'interrompe
+    jamais. Sur le papier, le voile tombe pile sur le filet plein, de la même
+    encre, et ne change rien. L'en-tête vaut 7 aussi et vient après dans le
+    flux : il passe au-dessus du voile, et garde ses propres filets pleins. */
 ---
 <div class="frame" aria-hidden="true">
+  <span class="rule left"></span>
+  <span class="rule right"></span>
+</div>
+<div class="frame veil" aria-hidden="true">
   <span class="rule left"></span>
   <span class="rule right"></span>
 </div>
@@ -30,4 +43,6 @@
   }
   .left  { left:  calc(max(0px, (100% - var(--page-max)) / 2) + var(--page-margin)); }
   .right { right: calc(max(0px, (100% - var(--page-max)) / 2) + var(--page-margin)); }
+  .veil { z-index: 7; }
+  .veil .rule { background: var(--line-page-veil); }
 </style>

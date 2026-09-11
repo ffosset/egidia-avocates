@@ -162,10 +162,13 @@ import blason from '../../assets/logo-egidia-blanc.png';
      colonne, la hiérarchie tient à l'ordre et aux écarts. */
   .plain { font-size: var(--fs-body-sm); color: var(--sable-clair); line-height: 1.6; }
 
+  /* Le dernier filet du site porte la même encre voilée que les filets de
+     marge là où ils traversent le pied (`--line-page-veil`) : un seul trait
+     sur le sauge obscur, vertical ou horizontal. */
   .legal-band {
     margin-top: var(--space-8);
     padding-top: var(--space-5);
-    border-top: 1px solid rgba(250, 247, 244, 0.26);
+    border-top: 1px solid var(--line-page-veil);
   }
   .legal {
     display: flex;
