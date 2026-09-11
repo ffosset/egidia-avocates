@@ -39,9 +39,15 @@ const href = (url: string) => (/^https?:\/\//.test(url) ? url : `https://${url}`
        qui ouvre le bloc. */
     padding: var(--space-4) var(--links-bleed, var(--space-4));
     margin-inline: calc(-1 * var(--links-bleed, var(--space-4)));
-    border-top: var(--divider);
+    /* ---- LES ENCRES ----
+       La liste vit sur le papier d'une carte comme sur la sauge de l'aplat
+       des pages intérieures. Elle ne connaît pas son fond : c'est le
+       contenant qui pose, s'il le faut, les quatre encres — le filet, le
+       libellé, l'adresse, le glyphe — et chacune retombe sur sa valeur de
+       papier quand personne ne la pose. */
+    border-top: var(--links-rule, var(--divider));
     text-decoration: none;
-    color: var(--text-body);
+    color: var(--links-ink, var(--text-body));
     font-size: var(--fs-body-sm);
     line-height: 1.5;
   }
@@ -50,7 +56,7 @@ const href = (url: string) => (/^https?:\/\//.test(url) ? url : `https://${url}`
      différence entre la hauteur de ligne (27px) et le glyphe (18px), moins ce
      que le trait laisse d'air en haut : la même valeur que les lignes de
      coordonnées de l'accueil, pour le même glyphe sur la même ligne. */
-  .glyph { color: var(--sauge-obscur); margin-top: 3px; }
+  .glyph { color: var(--links-glyph, var(--sauge-obscur)); margin-top: 3px; }
   /* Une adresse écrite en clair est un mot que rien ne coupe : sur un petit
      téléphone, elle imposait sa longueur à la colonne entière et la poussait
      hors du cadre. `anywhere` la laisse se casser — et, à la différence de
@@ -58,9 +64,32 @@ const href = (url: string) => (/^https?:\/\//.test(url) ? url : `https://${url}`
      qui est précisément ce qui décidait du débordement. */
   .url {
     display: block;
-    color: var(--text-label);
+    color: var(--links-url, var(--text-label));
     font-size: 16px;
     margin-top: 2px;
     overflow-wrap: anywhere;
+  }
+  /* Sous le geste, la ligne se couche dans son lit et l'adresse reprend
+     l'encre des étiquettes — que `.eg-inverse` a déjà relevée d'un cran pour
+     ce lit (voir `styles/survol.css`). Une adresse posée en clair sur la
+     sauge serait restée claire sur le lit crème, et aurait disparu. */
+  a:focus-visible .url { color: var(--text-label); }
+  @media (hover: hover) {
+    a:hover .url { color: var(--text-label); }
+  }
+  /* Au téléphone, la colonne du glyphe coûte trop cher : 24px plus l'espace,
+     sur une largeur où chaque libellé se casse déjà en deux ou trois lignes.
+     La flèche rentre alors dans le texte, juste devant la première lettre,
+     et le libellé comme l'adresse reprennent toute la largeur de la ligne.
+     La flèche reste calée sur la ligne de base du texte (l'aligner au milieu
+     la décalerait d'un pixel ou deux vers le haut). */
+  @media (--lap) {
+    a { display: block; }
+    .glyph {
+      display: inline-block;
+      vertical-align: -0.15em;
+      margin: 0 0.4em 0 0;
+    }
+    .glyph :global(svg) { display: block; }
   }
 </style>
