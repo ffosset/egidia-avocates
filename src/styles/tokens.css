@@ -77,6 +77,49 @@
   --section-y-sm: clamp(48px, 5vw,   64px);
 }
 
+/* ---- Le haut de l'échelle glisse, le corps ne bouge pas ----
+   L'échelle du design system est celle d'un écran de bureau, et elle y reste
+   entière. Au téléphone, ses quatre premiers pas ne tenaient plus dans la
+   colonne : un h1 de 48px sur 303px casse « n'existe pas, ou / plus », un
+   chapô de 24px remplit l'écran d'entrée à vingt-deux signes la ligne, et un
+   h2 de 40px dépassait le h1 du héros, que l'accueil avait déjà réduit de son
+   côté — une section pesait plus que la page.
+
+   Chaque valeur retombe EXACTEMENT sur celle du système en haut, et descend
+   d'UN pas de la même échelle en bas : le h1 prend la valeur du h2, le h2
+   celle du h3, le chapô celle du corps. Rien d'inventé. Entre les deux, la
+   même pente que le cadre (`vw`, pas de palier) : une tablette à 1000px ne
+   saute pas de 40 à 48.
+
+       viewport   héros   h1    h2    chapô
+        375px      34px   40px  32px  20px
+        1000px     36px   40px  33px  20px
+       >1250px     56px   48px  40px  24px
+
+   Le héros garde son plancher à lui : c'est une phrase, pas un nom, et à 40px
+   elle ferait cinq lignes. Il lui suffit de ne plus passer SOUS les titres de
+   section, ce que le h2 à 32px règle.
+
+   Le chapô tombe jusqu'au corps, et non à mi-chemin : à 22px il n'aurait
+   été qu'un corps qui ne dit pas son nom. Au téléphone, c'est sa couleur et
+   sa place — premier paragraphe, sous le titre — qui le distinguent.
+
+   Le CORPS (20/18) ne bouge pas, ni les niveaux qui vivent déjà dans des
+   cellules fluides (le sous-titre à 28px, le h3 à 32px, les étiquettes) :
+   c'est la lisibilité de première lecture, celle que le système protège
+   (« body never below 18px »), et elle vaut davantage sur un téléphone. */
+:root {
+  --fs-hero: clamp(34px, 3.6vw, 56px);
+  --fs-h1:   clamp(40px, 4vw,   48px);
+  --fs-h2:   clamp(32px, 3.3vw, 40px);
+  --fs-lead: clamp(20px, 2vw,   24px);
+  /* L'interligne du chapô suit sa taille : 36px à 24px (le 1,5 du système),
+     32px à 20px — celui du corps, qu'il rejoint alors. Écrit en absolu et non
+     en ratio : un ratio fixe aurait laissé le chapô plus serré (30px) que le
+     paragraphe qui le suit, au moment même où ils ont la même taille. */
+  --lh-lead: calc(1em + 12px);
+}
+
 /* ---- La couture ----
    UNE seule verticale gouverne le haut du site : le bord de fuite du panneau
    du héros — donc le bord visible de la photographie — et le premier filet de
