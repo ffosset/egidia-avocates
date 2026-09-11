@@ -81,7 +81,10 @@ commerces). Quatre décisions :
    autre origine, le moteur ne démarre pas la transition de `filter` et cloue
    la propriété à son ancienne valeur (commentaire à l'appui dans le composant).
 3. **Un voile intercepte la molette**, sinon la carte confisque le défilement de
-   la page. Il ne naît qu'avec le script, comme le cadre qu'il couvre.
+   la page. Il ne naît qu'avec le script, comme le cadre qu'il couvre — et il
+   ne se pose qu'une fois le plan QUITTÉ (la souris en sort, ou la page
+   défile) : le clic « Afficher le plan » livre un plan qui répond tout de
+   suite, sans second clic pour confirmer ce qu'on vient de demander.
 4. **Le plan occupe toute la cellule, et RIEN ne se pose sous lui** — ni barre,
    ni lien d'itinéraire. `a9990cf` avait retiré ce lien du registre du contact,
    et c'est ce retrait qui permet aux quatre cellules de partir du haut sur un
@@ -91,7 +94,8 @@ commerces). Quatre décisions :
    le repli.
 
 Trois états, donc, et le script est le seul à pouvoir les franchir : au repos
-(aucune requête) → chargé (le voile garde la molette) → manipulable.
+(aucune requête) → manipulable → voilé (le voile garde la molette), et retour
+au manipulable d'un clic sur le voile.
 
 **L'écran d'appel est déjà un plan.** Au repos, la cellule ne porte pas une
 phrase de mise en garde mais une image du quartier — `assets/photos/plan.jpg`,

@@ -99,7 +99,7 @@ const src = cle
     </small>
   </div>
 
-  {/* Le voile : posé une fois le plan chargé, il rend la molette à la page.
+  {/* Le voile : il rend la molette à la page une fois qu'on a QUITTÉ le plan.
       Il ne naît qu'avec le script, comme le cadre qu'il couvre. */}
   <button class="veil" type="button" data-veil>
     <span class="tag">Déplacer la carte</span>
@@ -109,13 +109,25 @@ const src = cle
 <script>
   /* Trois états, et le script est le seul à pouvoir les franchir :
        au repos       — aucun <iframe>, aucune requête ;
-       chargé         — le cadre existe, le voile garde la molette ;
-       manipulable    — le voile est tombé.
+       manipulable    — le cadre existe et répond à la main ;
+       voilé          — le voile garde la molette pour la page.
+     Le clic sur « Afficher le plan » mène DIRECTEMENT au plan manipulable :
+     qui vient de le demander n'a pas à confirmer qu'il veut s'en servir. Le
+     voile ne tombe qu'ensuite, quand on a quitté le plan — la souris en sort,
+     ou la page défile — et c'est là qu'il sert : la personne qui redescend
+     dans le registre du contact ne doit pas voir la carte lui confisquer la
+     molette. Un clic sur le voile rend le plan, et ainsi de suite.
+     `mouseleave` et non `pointerleave` : au doigt, `pointerleave` suit chaque
+     lever de doigt, et le voile retomberait sur le plan qu'on touche.
      Vingt lignes, là où le plan précédent chargeait 147 Ko de bibliothèque. */
   for (const wrap of document.querySelectorAll<HTMLElement>('[data-map]')) {
     const load = wrap.querySelector<HTMLButtonElement>('[data-load]');
     const veil = wrap.querySelector<HTMLButtonElement>('[data-veil]');
     if (!load || !veil) continue;
+
+    const reveil = () => {
+      if (wrap.classList.contains('loaded')) wrap.classList.add('veiled');
+    };
 
     wrap.classList.add('js');
     load.addEventListener('click', () => {
@@ -128,8 +140,10 @@ const src = cle
       map.allowFullscreen = true;
       map.src = wrap.dataset.src ?? '';
       wrap.prepend(map);
-      wrap.classList.add('loaded', 'veiled');
-      veil.focus();
+      wrap.classList.add('loaded');
+      map.focus();
+      wrap.addEventListener('mouseleave', reveil);
+      window.addEventListener('scroll', reveil, { passive: true });
     });
     veil.addEventListener('click', () => wrap.classList.remove('veiled'));
   }
