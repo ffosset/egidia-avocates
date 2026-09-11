@@ -36,14 +36,14 @@ export const CONTACT = {
 export const PHOTOS = {
   equipe: '/photos/egidia-team.jpg',
   equipeAlt: '/photos/equipe.jpg', // equipe-2.jpg jamais fourni — repli sur la principale
-  ambiance: '/photos/ambiance-terrasse.jpg',
+  ambiance: '/photos/matieres.jpg',
 };
 
 export const ALT = {
   equipe:
     'Les sept avocates du cabinet Egidia, devant le Palais de justice de Bruxelles',
   ambiance:
-    'Quatre avocates du cabinet en conversation sur la terrasse, Bruxelles en arrière-plan',
+    'La grande roue de la place Poelaert, vue du pied du Palais de justice de Bruxelles',
 };
 
 export const LIENS_ACCUEIL = [
