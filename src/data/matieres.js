@@ -107,7 +107,17 @@ export const MATIERES = [
     ],
     avocates: ['Cécile Ghymers', 'Déborah Unger'],
     // Marqué [Ajouter] dans le PDF du cabinet — toujours vide.
-    liens: [],
+    liens: [
+      // Un PDF, dont le chemin n'a rien à faire sous les yeux du lecteur :
+      // on écrit le site qui l'héberge, et le lien mène au document.
+      [
+        'Guide pratique et de premiers réflexes sur les questions de séjour des mineurs « étrangers » en situation de vulnérabilité',
+        'https://accrochaje.cfwb.be/fileadmin/sites/ajens/uploads/Bibliotheque/Fiches_base_de_donnee/Outils/Fichiers/25.10.24._Guide_mineurs_etrangers_-_version__aout_2025.pdf',
+        'accrochaje.cfwb.be',
+      ],
+      ['Plate-forme Mineurs en exil', 'www.mineursenexil.be'],
+      ['Mentor-Escale', 'www.mentorescale.be'],
+    ],
   },
   {
     id: 'famille',
