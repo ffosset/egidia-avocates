@@ -24,7 +24,7 @@ export const EDITEUR = {
 
 export const ORDRE = {
   nom: 'Ordre français des avocats du barreau de Bruxelles',
-  url: 'www.barreaudebruxelles.be',
+  url: 'barreaubruxelles.be',
 };
 
 export const AVOCATS_BE = {

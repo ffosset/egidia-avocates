@@ -81,7 +81,9 @@ export const LIENS_ACCUEIL = [
       // Le cabinet a donné l'adresse, pas la glose : le nom seul, comme
       // « CPAS de votre commune ». À compléter par le cabinet s'il veut dire
       // en une ligne ce qu'on y trouve.
-      ['Atelier des droits sociaux', 'www.atelierdroitssociaux.be'],
+      // Le site ne répond qu'en http : son certificat est celui de l'hébergeur,
+      // et un navigateur refuse la page en https. Le schéma est donc écrit.
+      ['Atelier des droits sociaux', 'http://www.atelierdroitssociaux.be', 'www.atelierdroitssociaux.be'],
     ],
   ],
 ];

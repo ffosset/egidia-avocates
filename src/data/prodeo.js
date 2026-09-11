@@ -85,7 +85,7 @@ export const REVENUS = [
 ];
 
 export const LIENS_PRODEO = [
-  ['Ordre français des avocats du barreau de Bruxelles', 'www.barreaudebruxelles.be'],
+  ['Ordre français des avocats du barreau de Bruxelles', 'barreaubruxelles.be'],
   ["Bureau d'aide juridique de Bruxelles", 'www.aidejuridiquebruxelles.be'],
   ['Wikifin · assurance protection juridique', 'www.wikifin.be'],
   ['Avocats.be · combien coûte un avocat', 'avocats.be/fr/tout-savoir/combien-ca-coute'],

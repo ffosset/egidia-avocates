@@ -612,7 +612,14 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
   .hono { padding: var(--section-y) 0; border-top: var(--divider); }
   /* Le titre, le texte et le renvoi cassent tous sur la même verticale : la
      mesure est portée par la colonne, une seule fois (voir RuledCell). */
-  .hono-propos { max-width: 30rem; }
+  .hono-propos {
+    max-width: 30rem;
+    /* L'étiquette lit `--text-label` (#7A6B5A) : sur la surface de la section,
+       3,4:1 — sous les 4,5:1 que réclame un texte de 15px. Le brun moyen y
+       tient 4,8:1. C'est le token qu'on retourne, pas la classe : la portée
+       d'Astro ne franchit pas la racine d'`Eyebrow` (voir SiteFooter). */
+    --text-label: var(--brun-moyen);
+  }
   .hono-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));

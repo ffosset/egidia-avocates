@@ -60,7 +60,7 @@ export const MATIERES = [
       ["Service d'Aide à la Jeunesse (SAJ)", 'aidealajeunesse.cfwb.be'],
       ["Bruxelles-J · Centre d'information pour les jeunes", 'www.bruxelles-j.be'],
       ['Service Droit des Jeunes (SDJ)', 'www.sdj.be'],
-      ['Infor Jeunes Bruxelles', 'www.inforjeunesbruxelles.be'],
+      ['Infor Jeunes', 'inforjeunes.be'],
       ['Tes droits ton avocat', 'tesdroitstonavocat.be'],
     ],
   },
