@@ -99,7 +99,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
 
     {/* 2 — VALEURS */}
     <Band tone="sage" id="valeurs">
-      <h2 class="band-title">Une justice claire et humaine</h2>
+      <h2 class="section-title band-title">Une justice claire et humaine</h2>
       <div class="band-copy pile">
         <p>
           Derrière chaque dossier, il y a une personne et une histoire. Nous prenons le temps de
@@ -121,7 +121,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
       <RuledGrid columns="minmax(0, 1fr) minmax(0, 1fr) var(--photo-track)" noTop>
         <RuledCell align="center">
           <Eyebrow>Matières</Eyebrow>
-          <h2 class="grid-title">Nos matières préférentielles</h2>
+          <h2 class="section-title grid-title">Nos matières préférentielles</h2>
         </RuledCell>
         {MATIERES.map((m, i) => {
           const n = i + 1;
@@ -148,7 +148,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
       <RuledGrid min={380} noTop>
         <RuledCell align="center" minHeight={280}>
           <Eyebrow>Équipe</Eyebrow>
-          <h2 class="big">Nos avocates</h2>
+          <h2 class="section-title">Nos avocates</h2>
         </RuledCell>
         <RuledCell align="center" minHeight={280}>
           <p class="sub">
@@ -187,7 +187,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
         <div class="hono-grid">
           <div class="pile hono-propos">
             <Eyebrow>Honoraires</Eyebrow>
-            <h2 class="hono-titre">Combien ça coûte ?</h2>
+            <h2 class="section-title">Combien ça coûte ?</h2>
             <p class="body">
               Nos honoraires varient selon la nature de l'affaire, sa complexité et votre
               situation. Nous les fixons avec modération et nous vous les expliquons clairement.
@@ -245,7 +245,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
     <section id="liens" class="liens pile">
       <div class="liens-head pile">
         <Eyebrow>Liens utiles</Eyebrow>
-        <h2 class="big">Ressources externes</h2>
+        <h2 class="section-title">Ressources externes</h2>
       </div>
       <RuledGrid columns="repeat(2, minmax(0, 1fr))" noTop class="pile-block">
         {LIENS_ACCUEIL.map(([titre, liens], i) => (
@@ -272,7 +272,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
       <RuledGrid min={320} maxCols={3} noTop>
         <RuledCell minHeight={320}>
           <Eyebrow>Contact</Eyebrow>
-          <h2 class="cell-lead">Les consultations ont lieu uniquement sur rendez-vous</h2>
+          <h2 class="section-title cell-lead">Les consultations ont lieu uniquement sur rendez-vous</h2>
         </RuledCell>
 
         <RuledCell minHeight={320}>
@@ -473,6 +473,22 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
      titre à son chapô. */
   .hero-inner > .hero-logo + h1 { margin-top: var(--stack-tight); }
 
+  /* ---- Le titre de section : UN seul cran ----
+     Six sections, six <h2>, une seule taille — celle que `SectionHead` donne
+     déjà aux sections des pages intérieures (`--fs-h2`). Il n'y a que deux
+     crans de titre sur l'accueil : celui-ci, et le sous-titre
+     (`--type-subtitle-*`, voir tokens.css) pour ce qui nomme une chose DANS
+     une cellule. Ce qui suit dans les sections ne touche plus à la lettre :
+     mesure, couleur, césure — rien d'autre. */
+  .section-title {
+    font-family: var(--font-display);
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+    letter-spacing: var(--ls-display);
+    color: var(--text-heading);
+  }
+
   /* ---- 2. VALEURS ---- */
   /* Le titre de la bande tient sur UNE ligne, toujours : c'est une phrase, et
      une phrase cassée en deux cesse d'être lue d'un trait. `nowrap` scelle la
@@ -484,7 +500,8 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
      ne fait que 11,3em et suit donc Fira de près ; c'est Arial, la chute des
      machines qui n'ont pas de condensée, qui fixe la borne.) On divise donc
      par 14 : tant que la fenêtre offre cette largeur entre ses filets, le
-     titre garde ses 40px ; en dessous il rétrécit avec elle au lieu de casser.
+     titre garde le cran de section ; en dessous il rétrécit avec elle au lieu
+     de casser.
      Le plancher de 28px disparaît — une phrase de 29 signes ne tient pas à
      28px sur un téléphone, il fallait choisir.
 
@@ -492,11 +509,8 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
      était Georgia à 15,0em. Il se remesure à chaque changement de famille
      d'affichage : c'est une largeur de texte, pas une constante. */
   .band-title {
-    font-family: var(--font-display);
-    font-size: min(40px, (100vw - 2 * var(--content-inset)) / 14);
+    font-size: min(var(--fs-h2), (100vw - 2 * var(--content-inset)) / 14);
     white-space: nowrap;
-    font-weight: var(--fw-bold);
-    line-height: 1.2;
     color: var(--text-on-accent);
   }
   /* Le titre de la bande et sa copie cassent sur la même verticale : une seule
@@ -564,15 +578,9 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
   #liens      { --section-surface: var(--surface-liens); }
   #contact    { --section-surface: var(--surface-contact); }
 
-  .grid-title {
-    font-family: var(--font-display);
-    font-size: clamp(28px, 2.6vw, 40px);
-    font-weight: var(--fw-bold);
-    line-height: 1.15;
-    /* La mesure appartient à la cellule (rem) : le label et le titre cassent
-       sur la même verticale, et non sur deux `ch` de corps différents. */
-    max-width: var(--cell-measure);
-  }
+  /* La mesure appartient à la cellule (rem) : le label et le titre cassent
+     sur la même verticale, et non sur deux `ch` de corps différents. */
+  .grid-title { max-width: var(--cell-measure); }
   /* Le nombre d'avocates qui prennent la matière : la MÊME pastille de filet
      que les langues d'un portrait (`styles/pastille.css`) — une note posée au
      pied de la cellule, pas une seconde ligne de texte.
@@ -611,15 +619,6 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
     gap: var(--space-8);
     /* Le panneau tient sa hauteur de son texte, pas de la colonne d'à côté. */
     align-items: start;
-  }
-  /* Le seul titre de l'accueil qui parle au lecteur à la première personne :
-     il est plus grand que les titres de cellule, il n'en est pas un. */
-  .hono-titre {
-    font-family: var(--font-display);
-    font-size: clamp(36px, 4.5vw, 68px);
-    font-weight: var(--fw-bold);
-    line-height: 1.08;
-    letter-spacing: var(--ls-display);
   }
   /* Le renvoi vers avocats.be : c'est une seconde voix, pas une note de bas de
      page — elle est en gras, et le lien porte son soulignement. */
@@ -663,13 +662,6 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
   .body { font-size: var(--fs-body); line-height: 1.6; }
 
   /* ---- 5. ÉQUIPE ---- */
-  .big {
-    font-family: var(--font-display);
-    font-size: clamp(40px, 5vw, 84px);
-    font-weight: var(--fw-bold);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-  }
   /* `.filler` est un <p> qui tient le rôle d'un titre : `eg-title` lui donne
      l'œil du display ET le pas qui va avec (voir pile.css). Il ne reste ici
      que ce qui lui est propre — la taille et la mesure. */
@@ -697,8 +689,6 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
      le `--content-inset` que la loi exige — donc la loi tient — et c'est
      surtout la SEULE valeur qui aligne le titre sur ce qu'il annonce. */
   .liens-head { padding-left: var(--cell-pad); }
-  /* Le nom de la section prend l'oeil de « Nos avocates » (voir `.big`) : ces
-     deux-là ouvrent une section entière, pas une cellule. */
 
   /* La rangée des noms de groupes : dans le registre pour en prendre les
      colonnes, hors de la boîte pour tout le reste. Aucun filet — c'est la
@@ -721,13 +711,7 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
   }
 
   /* ---- 7. CONTACT ---- */
-  .cell-lead {
-    font-family: var(--font-display);
-    font-size: clamp(28px, 2.6vw, 40px);
-    font-weight: var(--fw-bold);
-    line-height: 1.18;
-    max-width: 16ch;
-  }
+  .cell-lead { max-width: 16ch; }
   .cell-h3 {
     font-family: var(--type-subtitle-family);
     font-size: var(--type-subtitle-size);
