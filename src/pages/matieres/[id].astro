@@ -174,10 +174,19 @@ const descriptionSeo = `${m.titre} à Bruxelles : ${minuscule(m.resume)}`;
      78 % de sa largeur font un arc qui remonterait sous la dernière adresse,
      quelle que soit la queue. L'arc vit alors DANS la queue : son rayon
      vertical vaut exactement le pas du bas, et la courbe ne peut plus toucher
-     le texte. La bande garde ses filets de marge — ce n'est pas une
-     photographie, elle ne les franchit pas — et son texte revient à
-     --content-inset, sur la verticale du titre : le pas intérieur vaut la
-     gouttière, et le débord des lignes le suit.
+     le texte. La bande va d'un bord de l'écran à l'autre, comme l'aplat de
+     l'aide juridique et le panneau des honoraires : au téléphone, une
+     surface pleine qui s'arrêtait au filet laissait deux lisérés de papier
+     qui se lisaient comme une erreur de calage. Son texte reste à
+     --content-inset, sur la verticale du titre, et le débord des lignes le
+     suit : les filets entre deux liens vont eux aussi de bord à bord.
+
+     Du sable sur les filets de marge, qui sont de sable : comme la section
+     des honoraires, l'aplat passe au-dessus des filets pleins (6) et les
+     redessine dans l'encre qui se lit sur le sable, à --page-margin de ses
+     bords — la position même du filet. `overflow: hidden` les coupe à l'arc,
+     pour qu'ils ne courent pas sur le papier sous la courbe. Le voile (7)
+     traverse le tout.
 
      « Empilé » n'est pas un point de rupture : c'est `flex-wrap` qui décide,
      quand les deux bases (38ch + 30ch) et la gouttière (96px) ne tiennent plus
@@ -186,10 +195,26 @@ const descriptionSeo = `${m.titre} à Bruxelles : ${minuscule(m.resume)}`;
   .split { container-type: inline-size; }
   @container (max-width: calc(38ch + 30ch + 96px)) {
     .aplat {
-      padding-inline: var(--gutter);
-      --links-bleed: var(--gutter);
+      margin-inline: calc(-1 * var(--content-inset));
+      padding-inline: var(--content-inset);
+      --links-bleed: var(--content-inset);
       border-bottom-left-radius: 78% var(--space-10);
+      position: relative;
+      z-index: 6;
+      overflow: hidden;
     }
+    .aplat::before,
+    .aplat::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: var(--border-rule);
+      background: var(--line-page-rule-on-sable);
+      pointer-events: none;
+    }
+    .aplat::before { left: var(--page-margin); }
+    .aplat::after { right: var(--page-margin); }
   }
 
   /* Le fil d'Ariane n'est pas l'étiquette du titre (ce serait --stack-bind) :
@@ -322,4 +347,13 @@ const descriptionSeo = `${m.titre} à Bruxelles : ${minuscule(m.resume)}`;
   /* Les pastilles des autres matières : la même rangée que sur la page
      d'avocate, au même pas. */
   .chips { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--stack-tight); }
+  /* Ces pastilles mènent toutes quelque part : ce sont des boutons, et au
+     téléphone un bouton prend toute la largeur entre les marges (voir
+     `Button`, et les mêmes pastilles sur la page d'avocate). `:global` : la
+     pastille est un composant, sa racine ne porte pas la portée de cette
+     feuille. */
+  @media (--lap) {
+    .chips { flex-direction: column; align-items: stretch; }
+    .chips :global(.tag) { justify-content: center; }
+  }
 </style>

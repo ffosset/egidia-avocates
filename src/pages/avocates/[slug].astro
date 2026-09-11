@@ -287,6 +287,14 @@ const descriptionSeo = `${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` 
   .line { display: flex; gap: var(--space-3); align-items: center; font-size: var(--fs-body-sm); }
   .break { padding-bottom: var(--space-4); word-break: break-all; }
   .ruled { padding: var(--space-4) 0; border-top: var(--divider); }
+  /* Sans sa carte, le contact est une liste filetée comme les autres : ses
+     filets vont d'un filet de marge à l'autre, et le texte reste à
+     --content-inset — le pas intérieur vaut la gouttière. Après `.ruled`, dont
+     il doit défaire le `0` horizontal. */
+  @media (--lap) {
+    .contact { margin-inline: calc(-1 * var(--gutter)); }
+    .line { padding-inline: var(--gutter); }
+  }
 
   .rows { margin-top: var(--space-2); }
   .row {
