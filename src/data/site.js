@@ -12,10 +12,13 @@ export const CONTACT = {
   // 2026, portes du 13 rue de Livourne comprises — et arrondie à la centaine
   // de mètres : c'est la seule précision qu'un trajet à pied mérite, et la
   // seule qu'on puisse tenir quand un chantier déplace un trottoir.
+  // Chaque arrêt est éclaté en ses parts — le mode, les lignes, le nom — pour
+  // que l'accueil puisse poser les numéros à côté du glyphe et le nom d'arrêt
+  // dessous ; le pied de page les recompose en une phrase (`nomArret`).
   transports: [
-    { icone: 'tram-front', nom: 'Tram arrêt Stéphanie', marche: '300 m' },
-    { icone: 'train-front-tunnel', nom: 'Métro Louise', marche: '700 m' },
-    { icone: 'bus-front', nom: 'Bus 54, arrêt Bailli', marche: '700 m' },
+    { icone: 'tram-front', mode: 'Tram', lignes: ['8', '92', '93'], arret: 'Stéphanie', marche: '300 m' },
+    { icone: 'train-front-tunnel', mode: 'Métro', lignes: ['2', '6'], arret: 'Louise', marche: '700 m' },
+    { icone: 'bus-front', mode: 'Bus', lignes: ['54'], arret: 'Bailli', marche: '700 m' },
   ],
   // Le planificateur de la STIB n'accepte AUCUN paramètre d'adresse dans son
   // URL : sa page remet départ et destination à zéro au chargement (constaté
@@ -32,6 +35,14 @@ export const CONTACT = {
   // coordonnées sont le repli, et le lieu écrit noir sur blanc.
   coords: [50.83070, 4.35786],
 };
+
+/** « Tram 8, 92 et 93, arrêt Stéphanie » — la forme en une ligne d'un arrêt. */
+export function nomArret({ mode, lignes, arret }) {
+  const numeros = lignes.length > 1
+    ? `${lignes.slice(0, -1).join(', ')} et ${lignes.at(-1)}`
+    : lignes[0];
+  return `${mode} ${numeros}, arrêt ${arret}`;
+}
 
 export const PHOTOS = {
   equipe: '/photos/egidia-team.jpg',

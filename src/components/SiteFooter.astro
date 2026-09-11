@@ -1,7 +1,7 @@
 ---
 import Page from './Page.astro';
 import Eyebrow from './Eyebrow.astro';
-import { CONTACT } from '../data/site.js';
+import { CONTACT, nomArret } from '../data/site.js';
 import { MATIERES } from '../data/matieres.js';
 import { withBase } from '../lib/base.js';
 ---
@@ -45,7 +45,7 @@ import { withBase } from '../lib/base.js';
                 marche appartiennent à la section « Nous trouver », qui a la
                 place de les aligner et le bouton qui va avec. Ici, elles
                 allongeraient une ligne déjà à l'étroit dans sa colonne. */}
-            <span class="plain">{CONTACT.transports.map((a) => a.nom).join(' · ')}</span>
+            <span class="plain">{CONTACT.transports.map(nomArret).join(' · ')}</span>
           </div>
         </div>
       </div>

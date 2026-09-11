@@ -296,17 +296,24 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
 
         <RuledCell minHeight={320}>
           <h3 class="cell-h3">En transports en commun</h3>
-          {/* Les trois arrêts se lisent comme un tableau à deux colonnes : le
-              nom, puis la marche, celle-ci alignée à DROITE. Les distances se
-              comparent alors d'un coup d'œil vertical, ce qu'une distance
-              collée au bout de chaque nom, à une abscisse différente à chaque
-              ligne, ne permet jamais. */}
+          {/* Chaque arrêt se lit comme sur un poteau de la STIB : le glyphe,
+              le mode et ses numéros de ligne sur la première ligne
+              (« Tram 8, 92, 93 »), puis, en capitales dessous, l'arrêt et la
+              marche — celle-ci alignée à DROITE, dans la même étiquette que
+              l'arrêt. Les distances se comparent d'un coup d'œil vertical, ce
+              qu'une distance collée au bout de chaque nom, à une abscisse
+              différente à chaque ligne, ne permet jamais. */}
           <div class="lines">
             {CONTACT.transports.map((arret) => (
               <span class="line">
                 <span class="ico"><Icon name={arret.icone} size={18} /></span>
-                <span class="arret-nom">{arret.nom}</span>
-                <span class="arret-marche">{arret.marche}</span>
+                <span class="arret">
+                  <span class="arret-lignes">{arret.mode} {arret.lignes.join(', ')}</span>
+                  <span class="arret-pied">
+                    <span class="arret-nom">Arrêt {arret.arret}</span>
+                    <span class="arret-marche">{arret.marche}</span>
+                  </span>
+                </span>
               </span>
             ))}
           </div>
@@ -726,13 +733,28 @@ import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
   /* Chaque ligne s'ouvre par son glyphe : ce qu'elle EST se lit avant ce
      qu'elle dit — une adresse, un téléphone, un métro. */
   .line { display: flex; gap: var(--space-3); }
-  /* Le nom pousse la marche au bord droit de la mesure ; la marche, elle, ne se
-     laisse jamais couper — c'est un nombre, il tient sur une ligne. Le gris la
-     met un cran en retrait du nom : c'est une précision, pas l'information. */
-  .arret-nom { flex: 1 1 auto; }
+  /* L'arrêt prend toute la mesure : ses deux lignes s'y empilent. */
+  .arret { flex: 1 1 auto; display: grid; }
+  /* Les numéros sont ce qu'on cherche des yeux sur un poteau : en chiffres
+     tabulaires, pour que « 8, 92, 93 » et « 2, 6 » posent leurs chiffres sur
+     la même grille. */
+  .arret-lignes { font-variant-numeric: tabular-nums; }
+  /* Sous les numéros, la plaque : l'arrêt à gauche, la marche au bord droit,
+     tous deux dans la même étiquette — capitales espacées, corps d'étiquette.
+     La marche ne se laisse jamais couper : c'est un nombre, il tient sur une
+     ligne ; c'est le nom qui cède la place. */
+  .arret-pied {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    font-size: var(--fs-label);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-label);
+    text-transform: var(--type-label-transform);
+    color: var(--text-label);
+  }
   .arret-marche {
     flex: 0 0 auto;
-    color: var(--text-muted);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
