@@ -1,11 +1,21 @@
 ---
-/** Liste éditoriale : filet fin et tiret caramel, jamais de disque coloré. */
-interface Props { items: string[]; columns?: number }
-const { items, columns = 1 } = Astro.props;
+/** Liste éditoriale : filet fin et tiret caramel, jamais de disque coloré.
+    `marker="check"` remplace le tiret par la coche caramel des papiers à
+    fournir (voir `/aide-juridique`) : même glyphe, même couleur, même taille. */
+import Icon from './Icon.astro';
+interface Props { items: string[]; columns?: number; marker?: 'dash' | 'check' }
+const { items, columns = 1, marker = 'dash' } = Astro.props;
 ---
 <ul style={`grid-template-columns:repeat(${columns},1fr)`}>
   {items.map((it) => (
-    <li><span class="dash" aria-hidden="true"></span><span>{it}</span></li>
+    <li>
+      {marker === 'check' ? (
+        <span class="coche" aria-hidden="true"><Icon name="check" size={20} /></span>
+      ) : (
+        <span class="dash" aria-hidden="true"></span>
+      )}
+      <span>{it}</span>
+    </li>
   ))}
 </ul>
 
@@ -32,5 +42,16 @@ const { items, columns = 1 } = Astro.props;
     background: var(--caramel);
     flex: 0 0 auto;
     transform: translateY(-6px);
+  }
+  /* La coche est centrée sur la PREMIÈRE LIGNE, pas sur l'élément : un item
+     qui court sur deux lignes la garde en tête. `1.5em` est l'interligne de
+     la liste. `align-self: flex-start` parce que le `li` aligne sur la ligne
+     de base, ce qui n'a pas de sens pour un glyphe sans texte. */
+  .coche {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-self: flex-start;
+    margin-top: calc((1.5em - 20px) / 2);
+    color: var(--caramel);
   }
 </style>
