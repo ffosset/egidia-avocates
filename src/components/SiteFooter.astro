@@ -4,6 +4,11 @@ import Eyebrow from './Eyebrow.astro';
 import { CONTACT } from '../data/site.js';
 import { MATIERES } from '../data/matieres.js';
 import { withBase } from '../lib/base.js';
+import { Picture } from 'astro:assets';
+/* Le blason blanc, importé depuis `assets/` comme celui du héros (voir
+   index.astro) : 72px de haut, soit 63px de large — trois densités, et non
+   les 61 Ko du PNG entier sur chaque page du site. */
+import blason from '../../assets/logo-egidia-blanc.png';
 ---
 <footer>
   <Page>
@@ -12,7 +17,16 @@ import { withBase } from '../lib/base.js';
         {/* Le blason ramène à l'accueil, en haut de page : même cible que le
             nom dans l'en-tête. */}
         <a href={withBase("/")} class="blason" aria-label="Egidia · accueil">
-          <img src={withBase("/logo-egidia-blanc.png")} alt="Blason d'Egidia" width="480" height="552" />
+          <Picture
+            src={blason}
+            alt="Blason d'Egidia"
+            widths={[63, 126, 189]}
+            sizes="63px"
+            formats={['avif', 'webp']}
+            fallbackFormat="png"
+            loading="lazy"
+            decoding="async"
+          />
         </a>
         <div class="blurb">
           Cabinet bruxellois en droit des étrangers, de la famille, à l'aide sociale et de la jeunesse.

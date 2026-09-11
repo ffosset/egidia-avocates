@@ -17,8 +17,14 @@ import { MATIERES } from '../data/matieres.js';
 import { AVOCATES, codesLangues } from '../data/avocates.js';
 import { CONTACT, PHOTOS, ALT, LIENS_ACCUEIL } from '../data/site.js';
 import { cabinet, siteWeb, services, graphe } from '../lib/schema.js';
-import { getImage } from 'astro:assets';
+import { getImage, Picture } from 'astro:assets';
 import { photo } from '../lib/photos.js';
+/* Le blason est importé depuis `assets/` (le publicDir) et non copié dans
+   `src/` : le fichier y reste servi tel quel, à son adresse fixe, pour la
+   fiche schema.org (`logo`) — c'est LA source, et la page en tire une version
+   recodée (AVIF, WebP) aux trois densités d'écran d'un sceau de 96px, au lieu
+   des 72 Ko du PNG en 480 × 552. */
+import blason from '../../assets/logo-egidia.png';
 
 /* La photographie de l'équipe, à l'adresse absolue, pour la fiche du cabinet. */
 const equipe = await getImage({ src: photo(PHOTOS.equipe), width: 1600, format: 'jpg' });
@@ -79,12 +85,14 @@ const jsonLd = graphe(cabinet({ image: new URL(equipe.src, Astro.site).href }), 
               montre en entier (bouclier, nom, quatre profils). L'en-tête, lui, n'a que le nom. Le nom est déjà
               DANS l'image — l'alt le répète une fois, sans le doubler d'un
               titre. */}
-          <img
+          <Picture
             class="hero-logo"
-            src={withBase('/logo-egidia.png')}
+            src={blason}
             alt="Egidia"
-            width="480"
-            height="552"
+            widths={[96, 192, 288]}
+            sizes="96px"
+            formats={['avif', 'webp']}
+            fallbackFormat="png"
             loading="eager"
             decoding="async"
           />

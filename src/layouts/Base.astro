@@ -71,6 +71,12 @@ const partage = {
         nom ne sont plus qu'un grain. C'est la seule silhouette du bouclier,
         relevée sur le contour du logo et pleine de sauge obscur. */}
     <link rel="icon" href={withBase("/favicon.svg")} type="image/svg+xml" />
+    {/* iOS ne lit pas le SVG pour « Sur l'écran d'accueil » ni pour ses
+        signets : sans ce PNG, il pose une capture de la page. La même
+        silhouette, sur crème, 180 × 180 — l'appareil arrondit lui-même les
+        coins. Généré depuis favicon.svg (sharp) ; à refaire si l'un des deux
+        change. */}
+    <link rel="apple-touch-icon" href={withBase("/apple-touch-icon.png")} />
     <link rel="preload" href={fira700} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={sourceSans} as="font" type="font/woff2" crossorigin />
     <meta property="og:type" content="website" />
