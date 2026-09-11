@@ -1,16 +1,20 @@
 ---
 import Icon from './Icon.astro';
-interface Props { items: Array<[string, string]> }
+/* Un lien = [libellé, adresse, affichage?]. L'adresse est ce que vise le lien,
+   sans le `https://` ; l'affichage, s'il est donné, est ce qu'on écrit en
+   clair à la place — pour une adresse de recherche dont la chaîne de requête
+   n'a rien à faire sous les yeux du lecteur. */
+interface Props { items: Array<[string, string, string?]> }
 const { items } = Astro.props;
 ---
 <div class="links">
   {/* Tous ces liens sortent du site : ils s'ouvrent dans un nouvel onglet,
       comme partout ailleurs. La flèche oblique et l'adresse écrite en clair
       l'annoncent déjà au lecteur — il n'y a rien à ajouter au libellé. */}
-  {items.map(([label, url]) => (
+  {items.map(([label, url, affichage]) => (
     <a href={`https://${url}`} class="eg-inverse" target="_blank" rel="noopener">
       <span class="eg-accent glyph"><Icon name="arrow-up-right" size={18} /></span>
-      <span>{label}<span class="url">{url}</span></span>
+      <span>{label}<span class="url">{affichage ?? url}</span></span>
     </a>
   ))}
 </div>

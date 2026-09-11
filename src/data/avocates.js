@@ -129,7 +129,7 @@ export const AVOCATES = [
     publications: [],
     liens: [
       ['Publications et recherches — GREPEC, Université Saint-Louis', 'grepec.usaintlouis.be/team/deborah-unger/'],
-      ['Publications — DIAL, UCLouvain', 'research.dial.uclouvain.be'],
+      ['Publications — DIAL, UCLouvain', 'research.dial.uclouvain.be/search?query=deborah%20unger', 'research.dial.uclouvain.be'],
     ],
   },
   {
