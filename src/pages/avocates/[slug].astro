@@ -33,7 +33,7 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
       <div class="split">
         <div class="side">
           <div class="portrait">
-            <ArcImage src={a.photo} alt={a.nom} corner="bottom-right" sweep="78% 58%" loading="eager" />
+            <ArcImage src={a.photo} alt={a.nom} corner="bottom-right" sweep="46% 74%" loading="eager" />
           </div>
           <div class="fiches">
             <Card padding="var(--space-6)">
@@ -128,29 +128,36 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
 
 <style>
   /* ---- LE PORTRAIT ----
-     Debout, en tête de la colonne de gauche, et il part du bord de la FENÊTRE :
-     il franchit le filet de marge — seule chose du site qui en ait le droit.
-     Le débord vaut exactement la distance qui sépare le bord de la fenêtre du
-     début du contenu, centrage au-delà de --page-max compris ; la photographie
-     ne peut donc pas dériver du cadre.
-     Son arc est plus profond que l'arc de vignette (42%/52%) : il balaye toute
-     la hauteur d'un portrait debout, et non le coin d'une image. */
+     Couché — 3:2, le cadre du reflex que le cabinet a retenu — en tête de la
+     colonne de gauche, et il part du bord de la FENÊTRE : il franchit le filet
+     de marge — seule chose du site qui en ait le droit. Le débord vaut
+     exactement la distance qui sépare le bord de la fenêtre du début du
+     contenu, centrage au-delà de --page-max compris ; la photographie ne peut
+     donc pas dériver du cadre.
+     Sa hauteur n'est pas fixée : elle suit la largeur par le rapport de la
+     photographie, qui se montre donc ENTIÈRE. Une hauteur imposée l'aurait
+     rognée sur les côtés, et c'est précisément le cadre large — le jardin, les
+     bras — que ces portraits ont été choisis pour.
+     Son arc est plus profond que l'arc de vignette (42%/52%) : sur un cadre
+     couché, c'est la HAUTEUR qu'il balaye presque entière, et le rayon
+     horizontal reste court pour ne pas manger le visage, au centre. */
   .portrait {
     --bleed: calc(max(0px, (100vw - var(--page-max)) / 2) + var(--content-inset));
     margin-left: calc(-1 * var(--bleed));
     width: calc(100% + var(--bleed));
-    height: clamp(440px, 78vh, 820px);
+    aspect-ratio: 3 / 2;
   }
-  /* Une fois les colonnes empilées, le portrait n'est plus une colonne debout
-     mais un bandeau : il traverse alors la fenêtre D'UN BORD À L'AUTRE, et non
-     plus du seul bord gauche. Le débord de droite n'a pas besoin du calcul du
-     haut : sous le point de rupture, --page-max (1680px) n'est jamais atteint,
-     donc le terme de centrage vaut zéro et le débord se réduit à --content-inset.
+  /* Une fois les colonnes empilées, le portrait n'est plus une colonne mais un
+     bandeau : il traverse alors la fenêtre D'UN BORD À L'AUTRE, et non plus du
+     seul bord gauche. Le débord de droite n'a pas besoin du calcul du haut :
+     sous le point de rupture, --page-max (1680px) n'est jamais atteint, donc
+     le terme de centrage vaut zéro et le débord se réduit à --content-inset.
      Écrit ainsi, il n'y a plus un seul `100vw` dans la règle — donc plus rien
-     qui compte la barre de défilement et pousse la page d'un demi-pouce. */
+     qui compte la barre de défilement et pousse la page d'un demi-pouce.
+     Le rapport reste 3:2 : au bord de la tablette, le bandeau vaut la hauteur
+     de l'écran ou presque, comme le portrait debout la valait sur le bureau. */
   @media (--lap) {
     .portrait {
-      height: 380px;
       margin-inline: calc(-1 * var(--content-inset));
       width: auto;
     }
@@ -176,9 +183,14 @@ const autres = AVOCATES.filter((x) => x.slug !== a.slug);
     gap: var(--space-9);
     padding: 0 0 var(--section-y);
   }
-  .split > .side          { flex: 4 1 22ch; }
+  /* 5 contre 7, et non plus 4 contre 8 : la colonne de gauche se dessinait
+     pour un portrait DEBOUT, qui tirait sa présence de sa hauteur. Couché, le
+     portrait ne tient que de sa largeur — sur un tiers de page, le visage se
+     perdait au centre du jardin. Cinq douzièmes lui rendent ce que le cadre
+     large lui avait pris, sans ramener le texte sous une mesure confortable. */
+  .split > .side          { flex: 5 1 22ch; }
   /* Le portrait touche l'en-tête ; seul le TEXTE descend. */
-  .split > div:not(.side) { flex: 8 1 40ch; padding-top: var(--section-y); }
+  .split > div:not(.side) { flex: 7 1 40ch; padding-top: var(--section-y); }
   .side   { display: grid; gap: var(--space-5); }
   .fiches { display: grid; gap: var(--space-5); }
 

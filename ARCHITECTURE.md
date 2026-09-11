@@ -162,7 +162,27 @@ photographies redimensionnées, servis à la racine (`/logo.svg`,
 
 Les originaux pleine résolution sont dans `_originals/`, hors du dépôt
 (gitignoré) et hors du build. Les versions livrées suivent la spécification du
-design system : portraits 900px de large, vues larges 1600–1900px, JPEG q82.
+design system — JPEG q82, vues larges 1600–1900px — à une exception près, qui
+est un choix du cabinet : **les sept portraits sont couchés, en 3:2, livrés en
+1500×1000.** Le design system les prévoyait debout (900px de large, 4:5 dans la
+cellule-portrait) ; en septembre 2026 les avocates ont retenu les cadres
+horizontaux du reflex à la place des photos de téléphone. `PersonCell` et le
+portrait de la fiche suivent ce rapport — voir « Photographie et marque ».
+
+Six portraits sont les cadres du reflex tels quels. Un seul n'existe qu'en
+téléphone, debout : **Margaux Doyen** (un nouveau cadre, du même jour). Il est
+prélevé en 3:2 à la hauteur du visage et des bras, et se lit d'un cran plus
+près que les six autres — l'objectif du téléphone n'a pas le recul du reflex.
+Les anciens originaux de téléphone dorment dans
+`_originals/anciens-portraits-telephone/`.
+
+**Les portraits debout sont conservés**, dans `assets/photos/debout/` (900×1125,
+4:5), au cas où le cabinet revienne dessus. Ils sont servis mais ne sont
+référencés nulle part. Pour revenir en debout, trois gestes : pointer `photo`
+dans `src/data/avocates.js` vers `/photos/debout/<slug>.jpg`, rendre à
+`PersonCell` son rapport `4 / 5`, et redonner à `.portrait` de la fiche sa
+hauteur fixe (`clamp(440px, 78vh, 820px)`, 380px sous `--lap`) et son arc
+`78% 58%` — l'historique de `src/pages/avocates/[slug].astro` a la règle.
 
 ## Icônes
 
@@ -356,6 +376,8 @@ point de tout le dispositif.
 
 - `equipe-2.jpg` n'a jamais été fourni ; `PHOTOS.equipeAlt` retombe sur la photo
   principale.
+- Pas de cadre reflex pour Margaux Doyen : son portrait est un prélèvement 3:2
+  d'une photo de téléphone (voir « Images »). À remplacer si le photographe en a.
 - L'épingle de la carte est posée par géocodage de l'adresse ; `CONTACT.coords`
   ne sert plus qu'à documenter le lieu — **à faire confirmer par le cabinet**
   avant mise en ligne.
@@ -597,10 +619,16 @@ deux valeurs varient, et sans marche. Voir « Comment le site se replie ».
 ### Photographie et marque
 
 - **Lumière naturelle de fin d'après-midi, décors bruxellois réels.** Ni studio,
-  ni costume, ni pose d'autorité bras croisés. Portraits en 3:4. Toute photo
-  passe par l'arc du bouclier. Si de nouvelles photos sont commandées, garder
-  cette lumière : jamais froide, jamais contrastée, jamais désaturée, jamais
-  banque d'images.
+  ni costume, ni pose d'autorité bras croisés. Toute photo passe par l'arc du
+  bouclier. Si de nouvelles photos sont commandées, garder cette lumière :
+  jamais froide, jamais contrastée, jamais désaturée, jamais banque d'images.
+- **Portraits couchés, en 3:2.** Le design system les écrivait en 3:4 ; le
+  cabinet a tranché pour le cadre horizontal du reflex — le jardin et les bras
+  dans le cadre, pas seulement le visage. La photographie se montre ENTIÈRE,
+  partout : la cellule-portrait est en 3:2, la fiche pose le portrait à son
+  propre rapport plutôt qu'à une hauteur fixe, et l'arc y balaye la hauteur
+  plutôt que la largeur. Ne pas recadrer en debout « pour retrouver le visage » :
+  c'est ce cadre-là qui a été choisi.
 - **Le logo s'utilise tel quel.** Ses couleurs internes ne sont pas celles des
   tokens : **ne jamais le recoloriser**. Hauteur minimale 52px, air autour égal
   au tiers de la largeur du blason.

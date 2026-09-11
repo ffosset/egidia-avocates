@@ -1,6 +1,9 @@
 ---
 import { withBase } from '../lib/base.js';
-/** Cellule-portrait : photo pleine cellule, nom et langues au pied, sans fond. */
+/** Cellule-portrait : photo pleine cellule, nom et langues au pied, sans fond.
+    Le portrait est couché — 3:2, le cadre du reflex que le cabinet a retenu
+    pour ses sept avocates. La cellule prend donc plus de large que de haut, et
+    la photographie s'y montre entière : rien n'est rogné au montage. */
 import ArcImage from './ArcImage.astro';
 
 interface Props {
@@ -12,7 +15,7 @@ interface Props {
   edge?: 'left' | 'right' | 'both';
   href?: string;
 }
-const { name, photo, langues = [], ratio = '4 / 5', edge, href } = Astro.props;
+const { name, photo, langues = [], ratio = '3 / 2', edge, href } = Astro.props;
 const Tag = href ? 'a' : 'div';
 ---
 <Tag href={withBase(href)} class:list={['person', edge && `e-${edge}`, { clickable: !!href }]}>
