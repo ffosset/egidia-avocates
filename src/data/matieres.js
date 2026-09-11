@@ -71,7 +71,7 @@ export const MATIERES = [
     resume:
       "CPAS : revenu d'intégration, refus ou suspension d'aide, récupération d'indus, aide médicale urgente, questions d'accueil.",
     intro:
-      "Le droit de l'aide sociale préserve le droit de vivre une vie conforme à la dignité humaine de toute personne présente sur le territoire belge. Notre cabinet assiste les personnes dont l'aide a été refusée ou supprimée par un CPAS et les représente devant les juridictions du travail, y compris lorsque cette question croise une problématique de séjour.",
+      "Le droit à l'aide sociale préserve le droit de vivre une vie conforme à la dignité humaine de toute personne présente sur le territoire belge. Notre cabinet assiste les personnes dont l'aide a été refusée ou supprimée par un CPAS et les représente devant les juridictions du travail, y compris lorsque cette question croise une problématique de séjour.",
     traite: [
       "Revenu d'intégration",
       "Refus ou suspension d'aide",
