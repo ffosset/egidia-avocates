@@ -15,10 +15,11 @@
  * ---- LE SOMMAIRE EST ÉCRIT EN PREMIER, ET S'AFFICHE À DROITE ----
  * `row-reverse` sur une boîte qui peut passer à la ligne : tant que les deux
  * colonnes tiennent côte à côte, le sommaire va à DROITE et le texte à gauche —
- * la disposition des autres pages intérieures. Dès qu'elles s'empilent, chaque
- * colonne prend sa propre ligne, et c'est l'ordre du DOM qui décide : le
- * sommaire passe alors AU-DESSUS du document. Un sommaire posé sous quinze
- * articles n'aurait servi à personne.
+ * la disposition des autres pages intérieures. Dès qu'elles s'empilent, il n'y
+ * a plus de sommaire du tout (voir la requête de conteneur, en fin de feuille) :
+ * au téléphone, treize ancres empilées avant le premier article ne sont qu'un
+ * écran à passer, et le document se lit de haut en bas comme n'importe quelle
+ * page. L'encadré de la colonne, lui, reste : il ferme alors le document.
  *
  * ---- UN SEUL TABLEAU POUR LES DEUX ----
  * Les articles et le sommaire se déduisent de la MÊME liste `sections` : le
@@ -59,7 +60,7 @@ const corps = await Promise.all(
   <div class="split">
     <aside>
       <div class="sticky">
-        <Card tone="inset" padding="var(--space-6)">
+        <Card tone="inset" padding="var(--space-6)" class="somm-card">
           <Eyebrow>Sur cette page</Eyebrow>
           <nav class="somm" aria-label={`Sommaire · ${nom}`}>
             {sections.map((s) => (
@@ -207,9 +208,12 @@ const corps = await Promise.all(
   .art :global(dl.ident) { margin: 0; max-width: var(--measure-prose); }
   .art :global(dl.ident > div) {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: baseline;
-    gap: var(--space-5);
+    /* Côte à côte, l'étiquette et la valeur se tiennent à une gouttière de
+       pile ; l'une sous l'autre (voir `dd`), au pas le plus serré. */
+    gap: var(--space-2) var(--space-5);
     padding: var(--space-4) 0;
     border-top: var(--divider);
   }
@@ -218,8 +222,16 @@ const corps = await Promise.all(
      personne — il se lit dans l'encre du texte, et c'est le numéro qui passe au
      second plan. */
   .art :global(dl.ident.noms dt) { font-size: var(--fs-body-sm); color: var(--text-body); }
+  /* La valeur passe à la ligne SOUS son étiquette quand — et seulement quand
+     — son mot le plus long ne tient plus à côté : une adresse de site est un
+     seul mot de trente signes, et sur un téléphone il faisait déborder toute
+     la colonne. La ligne se casse sur la mesure MINIMALE de la valeur, pas
+     sur sa mesure naturelle : une adresse postale continue de se plier à
+     côté de son étiquette, comme avant. Descendue, la valeur prend toute la
+     ligne et reste au fer à droite. */
   .art :global(dl.ident dd) {
     margin: 0;
+    flex: 1 1 min-content;
     font-size: var(--fs-body-sm);
     text-align: right;
   }
@@ -233,5 +245,41 @@ const corps = await Promise.all(
     border-top: var(--divider);
     font-size: 16px;
     color: var(--text-label);
+  }
+
+  /* ---- EMPILÉ ----
+     « Empilé » n'est pas un point de rupture : c'est `flex-wrap` qui décide,
+     quand les deux bases (38ch + 22ch) et la gouttière ne tiennent plus dans
+     la ligne. La requête de conteneur pose la même condition, dans les mêmes
+     unités (voir `aide-juridique.astro`). La gouttière vaut 48px ici : la
+     bascule ne peut se produire que sous --lap, où c'est sa valeur.
+
+     Deux choses changent alors.
+     1. Le sommaire disparaît (voir l'en-tête du fichier). L'encadré qui le
+        suivait dans la colonne passe SOUS le document : `order` sur la boîte
+        du texte, qui prend la première ligne — le DOM ne bouge pas, et le
+        lecteur d'écran lit toujours l'encadré avant le document, comme la
+        colonne le faisait.
+     2. Les filets vont d'un filet de marge à l'autre, comme les registres de
+        l'accueil : chaque bloc fileté déborde d'UNE gouttière de chaque côté
+        — exactement ce qui sépare le contenu du filet — et reprend la même
+        valeur en padding, pour que le texte ne bouge pas. `RuledList` reçoit
+        la même consigne par `--list-bleed`.
+     Placé APRÈS les règles des articles, qu'il doit défaire. */
+  .split { container-type: inline-size; }
+  @container (max-width: calc(38ch + 22ch + 48px)) {
+    .split > .corps { order: -1; }
+    .sticky > :global(.somm-card) { display: none; }
+
+    .art, .maj {
+      margin-inline: calc(-1 * var(--gutter));
+      padding-inline: var(--gutter);
+      --list-bleed: var(--gutter);
+    }
+    /* Les paires nom/valeur portent leur propre filet : elles débordent à
+       leur tour du padding de l'article. Empilée, la colonne est plus étroite
+       que la mesure : la borne ne sert plus, et elle rognerait le débord. */
+    .art :global(dl.ident) { max-width: none; margin-inline: calc(-1 * var(--gutter)); }
+    .art :global(dl.ident > div) { padding-inline: var(--gutter); }
   }
 </style>
