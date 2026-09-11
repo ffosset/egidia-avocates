@@ -60,7 +60,7 @@ const descriptionSeo = `${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` 
             />
           </div>
           <div class="fiches">
-            <Card padding="var(--space-6)">
+            <Card class="contact-card">
               <Eyebrow>Contact</Eyebrow>
               <div class="contact">
                 <a href={`mailto:${a.email}`} class="line break"><Icon name="mail" size={18} />{a.email}</a>
@@ -72,7 +72,7 @@ const descriptionSeo = `${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` 
                 )}
               </div>
             </Card>
-            <Card tone="inset" padding="var(--space-6)">
+            <Card tone="inset" class="bref">
               <Eyebrow>En bref</Eyebrow>
               <div class="rows">
                 {a.depuis && <div class="row"><span class="k">Au barreau depuis</span><span class="v">{a.depuis}</span></div>}
@@ -93,9 +93,11 @@ const descriptionSeo = `${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` 
           </div>
           <h1>{a.nom}</h1>
 
-          <div class="block">
+          {/* Les deux blocs de pastilles portent `traits` : empilés, ils
+              remontent entre le contact et « En bref » (voir l'ordre). */}
+          <div class="block traits">
             <Eyebrow>Matières préférentielles</Eyebrow>
-            <div class="chips">
+            <div class="chips menant">
               {a.motsCles.map((t) => {
                 const m = MATIERES.find((x) => x.titre.toLowerCase() === t.toLowerCase());
                 return <Tag href={m ? `/matieres/${m.id}` : undefined}>{t}</Tag>;
@@ -103,7 +105,7 @@ const descriptionSeo = `${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` 
             </div>
           </div>
 
-          <div class="block">
+          <div class="block traits">
             <Eyebrow>Langues</Eyebrow>
             <div class="chips">
               {a.langues.map((l) => <Tag>{l}</Tag>)}
@@ -137,7 +139,7 @@ const descriptionSeo = `${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` 
 
           <div class="block">
             <Eyebrow>Les autres avocates</Eyebrow>
-            <div class="chips">
+            <div class="chips menant">
               {autres.map((x) => (
                 <Tag href={`/avocates/${x.slug}`}>{x.nom}</Tag>
               ))}
@@ -226,18 +228,27 @@ const descriptionSeo = `${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` 
      Côte à côte, les deux fiches suivent le portrait : elles sont la colonne
      de gauche. Empilées, elles s'intercalaient entre la photographie et le nom
      de l'avocate — on tombait sur un numéro de TVA avant de savoir qui on
-     lisait. La lecture demande : la photographie, le fil, le nom, PUIS les
-     fiches, puis le parcours.
+     lisait. La lecture demande : la photographie, le fil, le nom, PUIS ce qui
+     dit qui elle est — le contact, ses matières, ses langues —, PUIS la fiche
+     « En bref », puis le parcours.
 
-     Les deux colonnes s'effacent (`display: contents`) : leurs enfants
-     deviennent les éléments de la pile, et `order` les remet dans l'ordre de
-     lecture. C'est la seule façon d'intercaler deux blocs qui ne sont pas
-     frères dans le DOM sans dupliquer le balisage — et le DOM, lui, ne bouge
-     pas : l'ordre du clavier et celui du lecteur d'écran restent celui de la
-     source, où les fiches suivent déjà le portrait.
+     Les deux colonnes s'effacent (`display: contents`), et la pile des fiches
+     avec elles : leurs enfants deviennent les éléments de la pile, et `order`
+     les remet dans l'ordre de lecture. C'est la seule façon d'intercaler des
+     blocs qui ne sont pas frères dans le DOM sans dupliquer le balisage — et
+     le DOM, lui, ne bouge pas : l'ordre du clavier et celui du lecteur d'écran
+     restent celui de la source, où les fiches suivent déjà le portrait.
 
      `display: contents` efface aussi le padding et l'écart des colonnes : la
-     pile ne se règle donc plus qu'à la marge, bloc par bloc. */
+     pile ne se règle donc plus qu'à la marge, bloc par bloc.
+
+     Le contact perd sa carte : sur une colonne, il se lit comme les deux
+     blocs de pastilles qui le suivent — une étiquette, son contenu — et un
+     cadre blanc autour du seul courriel pesait plus que lui. « En bref »
+     garde sa surface, mais la prend en bandeau : d'un bord de l'écran à
+     l'autre, comme le portrait au-dessus, son texte restant à
+     --content-inset. Les filets de marge (5) le traversent : c'est du sable
+     clair, ils s'y lisent encore. */
   @media (--lap) {
     /* `align-items: flex-start` était la loi des deux COLONNES : chacune y
        prenait sa hauteur propre. Empilées, les blocs doivent au contraire
@@ -245,13 +256,29 @@ const descriptionSeo = `${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` 
        s'étendre jusqu'aux deux bords. */
     .split { flex-direction: column; align-items: stretch; gap: 0; }
     .split > .side,
-    .split > div:not(.side) { display: contents; }
+    .split > div:not(.side),
+    .fiches { display: contents; }
 
     .portrait { order: 1; }
     .fil      { order: 2; margin-top: var(--section-y-sm); }
     h1        { order: 3; }
-    .fiches   { order: 4; margin-top: var(--stack-loose); }
-    .block    { order: 5; }
+    .fiches > :global(.contact-card) {
+      order: 4;
+      margin-top: var(--stack-loose);
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+    }
+    .fiches > :global(.bref) {
+      order: 6;
+      margin-top: var(--space-8);
+      margin-inline: calc(-1 * var(--content-inset));
+      padding-inline: var(--content-inset);
+    }
+    .block    { order: 7; }
+    /* Après `.block`, qu'il doit contredire à spécificité égale. */
+    .traits   { order: 5; }
   }
 
   h1 { font-family: var(--font-display); font-size: var(--fs-h1); font-weight: var(--fw-bold); line-height: 1.12; }
@@ -279,9 +306,18 @@ const descriptionSeo = `${a.nom}, avocate au barreau de Bruxelles${a.depuis ? ` 
   h1 + .block { margin-top: var(--stack-loose); }
   .prose { max-width: var(--measure-prose); }
   .chips { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--stack-tight); }
+  /* Les pastilles qui MÈNENT quelque part (matières, consœurs) sont des
+     boutons, et au téléphone un bouton prend toute la largeur entre les
+     marges (voir `Button`) : elles s'empilent, étirées. Les langues, qui ne
+     font que nommer, restent des pastilles. `:global` : la pastille est un
+     composant, sa racine ne porte pas la portée de cette feuille. */
+  @media (--lap) {
+    .chips.menant { flex-direction: column; align-items: stretch; }
+    .chips.menant :global(.tag) { justify-content: center; }
+  }
   .spaced { margin-top: var(--space-5); }
   .spaced p { font-size: var(--fs-body); line-height: 1.6; color: var(--brun-moyen); }
-  .spaced p.first { font-size: var(--fs-lead); line-height: 1.5; color: var(--text-body); }
+  .spaced p.first { font-size: var(--fs-lead); line-height: var(--lh-lead); color: var(--text-body); }
   .tight { margin-top: var(--stack-tight); }
 
   ol { list-style: none; margin: 20px 0 0; padding: 0; }
