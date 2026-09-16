@@ -507,12 +507,12 @@ Canoniques, plan du site, robots.txt et `@id` du JSON-LD dérivent tous de
 - Pas de fiche d'établissement Google (Google Business Profile) : c'est elle
   qui place le cabinet sur le plan des résultats. À créer par le cabinet, avec
   l'adresse mot pour mot celle de `CONTACT.postale`.
-- Trois faits manquent aux pages légales, et `src/data/legal.js` les tient à
+- Deux faits manquent aux pages légales, et `src/data/legal.js` les tient à
   `null` en attendant — la page n'affiche alors rien plutôt qu'un chiffre
-  inventé : la forme juridique commune du cabinet (s'il en a une) et son numéro
-  d'entreprise, et le nom de l'assureur en responsabilité professionnelle. Les
-  numéros d'entreprise des sept avocates, eux, sont dans `avocates.js` et sont
-  affichés.
+  inventé : la forme juridique commune du cabinet (s'il en a une) et le nom de
+  l'assureur en responsabilité professionnelle. Le numéro d'entreprise du
+  cabinet (`EDITEUR.bce`) et ceux des sept avocates (`avocates.js`), eux, sont
+  connus et affichés.
 - `HEBERGEUR` dans `legal.js` dit GitHub Pages : à corriger le jour où le site
   passe sur le domaine du cabinet. Les deux pages légales le nomment, parce
   qu'il est le seul destinataire que le visiteur ne choisit pas.

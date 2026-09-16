@@ -11,15 +11,18 @@
 // En ISO, parce qu'elle sert deux fois — écrite en toutes lettres pour le
 // lecteur (`LegalDoc` la met en français), et telle quelle dans le `datetime`
 // de la balise <time> et dans les données structurées, que les machines lisent.
-export const MAJ = '2026-09-11';
+export const MAJ = '2026-09-16';
 
 export const EDITEUR = {
   nom: "Cabinet d'avocates Egidia",
-  // Sept avocates indépendantes, sept numéros d'entreprise (voir `avocates.js`).
-  // Aucune structure commune n'a été communiquée : tant que le cabinet n'en
-  // déclare pas une, la page dit ce qui est vrai — chacune répond pour elle.
+  // Sept avocates indépendantes, sept numéros d'entreprise (voir `avocates.js`),
+  // et un numéro pour le cabinet lui-même, communiqué le 16 septembre 2026.
+  // Sa forme juridique, elle, ne l'a pas été : tant que le cabinet ne la
+  // déclare pas, la page dit ce qui est vrai — chacune répond pour elle.
   entite: null,
-  bce: null,
+  // Le numéro d'entreprise et le numéro de TVA ne font qu'un en Belgique : le
+  // second est le premier précédé de « BE ». Écrit comme ceux des avocates.
+  bce: 'BE 1041.234.424',
 };
 
 export const ORDRE = {

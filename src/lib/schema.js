@@ -19,7 +19,7 @@ import { absolu } from './base.js';
 import { CONTACT } from '../data/site.js';
 import { AVOCATES, telE164 } from '../data/avocates.js';
 import { MATIERES } from '../data/matieres.js';
-import { ORDRE } from '../data/legal.js';
+import { EDITEUR, ORDRE } from '../data/legal.js';
 
 const ID_CABINET = () => absolu('/#cabinet');
 const ID_SITE = () => absolu('/#site');
@@ -48,6 +48,7 @@ export function cabinet({ image } = {}) {
     logo: absolu('/logo-egidia.png'),
     ...(image && { image }),
     email: CONTACT.email,
+    ...(EDITEUR.bce && { vatID: EDITEUR.bce }),
     address: {
       '@type': 'PostalAddress',
       streetAddress: CONTACT.postale.rue,
