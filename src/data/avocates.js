@@ -12,7 +12,7 @@ export const AVOCATES = [
     motsCles: ['Droit de la jeunesse', 'Droit de la famille', 'Droit des étrangers'],
     langues: ['Français', 'Anglais'],
     email: 'f.delplancke@avocat.be',
-    tel: null, // ligne professionnelle en cours d'attribution
+    tel: '0471 93 57 63',
     tva: 'BE 0666.604.190',
     linkedin: null,
     cabinets: { present: 'Egidia', passe: 'Alter Egaux' },

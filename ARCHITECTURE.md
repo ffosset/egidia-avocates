@@ -500,8 +500,7 @@ Canoniques, plan du site, robots.txt et `@id` du JSON-LD dérivent tous de
 - L'épingle de la carte est posée par géocodage de l'adresse ; `CONTACT.coords`
   ne sert plus qu'à documenter le lieu — **à faire confirmer par le cabinet**
   avant mise en ligne.
-- Pas de numéro général pour le cabinet ; Floriane Delplancke n'a pas encore de
-  ligne directe (sa fiche affiche « Ligne directe à venir »).
+- Pas de numéro général pour le cabinet.
 - LinkedIn absent pour Delplancke, Doyen, Ghymers et Vryens.
 - Liens utiles pour « Droit des MENA » — marqués `[Ajouter]` dans le PDF source.
 - Pas de fiche d'établissement Google (Google Business Profile) : c'est elle
