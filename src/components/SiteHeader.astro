@@ -100,9 +100,58 @@ import Icon from './Icon.astro';
        la boîte : l'en-tête les redessine (voir `header::before / ::after`) —
        et, menu ouvert, sur toute la hauteur de l'écran. */
     z-index: 7;
-    /* La hauteur de la barre glisse avec le cadre, comme les marges. */
-    --bar-h: clamp(64px, 5vw, 88px);
+    /* La hauteur de la barre glisse avec le cadre, comme les marges. Deux
+       mesures : la pleine, au repos ; l'étroite, quand la barre revient
+       accrochée en haut de l'écran (voir « La barre qui revient »). */
+    --bar-full: clamp(64px, 5vw, 88px);
+    --bar-thin: clamp(52px, 3.6vw, 64px);
+    --bar-h: var(--bar-full);
+    /* Ce qu'il y a de page au-dessus de la barre : la gouttière au repos,
+       rien quand la barre est accrochée au bord de l'écran. Le menu ouvert
+       et le tiroir s'en servent pour ne pas bouger sous le doigt. */
+    --dock-top: var(--gutter);
   }
+
+  /* ---- LA BARRE QUI REVIENT ----
+     Au repos, l'en-tête est une boîte dans le flux : on la dépasse en
+     défilant, comme n'importe quelle section. Mais dès qu'on REMONTE, elle
+     revient glisser sous le bord haut de l'écran, un peu plus étroite ; on
+     redescend, elle repart. Arrivé tout en haut, elle retrouve sa place, sa
+     gouttière et sa pleine hauteur — sans un saut.
+
+     Le mécanisme est `position: sticky`, et c'est `top` qui fait tout :
+     - garée (`top` négatif de toute sa hauteur) : la barre colle JUSTE
+       AU-DESSUS de la fenêtre, invisible, une fois qu'on l'a dépassée ;
+       avant, elle défile avec la page, comme au repos ;
+     - montrée (`top: 0`) : elle colle au bord haut. Entre les deux, `top`
+       se transitionne : c'est le glissement.
+     Garée ou montrée, il n'y a plus de gouttière au-dessus d'elle :
+     `--dock-top` tombe à 0 pour le menu et le tiroir. Le script ne pose que
+     l'attribut ; sans lui, l'en-tête reste la boîte dans le flux —
+     `[data-dock]` n'existe pas, rien de tout ceci ne vaut.
+
+     L'en-tête étroit occupe MOINS de flux que le plein : la différence
+     revient en marge basse, pour que la page ne remonte pas d'un cheveu au
+     moment où la barre s'amincit (elle est alors hors de vue). Elle ne
+     s'amincit qu'une fois entièrement dépassée, et ne reprend sa pleine
+     hauteur qu'à sa place, en haut : là, elle pousse vers le bas, et la marge
+     rend ce qu'elle prenait — rien ne bouge sous la barre. */
+  header[data-dock] {
+    position: sticky;
+    top: calc(-1 * (var(--bar-h) + 2 * var(--border-rule)));
+  }
+  header[data-dock='hidden'],
+  header[data-dock='shown'] {
+    --bar-h: var(--bar-thin);
+    --dock-top: 0px;
+    margin-bottom: calc(var(--bar-full) - var(--bar-thin));
+    /* Le glissement ne vaut qu'entre garée et montrée. Au repos, `top` ne
+       doit pas se transitionner : le menu ouvert cloue l'en-tête à `inset: 0`,
+       et une transition l'y ferait DESCENDRE de toute sa hauteur sous le
+       doigt qui vient de l'ouvrir. */
+    transition: top var(--dur-base) var(--ease-standard);
+  }
+  header[data-dock='shown'] { top: 0; }
 
   /* Les deux filets de marge, redessinés sur la hauteur de la boîte : même
      calcul que `PageRules` — l'en-tête fait la largeur de la fenêtre, le
@@ -234,6 +283,13 @@ import Icon from './Icon.astro';
     transform: none;
     transition-delay: 0s;
   }
+  /* Barre garée au-dessus de l'écran, rien n'en pend : après un clic sur
+     « Matières », le pointeur reste posé là où le déroulant était, et le
+     survol tiendrait le panneau ouvert sous un en-tête qu'on ne voit plus. */
+  header[data-dock='hidden'] .sub {
+    visibility: hidden;
+    opacity: 0;
+  }
   .sub a {
     justify-content: flex-start;
     min-height: var(--tap-min);
@@ -309,7 +365,7 @@ import Icon from './Icon.astro';
      ne touche jamais un filet de marge. */
   .drawer {
     position: fixed;
-    top: calc(var(--gutter) + var(--border-rule) + var(--bar-h));
+    top: calc(var(--dock-top) + var(--border-rule) + var(--bar-h));
     inset-inline: 0;
     bottom: 0;
     overflow-y: auto;
@@ -400,6 +456,10 @@ import Icon from './Icon.astro';
        au bord de l'écran : c'est le filet haut du premier intitulé qui ferme
        la barre, au même pixel qu'avant.
 
+       Barre revenue en haut de l'écran (voir « La barre qui revient »), la
+       gouttière n'existe plus : `--dock-top` vaut 0, et le bouton reste au
+       bord, là où il était.
+
        Ce n'est posé que sous le point de rupture : au-dessus, le `<details>`
        est caché mais peut être resté `open` — un menu ouvert sur un téléphone
        que l'on tourne, une fenêtre que l'on élargit — et l'en-tête ne doit
@@ -408,7 +468,7 @@ import Icon from './Icon.astro';
       position: fixed;
       inset: 0;
       margin-top: 0;
-      padding-top: var(--gutter);
+      padding-top: var(--dock-top);
       border-top: 0;
       border-bottom: 0;
     }
@@ -439,4 +499,87 @@ import Icon from './Icon.astro';
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') menus.forEach((menu) => (menu.open = false));
   });
+
+  /* ---- La barre qui revient (voir le style du même nom) ----
+     Le script ne fait qu'une chose : lire le sens du défilement et poser
+     `data-dock` — vide (au repos, dans le flux), `hidden` (garée au-dessus de
+     l'écran) ou `shown` (accrochée au bord haut). Le glissement, l'étroitesse
+     et la marge de compensation sont en CSS.
+
+     Trois zones, mesurées sur la place NATURELLE de l'en-tête (`haut`, son
+     bord haut dans la page ; `bas`, son bord bas) :
+     - au-dessus de `haut` : repos, quoi qu'il arrive — l'en-tête est chez lui ;
+     - au-delà de `bas` : le sens décide, on remonte → `shown`, on descend →
+       `hidden` ;
+     - entre les deux, l'en-tête est en train d'entrer ou de sortir de l'écran
+       par le flux : s'il est au repos, on le laisse (il défile naturellement) ;
+       s'il était déjà garé ou accroché, le sens décide comme au-delà.
+     Le repos ne cède qu'une fois l'en-tête entièrement dépassé : c'est à ce
+     moment, hors de vue, qu'il s'amincit. */
+  const header = document.querySelector<HTMLElement>('header');
+  if (header) {
+    const root = document.documentElement;
+    let haut = 0, bas = 0;
+    let dernier = window.scrollY;
+    let etat = '';
+    /* Un lien d'ancre fait remonter la page toute seule : ce n'est pas le
+       lecteur qui remonte, et la barre ne doit pas venir couvrir la section
+       qu'il a demandée. On la tient garée jusqu'au prochain geste du lecteur
+       — molette, doigt, clavier — pas jusqu'à une horloge : le glissement de
+       la page dure ce qu'il dure. */
+    let retenue = false;
+
+    const pose = (v: string) => {
+      if (v === etat) return;
+      etat = v;
+      header.setAttribute('data-dock', v);
+    };
+    /* Les mesures se prennent au repos : l'attribut retiré, l'en-tête est
+       dans le flux, à sa place, à sa pleine hauteur. */
+    const mesure = () => {
+      header.removeAttribute('data-dock');
+      const r = header.getBoundingClientRect();
+      haut = r.top + window.scrollY;
+      bas = r.bottom + window.scrollY;
+      header.setAttribute('data-dock', etat);
+    };
+    const lit = () => {
+      /* Le menu ouvert fige la page : rien à lire. Les rebonds d'iOS, hors des
+         bornes de la page, ne sont pas un sens de défilement. */
+      if (root.matches(':has([data-menu][open])')) return;
+      const y = Math.max(0, Math.min(window.scrollY, root.scrollHeight - window.innerHeight));
+      const monte = y < dernier;
+      const bouge = Math.abs(y - dernier) > 2;
+      dernier = y;
+      if (y <= haut) pose('');
+      else if (retenue) pose('hidden');
+      else if (!bouge) return;
+      else if (y > bas || etat) pose(monte ? 'shown' : 'hidden');
+    };
+
+    /* Le navigateur ne livre déjà qu'un `scroll` par image : rien à
+       tamponner. */
+    window.addEventListener('scroll', lit, { passive: true });
+    window.addEventListener('resize', () => { mesure(); lit(); });
+    /* Un lien vers une ancre de la page : la page va glisser d'elle-même. */
+    document.addEventListener('click', (e) => {
+      const a = (e.target as HTMLElement).closest('a[href*="#"]');
+      if (!(a instanceof HTMLAnchorElement)) return;
+      if (a.origin !== location.origin || a.pathname !== location.pathname) return;
+      retenue = true;
+      if (window.scrollY > haut) pose('hidden');
+    });
+    for (const geste of ['wheel', 'touchstart', 'keydown'] as const) {
+      window.addEventListener(geste, () => { retenue = false; }, { passive: true });
+    }
+    /* Le clavier entre dans la barre : elle se montre, on ne tabule pas dans
+       le vide. Le clavier seulement (`:focus-visible`) : un clic donne aussi
+       le focus, et c'est justement lui qu'on vient de garer. */
+    header.addEventListener('focusin', () => {
+      if (window.scrollY > haut && header.matches(':has(:focus-visible)')) pose('shown');
+    });
+
+    mesure();
+    lit();
+  }
 </script>

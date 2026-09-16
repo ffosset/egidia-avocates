@@ -50,18 +50,20 @@ fond gardait ce fond au survol tout en appliquant son encre de survol : sur les
 honoraires, le bouton secondaire écrivait sauge obscur sur sauge obscur. Le
 détail du calcul est en tête de `survol.css`.
 
-**Cinq des six gabarits ne livrent aucun script.** Seul l'accueil en charge,
-et uniquement pour l'appel de la carte d'accès :
+**Toutes les pages livrent le même script, celui de l'en-tête** — un peu plus
+d'1 Ko, en ligne dans la page : la barre qui revient quand on remonte (voir
+« La barre qui revient ») et deux conforts du menu. Seul l'accueil en charge
+davantage, pour l'appel de la carte d'accès :
 
 | Route | JS livré |
 | --- | --- |
-| `/` | moins d'1 Ko (l'appel de la carte et son voile) |
-| `/matieres/[id]` | aucun |
-| `/avocates/[slug]` | aucun |
-| `/aide-juridique` | aucun |
-| `/mentions-legales` | aucun |
-| `/vie-privee` | aucun |
-| `/404` | aucun |
+| `/` | l'en-tête, plus moins d'1 Ko pour l'appel de la carte et son voile |
+| `/matieres/[id]` | l'en-tête |
+| `/avocates/[slug]` | l'en-tête |
+| `/aide-juridique` | l'en-tête |
+| `/mentions-legales` | l'en-tête |
+| `/vie-privee` | l'en-tête |
+| `/404` | l'en-tête |
 
 Les `<script type="application/ld+json">` que portent les pages (voir
 « Référencement ») ne comptent pas : le navigateur ne les exécute pas, il les
@@ -344,8 +346,33 @@ de l'accueil (celle-ci reste sur la page, sous le menu). La page derrière est
 figée (`html:has([data-menu][open]) { overflow: hidden }`) et
 retrouve sa position à la fermeture. Le tout n'est posé que sous `--lap` : un
 `<details>` resté `open` quand la fenêtre s'élargit ne doit pas clouer l'en-tête.
-Le script de `SiteHeader` n'ajoute que deux conforts — refermer après un lien
-d'ancre, refermer sur Échap — et le menu reste utilisable s'il ne s'exécute pas.
+Le script de `SiteHeader` n'ajoute au menu que deux conforts — refermer après
+un lien d'ancre, refermer sur Échap — et le menu reste utilisable s'il ne
+s'exécute pas.
+
+### La barre qui revient
+
+Au repos, l'en-tête est une boîte dans le flux : on la dépasse en défilant.
+Mais dès qu'on **remonte**, elle revient glisser sous le bord haut de l'écran,
+un peu plus étroite (`--bar-thin` contre `--bar-full`) ; on redescend, elle
+repart. Arrivé tout en haut, elle retrouve sa place, sa gouttière et sa pleine
+hauteur, sans un saut.
+
+Le mécanisme est `position: sticky`, posé seulement quand le script a mis
+`data-dock` sur l'en-tête (sans script : la boîte dans le flux, comme avant).
+C'est `top` qui fait tout : négatif de toute la hauteur de la barre, elle colle
+**juste au-dessus** de la fenêtre une fois dépassée (`hidden`) ; à `0`, elle
+colle au bord haut (`shown`) ; entre les deux, `top` se transitionne — c'est le
+glissement. Le script ne lit que le sens du défilement et pose l'attribut ; il
+ne s'amincit qu'une fois l'en-tête entièrement dépassé, hors de vue, et la
+différence de hauteur revient en marge basse pour que la page ne bouge pas d'un
+pixel.
+
+Deux retenues : un lien d'ancre qui fait remonter la page toute seule garde la
+barre garée jusqu'au prochain geste du lecteur (elle ne vient pas couvrir la
+section demandée) ; le clavier qui entre dans la barre (`:focus-visible`) la
+montre. Sous `--lap`, le menu ouvert depuis la barre revenue reste au bord de
+l'écran, sans gouttière (`--dock-top`), le bouton toujours sous le doigt.
 
 ### `RuledGrid` : deux modes
 
