@@ -27,9 +27,17 @@ const Tag = href ? 'a' : 'span';
     text-decoration: none;
     transition: var(--transition-control);
   }
-  /* Une pastille qui MÈNE quelque part porte l'encre vive du texte ; une
-     pastille qui ne fait que nommer reste dans le brun de son propre filet.
-     La boîte ne change pas : seule l'encre dit lequel des deux on regarde. */
+  /* Une pastille qui MÈNE quelque part porte l'encre vive du texte et la boîte
+     d'un bouton : la hauteur du doigt, le filet à pleine force. Une pastille
+     qui ne fait que nommer (les langues) n'a pas à être touchée : elle rentre
+     à la taille d'une note en marge, et son filet est son encre ÉCLAIRCIE de
+     moitié — le même trait que la pastille du registre (`styles/pastille.css`).
+     À pleine force, dans la même boîte, elle se lisait comme un bouton. */
   a.tag { color: var(--text-body); }
+  span.tag {
+    min-height: 0;
+    padding: var(--space-1) var(--space-3);
+    border-color: color-mix(in srgb, currentColor 50%, transparent);
+  }
   .tag.selected { background: var(--brun-profond); color: var(--creme); border-color: var(--brun-profond); }
 </style>
